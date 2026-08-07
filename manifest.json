@@ -1,0 +1,11 @@
+{
+    "display_name": "Telegram Mobile",
+    "loading_order": 100,
+    "requires": [],
+    "optional": [],
+    "js": "loader-0.1.0.js",
+    "author": "kamoimi",
+    "version": "0.1.0",
+    "homePage": "",
+    "auto_update": true
+}

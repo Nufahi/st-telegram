@@ -1,0 +1,167 @@
+/* ST Telegram — the desktop phone frame.
+ *
+ * On a wide screen the phone layout would stretch to 2000px and look absurd,
+ * so we centre it in a phone-shaped column with a device bezel around it.
+ *
+ * ═══ Why this is done with position/inset and NOT transform ═══
+ *
+ * The obvious implementation is `transform: translateX(-50%)` on #sheld.
+ * Do not. A transform creates a containing block for every position:fixed
+ * descendant, and #top-settings-holder plus every .drawer-content inside it
+ * is position:fixed. They would anchor to the frame's box, get clipped, and
+ * their z-index would be trapped in the frame's stacking context -- the
+ * settings panels would open behind the chat. We size and place the frame
+ * with plain inset values so no containing block is ever created.
+ *
+ * Same reason the drawer slides with margin-left rather than transform.
+ */
+
+@media (min-width: 701px) {
+    html[data-tg-frame='on'] body {
+        /* The desk the phone lies on. */
+        background:
+            radial-gradient(ellipse at 50% 0%, rgba(255, 255, 255, .06), transparent 60%),
+            var(--tg-desk-bg, #1b2028) !important;
+    }
+
+    html[data-tg-frame='on'][data-tg-variant='day'] body {
+        --tg-desk-bg: #20262e;
+    }
+
+    html[data-tg-frame='on'][data-tg-variant='night'] body {
+        --tg-desk-bg: #0a0d11;
+    }
+
+    /* The phone. Centred with symmetric insets: no transform, no new
+       containing block. */
+    html[data-tg-frame='on'] #sheld {
+        left: calc(50% - var(--tg-frame-width) / 2) !important;
+        right: auto !important;
+        top: 22px !important;
+        bottom: 22px !important;
+
+        width: var(--tg-frame-width) !important;
+        max-width: var(--tg-frame-width) !important;
+        height: auto !important;
+
+        border-radius: 28px !important;
+        overflow: hidden !important;
+
+        /* Bezel, rim light and the shadow it casts on the desk. */
+        box-shadow:
+            0 0 0 10px #14181d,
+            0 0 0 11px rgba(255, 255, 255, .07),
+            0 26px 60px rgba(0, 0, 0, .55),
+            0 8px 20px rgba(0, 0, 0, .35) !important;
+    }
+
+    /* Status bar. Telegram sits under the system bar, which is a darkened
+       shade of the action bar colour. Purely decorative. */
+    html[data-tg-frame='on'] #sheld::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 26px;
+        z-index: 40;
+        background: var(--tg-statusbar);
+        pointer-events: none;
+    }
+
+    /* The clock and indicators drawn into that bar. */
+    html[data-tg-frame='on'] #sheld::after {
+        content: attr(data-tg-clock);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 26px;
+        z-index: 41;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 14px;
+        font-size: 12px;
+        font-weight: 500;
+        font-family: var(--tg-font-ui);
+        color: #fff;
+        letter-spacing: .2px;
+        pointer-events: none;
+        user-select: none;
+    }
+
+    /* Push the app's own chrome below the fake status bar. */
+    html[data-tg-frame='on'] .tg-header {
+        margin-top: 26px !important;
+    }
+
+    /* The drawer and the settings sheets are position:fixed, so they would
+       cover the whole desktop viewport. Clamp them to the phone. */
+    html[data-tg-frame='on'] #top-settings-holder {
+        top: 22px !important;
+        bottom: 22px !important;
+        left: calc(50% - var(--tg-frame-width) / 2) !important;
+        height: auto !important;
+        width: min(300px, calc(var(--tg-frame-width) * .84)) !important;
+        max-width: min(300px, calc(var(--tg-frame-width) * .84)) !important;
+        margin-left: calc(min(300px, calc(var(--tg-frame-width) * .84)) * -1) !important;
+        border-radius: 28px 0 0 28px !important;
+    }
+
+    html[data-tg-frame='on'] body.tg-drawer-open #top-settings-holder {
+        margin-left: 0 !important;
+    }
+
+    html[data-tg-frame='on'] #top-settings-holder .drawer-content {
+        top: 22px !important;
+        bottom: 22px !important;
+        left: calc(50% - var(--tg-frame-width) / 2) !important;
+        right: auto !important;
+        width: var(--tg-frame-width) !important;
+        max-width: var(--tg-frame-width) !important;
+        height: auto !important;
+        border-radius: 28px !important;
+    }
+
+    html[data-tg-frame='on'] .tg-scrim {
+        top: 22px !important;
+        bottom: 22px !important;
+        left: calc(50% - var(--tg-frame-width) / 2) !important;
+        right: auto !important;
+        width: var(--tg-frame-width) !important;
+        border-radius: 28px !important;
+    }
+
+    /* Popups and toasts, likewise. */
+    html[data-tg-frame='on'] .popup {
+        max-width: calc(var(--tg-frame-width) - 40px) !important;
+    }
+
+    /* Frame off: fill the viewport but keep a readable column, the way
+       Telegram Web behaves when the window is narrow. */
+    html[data-tg-frame='off'] #sheld {
+        left: 50% !important;
+        right: auto !important;
+        margin-left: calc(min(560px, 100vw) / -2) !important;
+        width: min(560px, 100vw) !important;
+        max-width: min(560px, 100vw) !important;
+    }
+}
+
+/* On real phones there is no frame, ever. */
+@media (max-width: 700px) {
+    html #sheld {
+        inset: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: 100dvh !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+
+    html #sheld::before,
+    html #sheld::after {
+        display: none !important;
+    }
+}

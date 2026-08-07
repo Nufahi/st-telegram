@@ -1,0 +1,23 @@
+/* ST Telegram — stylesheet entry point.
+ *
+ * Order is load-bearing:
+ *   tokens    must be first; everything below reads its variables
+ *   icons     variable definitions only, no rules
+ *   base      SillyTavern chrome we neutralise before restyling
+ *   chat / header / composer / drawer   the app itself
+ *   frame     last, because it overrides positions set by the others
+ *
+ * @import is used rather than a build step so the files stay individually
+ * editable and debuggable in devtools. The cost is a handful of extra
+ * requests on first load; they are cached afterwards and the whole set is
+ * under 60 KB.
+ */
+
+@import url('./tokens.css');
+@import url('./icons.css');
+@import url('./base.css');
+@import url('./chat.css');
+@import url('./header.css');
+@import url('./composer.css');
+@import url('./drawer.css');
+@import url('./frame.css');

@@ -1,0 +1,275 @@
+/* ST Telegram — design tokens.
+ *
+ * Colour values are taken from Telegram for Android's own theme files
+ * (the "Day" and "Night" built-ins). Do not "improve" them: the entire point
+ * of the project is that it looks like the real app.
+ *
+ * NAMING RULE, learned the hard way by the project this is modelled on:
+ * anything that is a LENGTH carries a size suffix (-width, -size, -gap).
+ * A colour token and a length token sharing a name both land in :root and the
+ * later one silently wins, producing a length where a colour was expected.
+ * No test catches that -- only your eyes do.
+ *
+ * THREE TIERS. Components must read the semantic tier only.
+ *   palette   raw Telegram colours, per variant
+ *   semantic  what the colour is FOR
+ *   metrics   spacing and sizing, variant-independent
+ */
+
+/* ══ Metrics — shared by both variants ═══════════════════════════════════ */
+
+:root {
+    /* Telegram Android's action bar is 56dp; the composer is 48dp of content
+       plus padding. These two drive nearly every vertical offset. */
+    --tg-header-height: 56px;
+    --tg-composer-height: 48px;
+
+    /* The phone frame on desktop. 420px is a large-phone logical width, which
+       is what Telegram's own layout is designed against. */
+    --tg-frame-width: 420px;
+    --tg-frame-radius: 0px;
+
+    /* Bubbles */
+    --tg-bubble-radius: 12px;
+    /* The small radius on the corner nearest the tail. */
+    --tg-bubble-radius-tail: 6px;
+    --tg-bubble-max-width: 82%;
+    --tg-bubble-gap: 2px;
+    /* Gap between two groups from different senders. */
+    --tg-bubble-group-gap: 10px;
+    --tg-bubble-pad-y: 6px;
+    --tg-bubble-pad-x: 9px;
+    --tg-tail-width: 9px;
+
+    /* Avatars */
+    --tg-avatar-size: 40px;
+    --tg-avatar-size-header: 37px;
+    --tg-avatar-size-bubble: 33px;
+
+    /* Type scale. Telegram Android defaults to 16sp body text. */
+    --tg-font-body-size: 16px;
+    --tg-font-body-lead: 1.31;
+    --tg-font-name-size: 15px;
+    --tg-font-meta-size: 12px;
+    --tg-font-header-size: 17px;
+    --tg-font-status-size: 13px;
+
+    --tg-font-ui: 'Roboto', 'Noto Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --tg-font-mono: 'Roboto Mono', ui-monospace, 'SF Mono', Consolas, monospace;
+
+    /* Material elevation, as Telegram uses it. */
+    --tg-shadow-header: 0 1px 3px rgba(0, 0, 0, .16);
+    --tg-shadow-bubble: 0 1px 1px rgba(0, 0, 0, .10);
+    --tg-shadow-fab: 0 3px 6px rgba(0, 0, 0, .22), 0 1px 3px rgba(0, 0, 0, .16);
+    --tg-shadow-drawer: 0 8px 24px rgba(0, 0, 0, .28);
+    --tg-shadow-menu: 0 4px 16px rgba(0, 0, 0, .22);
+
+    /* Material standard easing and durations. */
+    --tg-ease: cubic-bezier(.4, 0, .2, 1);
+    --tg-ease-decelerate: cubic-bezier(0, 0, .2, 1);
+    --tg-ease-accelerate: cubic-bezier(.4, 0, 1, 1);
+    --tg-dur-short: 150ms;
+    --tg-dur-medium: 225ms;
+    --tg-dur-drawer: 260ms;
+}
+
+/* ══ Day palette ═════════════════════════════════════════════════════════ */
+
+:root,
+html[data-tg-variant='day'] {
+    color-scheme: light;
+
+    /* palette */
+    --tg-white: #ffffff;
+    --tg-black: #000000;
+    --tg-chat-bg: #d5dbdf;
+    --tg-panel: #ffffff;
+    --tg-panel-sunken: #f1f1f1;
+    --tg-panel-hover: #f4f4f5;
+    --tg-panel-pressed: #e8e8e9;
+    --tg-divider: rgba(0, 0, 0, .08);
+    --tg-divider-strong: rgba(0, 0, 0, .16);
+
+    --tg-in-bubble: #ffffff;
+    --tg-out-bubble: #effdde;
+    --tg-out-bubble-pressed: #d8f5c0;
+
+    --tg-text: #000000;
+    --tg-text-secondary: #707579;
+    --tg-text-hint: #a2acb4;
+    --tg-text-on-accent: #ffffff;
+
+    --tg-accent: #3390ec;
+    --tg-accent-pressed: #2b7ccc;
+    --tg-accent-soft: rgba(51, 144, 236, .12);
+    --tg-check: #4fae4e;
+    --tg-online: #4dcd5e;
+    --tg-danger: #e53935;
+    --tg-unread-badge: #3390ec;
+
+    /* The action bar is accent-coloured in Telegram's Day theme. */
+    --tg-header-bg: #527da3;
+    --tg-header-text: #ffffff;
+    --tg-header-subtext: rgba(255, 255, 255, .70);
+    --tg-header-icon: #ffffff;
+    --tg-statusbar: #43668c;
+
+    --tg-drawer-header-bg: #527da3;
+    --tg-drawer-bg: #ffffff;
+
+    --tg-ripple: rgba(0, 0, 0, .10);
+    --tg-scrim: rgba(0, 0, 0, .40);
+    --tg-selection: rgba(51, 144, 236, .28);
+    --tg-scrollbar: rgba(0, 0, 0, .22);
+
+    --tg-code-bg: rgba(0, 0, 0, .05);
+    --tg-code-text: #3a3a3a;
+    --tg-quote-bar: var(--tg-accent);
+    --tg-link: #3390ec;
+
+    --tg-shadow-bubble: 0 1px 1px rgba(0, 0, 0, .10);
+}
+
+/* ══ Night palette ═══════════════════════════════════════════════════════ */
+
+html[data-tg-variant='night'] {
+    color-scheme: dark;
+
+    --tg-white: #ffffff;
+    --tg-black: #000000;
+    --tg-chat-bg: #0e1621;
+    --tg-panel: #17212b;
+    --tg-panel-sunken: #131c26;
+    --tg-panel-hover: #1c2733;
+    --tg-panel-pressed: #232e3c;
+    --tg-divider: rgba(255, 255, 255, .08);
+    --tg-divider-strong: rgba(255, 255, 255, .14);
+
+    --tg-in-bubble: #182533;
+    --tg-out-bubble: #2b5278;
+    --tg-out-bubble-pressed: #35618d;
+
+    --tg-text: #ffffff;
+    --tg-text-secondary: #aaaaaa;
+    --tg-text-hint: #6d7883;
+    --tg-text-on-accent: #ffffff;
+
+    --tg-accent: #8774e1;
+    --tg-accent-pressed: #7561d4;
+    --tg-accent-soft: rgba(135, 116, 225, .18);
+    --tg-check: #72d5fd;
+    --tg-online: #4dcd5e;
+    --tg-danger: #ec6657;
+    --tg-unread-badge: #8774e1;
+
+    /* Night's action bar is the panel colour, not the accent. */
+    --tg-header-bg: #17212b;
+    --tg-header-text: #ffffff;
+    --tg-header-subtext: #aaaaaa;
+    --tg-header-icon: #ffffff;
+    --tg-statusbar: #0e1621;
+
+    --tg-drawer-header-bg: #17212b;
+    --tg-drawer-bg: #17212b;
+
+    --tg-ripple: rgba(255, 255, 255, .10);
+    --tg-scrim: rgba(0, 0, 0, .55);
+    --tg-selection: rgba(135, 116, 225, .35);
+    --tg-scrollbar: rgba(255, 255, 255, .20);
+
+    --tg-code-bg: rgba(0, 0, 0, .28);
+    --tg-code-text: #dfe6ec;
+    --tg-quote-bar: var(--tg-accent);
+    --tg-link: #62bcf9;
+
+    --tg-shadow-bubble: 0 1px 2px rgba(0, 0, 0, .28);
+}
+
+/* ══ Accent overrides ════════════════════════════════════════════════════
+   Only the accent family changes; everything else is inherited from the
+   variant above. Day keeps its accent-coloured action bar in sync. */
+
+html[data-tg-accent='green'] {
+    --tg-accent: #4fae4e;
+    --tg-accent-pressed: #439443;
+    --tg-accent-soft: rgba(79, 174, 78, .14);
+    --tg-unread-badge: #4fae4e;
+    --tg-link: #3f9e3e;
+}
+
+html[data-tg-accent='green'][data-tg-variant='day'] {
+    --tg-header-bg: #4fae4e;
+    --tg-statusbar: #3f8c3e;
+}
+
+html[data-tg-accent='teal'] {
+    --tg-accent: #3aa2a0;
+    --tg-accent-pressed: #318a88;
+    --tg-accent-soft: rgba(58, 162, 160, .14);
+    --tg-unread-badge: #3aa2a0;
+    --tg-link: #2f8e8c;
+}
+
+html[data-tg-accent='teal'][data-tg-variant='day'] {
+    --tg-header-bg: #3aa2a0;
+    --tg-statusbar: #2e8280;
+}
+
+html[data-tg-accent='orange'] {
+    --tg-accent: #e8734a;
+    --tg-accent-pressed: #cf6340;
+    --tg-accent-soft: rgba(232, 115, 74, .14);
+    --tg-unread-badge: #e8734a;
+    --tg-link: #d4643c;
+}
+
+html[data-tg-accent='orange'][data-tg-variant='day'] {
+    --tg-header-bg: #e8734a;
+    --tg-statusbar: #c65d3b;
+}
+
+html[data-tg-accent='pink'] {
+    --tg-accent: #e0559b;
+    --tg-accent-pressed: #c74a89;
+    --tg-accent-soft: rgba(224, 85, 155, .14);
+    --tg-unread-badge: #e0559b;
+    --tg-link: #d14a8f;
+}
+
+html[data-tg-accent='pink'][data-tg-variant='day'] {
+    --tg-header-bg: #e0559b;
+    --tg-statusbar: #bf4784;
+}
+
+html[data-tg-accent='violet'] {
+    --tg-accent: #8a56ac;
+    --tg-accent-pressed: #784a97;
+    --tg-accent-soft: rgba(138, 86, 172, .16);
+    --tg-unread-badge: #8a56ac;
+    --tg-link: #9b6bc0;
+}
+
+html[data-tg-accent='violet'][data-tg-variant='day'] {
+    --tg-header-bg: #8a56ac;
+    --tg-statusbar: #744897;
+}
+
+/* ══ Motion ══════════════════════════════════════════════════════════════ */
+
+html[data-tg-motion='off'] *,
+html[data-tg-motion='off'] *::before,
+html[data-tg-motion='off'] *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html *,
+    html *::before,
+    html *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+    }
+}

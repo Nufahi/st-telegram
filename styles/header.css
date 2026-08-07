@@ -1,0 +1,187 @@
+/* ST Telegram — the action bar.
+ *
+ * Telegram's chat screen header: back arrow, avatar, name + status, then
+ * call/search/overflow icons. SillyTavern has no equivalent node, so
+ * src/chat.js injects `.tg-header` as a direct child of #sheld, ABOVE #chat
+ * in the flex order. It is a flex item, not `position:fixed` -- fixed would
+ * fight the phone frame's containing block on desktop.
+ *
+ * SillyTavern's own #top-bar and #top-settings-holder are repurposed as the
+ * navigation drawer (drawer.css), not hidden, so all native panels keep
+ * working.
+ */
+
+.tg-header {
+    position: relative;
+    z-index: 30;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: var(--tg-header-height);
+    padding: 0 4px 0 2px;
+    background: var(--tg-header-bg);
+    color: var(--tg-header-text);
+    box-shadow: var(--tg-shadow-header);
+    user-select: none;
+}
+
+/* ── Icon buttons ───────────────────────────────────────────────────────── */
+
+.tg-header-btn {
+    position: relative;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border: 0;
+    padding: 0;
+    background: none;
+    border-radius: 50%;
+    color: var(--tg-header-icon);
+    cursor: pointer;
+    /* Material ripple origin. */
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tg-header-btn::before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    background-color: currentColor;
+    -webkit-mask: var(--tg-btn-icon) center / contain no-repeat;
+    mask: var(--tg-btn-icon) center / contain no-repeat;
+}
+
+.tg-header-btn:hover {
+    background: rgba(255, 255, 255, .12);
+}
+
+.tg-header-btn:active {
+    background: rgba(255, 255, 255, .20);
+}
+
+.tg-header-back { --tg-btn-icon: var(--tg-icon-back); }
+.tg-header-search { --tg-btn-icon: var(--tg-icon-search); }
+.tg-header-menu { --tg-btn-icon: var(--tg-icon-dots); }
+
+/* ── Avatar ─────────────────────────────────────────────────────────────── */
+
+.tg-header-avatar {
+    flex: 0 0 auto;
+    width: var(--tg-avatar-size-header);
+    height: var(--tg-avatar-size-header);
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 8px 0 2px;
+    background: rgba(255, 255, 255, .18);
+    cursor: pointer;
+}
+
+.tg-header-avatar img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+/* Fallback: a coloured circle with the first letter, as Telegram shows for
+   contacts without a photo. */
+.tg-header-avatar[data-tg-fallback]::after {
+    content: attr(data-tg-fallback);
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+}
+
+/* ── Title block ────────────────────────────────────────────────────────── */
+
+.tg-header-titles {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    cursor: pointer;
+    padding: 0 4px 0 0;
+}
+
+.tg-header-name {
+    font-size: var(--tg-font-header-size);
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--tg-header-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tg-header-status {
+    font-size: var(--tg-font-status-size);
+    line-height: 1.15;
+    color: var(--tg-header-subtext);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* "typing..." is accent-coloured in the app. On Day the action bar is
+   already accent-coloured, so we go white instead to stay legible. */
+.tg-header-status[data-tg-typing='on'] {
+    color: #fff;
+}
+
+html[data-tg-variant='night'] .tg-header-status[data-tg-typing='on'] {
+    color: var(--tg-accent);
+}
+
+/* ── Overflow menu ──────────────────────────────────────────────────────── */
+
+/* Telegram's ⋮ opens a Material popup anchored to the top-right. We reuse
+   SillyTavern's #options node so every native action keeps its handler. */
+#options {
+    background: var(--tg-panel) !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: var(--tg-shadow-menu) !important;
+    padding: 6px 0 !important;
+    min-width: 200px !important;
+    z-index: 60 !important;
+}
+
+#options .options-content {
+    background: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#options .options-content a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+    padding: 11px 16px !important;
+    color: var(--tg-text) !important;
+    font-size: 15px !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+}
+
+#options .options-content a:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+#options .options-content a i {
+    width: 22px !important;
+    font-size: 16px !important;
+    color: var(--tg-text-secondary) !important;
+    text-align: center !important;
+}

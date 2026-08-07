@@ -1,0 +1,472 @@
+/* ST Telegram — the navigation drawer.
+ *
+ * SillyTavern's #top-settings-holder is a horizontal strip of .drawer
+ * elements, each being a nav entry whose .drawer-content is the settings
+ * panel it opens. We turn the strip into Telegram's slide-out drawer and
+ * leave every panel working.
+ *
+ * ═══ HARD CONSTRAINT — read before touching anything here ═══
+ *
+ * .drawer-content is position:fixed. An ancestor of it must NEVER create a
+ * containing block or a stacking context. That means no transform, filter,
+ * perspective, backdrop-filter, will-change or contain on .drawer or on
+ * #top-settings-holder. Violating it produces two failures at once:
+ *
+ *   - the panel anchors to that ancestor instead of the viewport, so it is
+ *     squeezed into a few dozen pixels and effectively invisible;
+ *   - its z-index is trapped in the ancestor's stacking context, so it
+ *     renders *behind* the chat messages.
+ *
+ * The second is the nasty one: the panel really is open, really has a size,
+ * really is on screen -- just covered. It presents as "clicking does
+ * nothing" and you can lose an afternoon to it.
+ *
+ * To animate the drawer, transform .drawer-toggle instead. It is a SIBLING
+ * of .drawer-content, so deforming it cannot affect the panel.
+ */
+
+/* ── The drawer surface ─────────────────────────────────────────────────── */
+
+#top-settings-holder {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    z-index: 50 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+
+    width: min(300px, 84vw) !important;
+    max-width: min(300px, 84vw) !important;
+    height: 100dvh !important;
+
+    background: var(--tg-drawer-bg) !important;
+    box-shadow: var(--tg-shadow-drawer) !important;
+    border: 0 !important;
+    padding: 0 0 8px !important;
+    margin: 0 !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+
+    /* Slide-out. margin-left rather than transform, because transform on
+       this node would create a containing block and break every
+       .drawer-content inside it -- see the constraint above. */
+    margin-left: calc(min(300px, 84vw) * -1) !important;
+    visibility: hidden !important;
+    transition:
+        margin-left var(--tg-dur-drawer) var(--tg-ease),
+        visibility 0s linear var(--tg-dur-drawer);
+}
+
+body.tg-drawer-open #top-settings-holder {
+    margin-left: 0 !important;
+    visibility: visible !important;
+    transition:
+        margin-left var(--tg-dur-drawer) var(--tg-ease-decelerate),
+        visibility 0s;
+}
+
+#top-settings-holder::-webkit-scrollbar {
+    width: 3px;
+}
+
+#top-settings-holder::-webkit-scrollbar-thumb {
+    background: var(--tg-scrollbar);
+    border-radius: 3px;
+}
+
+/* SillyTavern's #top-bar is the strip's backdrop. We only need it as a
+   colour surface behind the drawer header. */
+#top-bar {
+    display: none !important;
+}
+
+/* ── Drawer header ──────────────────────────────────────────────────────── */
+
+/* Telegram's drawer opens with a coloured block showing your avatar, name
+   and a theme toggle. Injected by src/chat.js as .tg-drawer-head. */
+.tg-drawer-head {
+    flex: 0 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 8px;
+    min-height: 148px;
+    padding: 14px 16px 12px;
+    background: var(--tg-drawer-header-bg);
+    color: #fff;
+    /* Telegram tints the drawer header with the wallpaper. */
+    background-image: linear-gradient(160deg, rgba(255, 255, 255, .10), rgba(0, 0, 0, .14));
+    user-select: none;
+}
+
+.tg-drawer-head-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tg-drawer-avatar {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: rgba(255, 255, 255, .20);
+    flex: 0 0 auto;
+}
+
+.tg-drawer-avatar img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block;
+}
+
+.tg-drawer-theme {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    padding: 0;
+    background: none;
+    border-radius: 50%;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tg-drawer-theme::before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    background-color: #fff;
+    -webkit-mask: var(--tg-icon-moon) center / contain no-repeat;
+    mask: var(--tg-icon-moon) center / contain no-repeat;
+}
+
+.tg-drawer-theme:hover {
+    background: rgba(255, 255, 255, .14);
+}
+
+.tg-drawer-name {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.25;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tg-drawer-sub {
+    font-size: 13px;
+    line-height: 1.25;
+    color: rgba(255, 255, 255, .72);
+}
+
+/* ── Nav entries ────────────────────────────────────────────────────────── */
+
+#top-settings-holder > .drawer {
+    /* NEVER add transform/filter/contain here. See the header comment. */
+    position: static !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    transform: none !important;
+    filter: none !important;
+    perspective: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    will-change: auto !important;
+    contain: none !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 48px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    border: 0 !important;
+    cursor: pointer;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle:active {
+    background: var(--tg-panel-pressed) !important;
+}
+
+/* Make the WHOLE row the hit area without any JavaScript.
+   SillyTavern puts role=button and its click handler on .drawer-icon only,
+   so clicking the label would otherwise do nothing. Stretching the icon over
+   the row solves it structurally -- no synthesised clicks, which is what you
+   must avoid: forwarding a click to the icon makes SillyTavern handle the
+   same gesture twice and the two toggles cancel out. */
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon {
+    position: absolute !important;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    display: block !important;
+    background: none !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    text-shadow: none !important;
+    transform: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* The glyph, drawn at the left of the row. Overriding ::before both kills
+   the Font Awesome glyph and paints our mask in a single rule. */
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 17px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    display: block !important;
+    width: 24px !important;
+    height: 24px !important;
+    background-color: var(--tg-text-secondary) !important;
+    background-image: none !important;
+    /* Default: no mask, so an unmapped drawer shows nothing rather than a
+       stale icon inherited from the rule above it. */
+    -webkit-mask: none !important;
+    mask: none !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon::after {
+    content: none !important;
+    display: none !important;
+}
+
+/* Icon mapping. Keyed by the Font Awesome class rather than the element ID:
+   SillyTavern has renamed these IDs across versions (the backgrounds drawer
+   moved from #logo_block to #backgrounds-button) but the glyph classes have
+   been stable. Both are listed where they are known. */
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-sliders::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-sliders-h::before {
+    -webkit-mask: var(--tg-icon-tune) center / contain no-repeat !important;
+    mask: var(--tg-icon-tune) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-plug::before {
+    -webkit-mask: var(--tg-icon-plug) center / contain no-repeat !important;
+    mask: var(--tg-icon-plug) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-font::before {
+    -webkit-mask: var(--tg-icon-font) center / contain no-repeat !important;
+    mask: var(--tg-icon-font) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-globe::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-book-atlas::before {
+    -webkit-mask: var(--tg-icon-globe) center / contain no-repeat !important;
+    mask: var(--tg-icon-globe) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-user-cog::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-user-gear::before {
+    -webkit-mask: var(--tg-icon-user) center / contain no-repeat !important;
+    mask: var(--tg-icon-user) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-panorama::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-image::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-images::before {
+    -webkit-mask: var(--tg-icon-image) center / contain no-repeat !important;
+    mask: var(--tg-icon-image) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-cubes::before {
+    -webkit-mask: var(--tg-icon-extension) center / contain no-repeat !important;
+    mask: var(--tg-icon-extension) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-face-smile::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-user-tie::before {
+    -webkit-mask: var(--tg-icon-user) center / contain no-repeat !important;
+    mask: var(--tg-icon-user) center / contain no-repeat !important;
+}
+
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-address-card::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-users::before {
+    -webkit-mask: var(--tg-icon-people) center / contain no-repeat !important;
+    mask: var(--tg-icon-people) center / contain no-repeat !important;
+}
+
+/* Highlight the entry whose panel is open. */
+#top-settings-holder > .drawer:has(> .drawer-content.openDrawer) > .drawer-toggle {
+    background: var(--tg-accent-soft) !important;
+}
+
+#top-settings-holder > .drawer:has(> .drawer-content.openDrawer) > .drawer-toggle > .drawer-icon::before {
+    background-color: var(--tg-accent) !important;
+}
+
+/* ── Row labels ─────────────────────────────────────────────────────────── */
+
+/* Injected by src/chat.js. Sits above the stretched icon and must not eat
+   the click. */
+.tg-drawer-label {
+    position: absolute;
+    left: 56px;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--tg-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#top-settings-holder > .drawer:has(> .drawer-content.openDrawer) .tg-drawer-label {
+    color: var(--tg-accent);
+    font-weight: 500;
+}
+
+/* Telegram groups drawer entries with a hairline. src/chat.js tags the rows
+   that start a new group. */
+#top-settings-holder > .drawer.tg-group-top {
+    border-top: 1px solid var(--tg-divider) !important;
+    margin-top: 7px !important;
+    padding-top: 7px !important;
+}
+
+/* ── Hamburger + scrim ──────────────────────────────────────────────────── */
+
+.tg-scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: var(--tg-scrim);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--tg-dur-drawer) var(--tg-ease),
+        visibility 0s linear var(--tg-dur-drawer);
+}
+
+body.tg-drawer-open .tg-scrim {
+    opacity: 1;
+    visibility: visible;
+    transition:
+        opacity var(--tg-dur-drawer) var(--tg-ease),
+        visibility 0s;
+}
+
+/* ── Settings panels ────────────────────────────────────────────────────── */
+
+/* The panels themselves stay as SillyTavern built them, but as full-screen
+   Material sheets sliding in from the left, over the drawer. */
+#top-settings-holder .drawer-content {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 70 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+
+    background: var(--tg-panel) !important;
+    color: var(--tg-text) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    padding: 8px 12px 20px !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+}
+
+/* SillyTavern animates these with its own show/hide; we only need the closed
+   state to be genuinely out of the way. */
+#top-settings-holder .drawer-content.closedDrawer {
+    display: none !important;
+}
+
+#top-settings-holder .drawer-content .drag-grabber {
+    display: none !important;
+}
+
+#top-settings-holder .drawer-content::-webkit-scrollbar {
+    width: 3px;
+}
+
+#top-settings-holder .drawer-content::-webkit-scrollbar-thumb {
+    background: var(--tg-scrollbar);
+    border-radius: 3px;
+}
+
+/* Inside the panels, give SillyTavern's controls Material shapes. */
+#top-settings-holder .drawer-content .inline-drawer-toggle,
+#top-settings-holder .drawer-content .inline-drawer-header {
+    background: none !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    border-radius: 0 !important;
+    padding: 12px 4px !important;
+    color: var(--tg-text) !important;
+    font-size: 15px !important;
+}
+
+#top-settings-holder .drawer-content .menu_button {
+    background: var(--tg-accent) !important;
+    color: var(--tg-text-on-accent) !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+    font-size: 14px !important;
+    padding: 8px 14px !important;
+}
+
+#top-settings-holder .drawer-content .menu_button:hover {
+    background: var(--tg-accent-pressed) !important;
+}
+
+#top-settings-holder .drawer-content input[type='text'],
+#top-settings-holder .drawer-content input[type='number'],
+#top-settings-holder .drawer-content input[type='password'],
+#top-settings-holder .drawer-content select,
+#top-settings-holder .drawer-content textarea {
+    background: var(--tg-panel-sunken) !important;
+    color: var(--tg-text) !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    font-size: 14px !important;
+}
