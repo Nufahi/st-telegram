@@ -15,6 +15,11 @@
     position: relative;
     z-index: 30;
     flex: 0 0 auto;
+    /* Pin to the top of #sheld's flex column regardless of where in the
+       child order the node ends up. SillyTavern keeps #sheldheader as the
+       first child and may insert other nodes ahead of ours; relying on DOM
+       order alone would put the action bar in the middle of the screen. */
+    order: -1;
     display: flex;
     align-items: center;
     gap: 4px;

@@ -16,9 +16,17 @@
 import { TG_ENABLED } from './src/boot.js';
 import './src/settings.js';
 
+/* No top-level await here. Some WebViews -- TauriTavern among them -- never
+   finish initialising a dynamically imported module that awaits at the top
+   level, and the extension fails silently with no console error. Chaining
+   the promise has the same effect and loads everywhere. */
 if (TG_ENABLED) {
-    await import('./src/theme.js');
-    await import('./src/chat.js');
+    Promise.all([
+        import('./src/theme.js'),
+        import('./src/chat.js'),
+    ]).catch((error) => {
+        console.error('[ST Telegram] failed to load:', error);
+    });
 } else {
     console.info('[ST Telegram] Disabled in the extension panel; only the settings panel is active.');
 }

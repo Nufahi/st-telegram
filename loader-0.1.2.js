@@ -6,4 +6,4 @@
  * FILE NAME per release, so every release adds a new loader-X.Y.Z.js here and
  * points manifest.json at it. Keep the old ones; they cost nothing.
  */
-import './index.js?v=0.1.0';
+import './index.js?v=0.1.2';

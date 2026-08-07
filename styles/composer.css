@@ -290,10 +290,16 @@
 }
 
 /* Only one FAB is visible at a time. src/chat.js sets these flags on <html>
-   from the textarea's content and the generation state. */
+   from the textarea's content and the generation state.
+ *
+ * These selectors must be at least as specific as the `#rightSendForm > div`
+ * rule above, which is (1,0,1) and sets display:grid on every child. A bare
+ * `.tg-mic` is (0,1,0) and loses even with !important, because !important
+ * only breaks ties between origins -- within the same origin specificity
+ * still decides. Hence the #rightSendForm prefix on the mic rules. */
 html[data-tg-fab='mic'] #rightSendForm > #send_but { display: none !important; }
-html[data-tg-fab='send'] .tg-mic { display: none !important; }
-html[data-tg-fab='stop'] .tg-mic,
+html[data-tg-fab='send'] #rightSendForm > .tg-mic { display: none !important; }
+html[data-tg-fab='stop'] #rightSendForm > .tg-mic,
 html[data-tg-fab='stop'] #rightSendForm > #send_but { display: none !important; }
 
 /* SillyTavern's script-runner controls have no Telegram equivalent and must

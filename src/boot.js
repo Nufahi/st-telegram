@@ -21,17 +21,26 @@
  *    Everything ships in a <link> we own and can remove.
  */
 
-const TG_VERSION = '0.1.0';
+const TG_VERSION = '0.1.2';
 
 /* Bump this whenever styles/*.css changes. It is the CSS cache-bust key.
-   Changing CSS without bumping it means users keep the old stylesheet and
-   your fix looks like it did nothing. */
-const TG_STYLE_BUILD = '0.1.0-boot';
+ *
+ * This is not theoretical bookkeeping: during development the drawer
+ * appeared permanently stuck shut, and the cause was a corrected stylesheet
+ * being served from cache under an unchanged key. The symptom is the worst
+ * kind -- the fix is on disk, the code is right, and nothing happens. */
+const TG_STYLE_BUILD = '0.1.2-drawer-margin-shorthand';
 
-/* Derive our own folder URL from the module URL. SillyTavern names the
+/* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the
-   moment someone renames the repo or installs it manually. */
-const TG_BASE = new URL('.', import.meta.url).href;
+   moment someone renames the repo or installs it manually.
+ *
+ * Note the '../': this file lives in src/, so '.' would resolve to
+ * .../st-telegram/src/ and every asset would be requested one level too
+ * deep. That shipped in 0.1.0 and 404'd every stylesheet -- the extension
+ * loaded, injected its DOM, and had no CSS at all. tools/verify.mjs exists
+ * to make that impossible to ship again; run it before every release. */
+const TG_BASE = new URL('../', import.meta.url).href;
 
 const TG_PREFIX = 'st-telegram:';
 

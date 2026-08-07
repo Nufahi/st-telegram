@@ -40,6 +40,20 @@
         top: 22px !important;
         bottom: 22px !important;
 
+        /* Explicitly clear anything that would make #sheld a containing
+           block for its position:fixed descendants. SillyTavern does not set
+           these today, but a user theme or another extension can, and the
+           failure mode is silent and baffling: the drawer and every settings
+           panel would anchor to #sheld, get clipped by its overflow:hidden,
+           and land behind the chat in its stacking context. */
+        transform: none !important;
+        filter: none !important;
+        perspective: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        will-change: auto !important;
+        contain: none !important;
+
         width: var(--tg-frame-width) !important;
         max-width: var(--tg-frame-width) !important;
         height: auto !important;
@@ -97,7 +111,27 @@
     }
 
     /* The drawer and the settings sheets are position:fixed, so they would
-       cover the whole desktop viewport. Clamp them to the phone. */
+       cover the whole desktop viewport. Clamp them to the phone.
+     *
+     * The closed/open pair below MUST be written with matching specificity,
+     * and the closed one must be scoped to :not(.tg-drawer-open).
+     *
+     * Getting this wrong is how the drawer silently stopped opening on
+     * desktop: the closed rule was `html[data-tg-frame='on'] #top-...`,
+     * which is (1,1,1) -- exactly tying drawer.css's open rule
+     * `body.tg-drawer-open #top-...`, also (1,1,1). frame.css is imported
+     * last, so the tie broke in favour of the CLOSED margin and the drawer
+     * could never slide in. `visibility` still flipped, because nothing in
+     * frame.css touched it, which made the bug look like a transition
+     * problem rather than a cascade problem. */
+    html[data-tg-frame='on'] body:not(.tg-drawer-open) #top-settings-holder {
+        margin-left: calc(min(300px, calc(var(--tg-frame-width) * .84)) * -1) !important;
+    }
+
+    html[data-tg-frame='on'] body.tg-drawer-open #top-settings-holder {
+        margin-left: 0 !important;
+    }
+
     html[data-tg-frame='on'] #top-settings-holder {
         top: 22px !important;
         bottom: 22px !important;
@@ -105,12 +139,7 @@
         height: auto !important;
         width: min(300px, calc(var(--tg-frame-width) * .84)) !important;
         max-width: min(300px, calc(var(--tg-frame-width) * .84)) !important;
-        margin-left: calc(min(300px, calc(var(--tg-frame-width) * .84)) * -1) !important;
         border-radius: 28px 0 0 28px !important;
-    }
-
-    html[data-tg-frame='on'] body.tg-drawer-open #top-settings-holder {
-        margin-left: 0 !important;
     }
 
     html[data-tg-frame='on'] #top-settings-holder .drawer-content {

@@ -47,7 +47,17 @@
     box-shadow: var(--tg-shadow-drawer) !important;
     border: 0 !important;
     padding: 0 0 8px !important;
-    margin: 0 !important;
+
+    /* Deliberately NOT `margin: 0`. The shorthand expands to all four
+       longhands, so it resets margin-left and silently defeats the
+       open/closed slide rules below no matter how specific they are.
+       That cost a long debugging session: every rule that set margin-left
+       matched and read 0px, while the computed value stayed at -300px,
+       because the winning declaration was a shorthand nobody was looking
+       for. Set only the sides that are not animated. */
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
 
     overflow-x: hidden !important;
     overflow-y: auto !important;
@@ -56,11 +66,20 @@
     /* Slide-out. margin-left rather than transform, because transform on
        this node would create a containing block and break every
        .drawer-content inside it -- see the constraint above. */
-    margin-left: calc(min(300px, 84vw) * -1) !important;
-    visibility: hidden !important;
     transition:
         margin-left var(--tg-dur-drawer) var(--tg-ease),
         visibility 0s linear var(--tg-dur-drawer);
+}
+
+/* Open and closed are written as a mutually exclusive pair at IDENTICAL
+   specificity, rather than as a base rule plus an override. An override
+   relationship is fragile: any later rule that happens to tie the open
+   selector wins on source order and pins the drawer shut, which is exactly
+   what frame.css did until it was fixed. A :not() pair cannot be broken
+   that way, because only one of the two ever matches. */
+body:not(.tg-drawer-open) #top-settings-holder {
+    margin-left: calc(min(300px, 84vw) * -1) !important;
+    visibility: hidden !important;
 }
 
 body.tg-drawer-open #top-settings-holder {
