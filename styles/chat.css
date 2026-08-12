@@ -209,6 +209,17 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     border: 0 !important;
     box-shadow: none !important;
     flex: 0 0 auto !important;
+    /* Tapping it opens the sender's card, as in Telegram. */
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#chat > .mes .avatar:hover {
+    filter: brightness(1.06);
+}
+
+#chat > .mes .avatar:active {
+    transform: scale(.94);
 }
 
 #chat > .mes .avatar img {

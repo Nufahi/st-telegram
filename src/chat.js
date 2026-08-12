@@ -125,6 +125,66 @@ function ensureHeader() {
     return node;
 }
 
+/* Telegram's magnifier searches the conversation. SillyTavern's equivalent is
+   the chat file browser: its search field posts to /api/chats/search, which
+   matches MESSAGE TEXT across every chat with the current character, and
+   clicking a result opens that chat. That is close enough to Telegram's
+   in-chat search to be worth wiring, and it is entirely native -- we only
+   open the view and focus its field.
+ *
+ * With no character selected there is nothing to search, so we fall back to
+ * the character list's own search box. */
+function openChatSearch() {
+    const context = getContext();
+    const hasPeer = Boolean(context?.groupId ?? context?.group_id)
+        || (context?.characterId ?? context?.character_id) !== undefined;
+
+    if (hasPeer) {
+        toggleDrawer(false);
+        document.getElementById('option_select_chat')?.click();
+        /* SillyTavern focuses this itself after 200ms; matching that avoids a
+           race where we focus first and it steals the caret back. */
+        window.setTimeout(() => {
+            document.getElementById('select_chat_search')?.focus();
+        }, 260);
+        return;
+    }
+
+    openCharacterPanel();
+    window.setTimeout(() => {
+        const field = document.getElementById('character_search_bar');
+        field?.focus();
+    }, 260);
+}
+
+/* The three-dot menu. SillyTavern's #options popup is the real thing and it
+   already carries the chat-level actions Telegram puts here, so we open that
+   rather than inventing a parallel menu.
+ *
+ * It is anchored to #options_button with Popper. That button lives in the
+ * composer, so the popup appears above the composer rather than under our
+ * header -- acceptable, and far better than a menu whose entries we would
+ * have to keep in sync with SillyTavern by hand. */
+function openChatMenu() {
+    document.getElementById('options_button')?.click();
+}
+
+/* Open the Character Management panel, which is where every card, chat file
+   and character control lives.
+ *
+ * The panel is a native drawer, so it must be opened through its own toggle:
+ * clicking the icon is what keeps SillyTavern's open/closed bookkeeping (and
+ * the .openDrawer class our CSS keys on) in step. */
+function openCharacterPanel() {
+    const panel = document.getElementById('right-nav-panel');
+    if (!panel?.classList.contains('openDrawer')) {
+        document.querySelector('#rightNavHolder .drawer-icon')?.click();
+    }
+    /* The launcher would otherwise stay on top of the panel we just opened. */
+    toggleDrawer(false);
+    return panel;
+}
+
 function wireHeader(node) {
     node.querySelector('.tg-header-back')?.addEventListener('click', () => {
         toggleDrawer(!document.body.classList.contains('tg-drawer-open'));
@@ -135,17 +195,26 @@ function wireHeader(node) {
        not the "synthesised click" anti-pattern: our button is a node we own
        with no SillyTavern handler of its own, so nothing is handled twice. */
     node.querySelector('.tg-header-search')?.addEventListener('click', () => {
-        document.querySelector('#rightNavHolder .drawer-icon')?.click();
+        openChatSearch();
     });
 
     node.querySelector('.tg-header-menu')?.addEventListener('click', (event) => {
         event.stopPropagation();
-        document.getElementById('options_button')?.click();
+        openChatMenu();
     });
 
-    node.querySelector('.tg-header-avatar')?.addEventListener('click', () => {
-        document.querySelector('#rightNavHolder .drawer-icon')?.click();
-    });
+    /* Telegram opens the peer's profile when you tap the avatar or the title.
+       #rm_button_selected_ch is SillyTavern's equivalent: it selects the
+       current character's card, and handles the group case by itself. */
+    const openProfile = () => {
+        openCharacterPanel();
+        /* After the panel is in the DOM: the tab button only exists there. */
+        window.requestAnimationFrame(() => {
+            document.getElementById('rm_button_selected_ch')?.click();
+        });
+    };
+    node.querySelector('.tg-header-avatar')?.addEventListener('click', openProfile);
+    node.querySelector('.tg-header-titles')?.addEventListener('click', openProfile);
 }
 
 /* Where the header's identity comes from: the active character or group. */
@@ -471,6 +540,90 @@ function openActionSheet(row) {
     document.body.append(sheet);
     actionSheet = sheet;
     document.body.classList.add('tg-action-sheet-open');
+}
+
+/* Tapping a message avatar opens that sender's card, as it does in Telegram.
+ *
+ * The sender is resolved per message rather than assumed to be the current
+ * peer: in a group each row can be a different character, and the user's own
+ * avatar must open the persona settings instead of a character card.
+ *
+ * This cannot collide with the action sheet, which only fires for targets
+ * inside .mes_block; avatars live in .mesAvatarWrapper, a sibling of it. */
+function onMessageAvatarClick(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+
+    const avatar = target.closest('#chat > .mes .mesAvatarWrapper .avatar');
+    if (!avatar) return;
+    const row = avatar.closest('#chat > .mes');
+    if (!row) return;
+
+    event.preventDefault();
+    /* stopImmediatePropagation, not stopPropagation: the action sheet handler
+       is bound to this same #chat node, and stopPropagation does not stop
+       other listeners on the element the event is currently at. */
+    event.stopImmediatePropagation();
+
+    if (row.getAttribute('is_user') === 'true') {
+        openPersonaPanel();
+        return;
+    }
+
+    openSenderCard(row.getAttribute('ch_name') || '');
+}
+
+/* Open the persona settings, which is the user's own "profile". */
+function openPersonaPanel() {
+    toggleDrawer(false);
+    const panel = document.querySelector('#persona-management-button .drawer-content');
+    if (!panel?.classList.contains('openDrawer')) {
+        document.querySelector('#persona-management-button .drawer-icon')?.click();
+    }
+}
+
+/* Open a character card by NAME, because that is all a message row carries.
+ *
+ * In a group the sender is usually not the selected character, so clicking
+ * .character_select for that name is the only way to reach the right card.
+ * We look the name up in the context rather than guessing from the DOM. */
+function openSenderCard(name) {
+    const context = getContext();
+    const characters = context?.characters;
+
+    if (name && Array.isArray(characters)) {
+        const index = characters.findIndex((c) => c?.name === name);
+        if (index >= 0) {
+            openCharacterPanel();
+            window.requestAnimationFrame(() => {
+                /* Prefer SillyTavern's own list entry: it carries the click
+                   handler that selects and renders the card. SillyTavern
+                   stamps both an id and data-chid onto each row when it
+                   builds the list. */
+                const entry = document.getElementById(`CharID${index}`)
+                    || document.querySelector(`.character_select[data-chid="${index}"]`);
+                if (entry instanceof HTMLElement) {
+                    entry.click();
+                    return;
+                }
+                /* Not rendered (list paginated or filtered): fall back to the
+                   context API, which does the same thing without the DOM. */
+                try {
+                    context.selectCharacterById?.(index);
+                } catch (error) {
+                    console.warn('[ST Telegram] could not open character card:', error);
+                }
+            });
+            return;
+        }
+    }
+
+    /* Unknown sender -- the current peer's own card is the best we can do. */
+    openCharacterPanel();
+    window.requestAnimationFrame(() => {
+        document.getElementById('rm_button_selected_ch')?.click();
+    });
 }
 
 function onMessageActionRequest(event) {
@@ -928,6 +1081,8 @@ function start() {
     document.addEventListener('mousedown', blockInlineDrawerAutoClose, true);
     document.addEventListener('touchstart', blockInlineDrawerAutoClose, true);
     document.getElementById('send_textarea')?.addEventListener('input', refreshFab);
+    /* Avatar first: it must claim the click before the action sheet sees it. */
+    document.getElementById('chat')?.addEventListener('click', onMessageAvatarClick);
     document.getElementById('chat')?.addEventListener('click', onMessageActionRequest);
 
     document.addEventListener('keydown', (event) => {
