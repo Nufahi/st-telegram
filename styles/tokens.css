@@ -107,12 +107,12 @@ html[data-tg-variant='day'] {
     --tg-danger: #e53935;
     --tg-unread-badge: #3390ec;
 
-    /* The action bar is accent-coloured in Telegram's Day theme. */
-    --tg-header-bg: #527da3;
-    --tg-header-text: #ffffff;
-    --tg-header-subtext: rgba(255, 255, 255, .70);
-    --tg-header-icon: #ffffff;
-    --tg-statusbar: #43668c;
+    /* Current Telegram Android uses a light surface for the chat app bar. */
+    --tg-header-bg: #ffffff;
+    --tg-header-text: #212121;
+    --tg-header-subtext: #838c96;
+    --tg-header-icon: #5f6368;
+    --tg-statusbar: #ffffff;
 
     --tg-drawer-header-bg: #527da3;
     --tg-drawer-bg: #ffffff;
@@ -187,7 +187,7 @@ html[data-tg-variant='night'] {
 
 /* ══ Accent overrides ════════════════════════════════════════════════════
    Only the accent family changes; everything else is inherited from the
-   variant above. Day keeps its accent-coloured action bar in sync. */
+   variant above. */
 
 html[data-tg-accent='green'] {
     --tg-accent: #4fae4e;
@@ -195,11 +195,6 @@ html[data-tg-accent='green'] {
     --tg-accent-soft: rgba(79, 174, 78, .14);
     --tg-unread-badge: #4fae4e;
     --tg-link: #3f9e3e;
-}
-
-html[data-tg-accent='green'][data-tg-variant='day'] {
-    --tg-header-bg: #4fae4e;
-    --tg-statusbar: #3f8c3e;
 }
 
 html[data-tg-accent='teal'] {
@@ -210,22 +205,12 @@ html[data-tg-accent='teal'] {
     --tg-link: #2f8e8c;
 }
 
-html[data-tg-accent='teal'][data-tg-variant='day'] {
-    --tg-header-bg: #3aa2a0;
-    --tg-statusbar: #2e8280;
-}
-
 html[data-tg-accent='orange'] {
     --tg-accent: #e8734a;
     --tg-accent-pressed: #cf6340;
     --tg-accent-soft: rgba(232, 115, 74, .14);
     --tg-unread-badge: #e8734a;
     --tg-link: #d4643c;
-}
-
-html[data-tg-accent='orange'][data-tg-variant='day'] {
-    --tg-header-bg: #e8734a;
-    --tg-statusbar: #c65d3b;
 }
 
 html[data-tg-accent='pink'] {
@@ -236,22 +221,12 @@ html[data-tg-accent='pink'] {
     --tg-link: #d14a8f;
 }
 
-html[data-tg-accent='pink'][data-tg-variant='day'] {
-    --tg-header-bg: #e0559b;
-    --tg-statusbar: #bf4784;
-}
-
 html[data-tg-accent='violet'] {
     --tg-accent: #8a56ac;
     --tg-accent-pressed: #784a97;
     --tg-accent-soft: rgba(138, 86, 172, .16);
     --tg-unread-badge: #8a56ac;
     --tg-link: #9b6bc0;
-}
-
-html[data-tg-accent='violet'][data-tg-variant='day'] {
-    --tg-header-bg: #8a56ac;
-    --tg-statusbar: #744897;
 }
 
 /* ══ Motion ══════════════════════════════════════════════════════════════ */

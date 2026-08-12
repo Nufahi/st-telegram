@@ -184,9 +184,26 @@ function wire(panel) {
     /* Enabling or disabling changes what boot.js does at module-eval time,
        so it genuinely needs a reload -- there is no way to retrofit the
        pre-paint attributes onto a page that already rendered. */
-    enabled.addEventListener('change', () => {
-        tgWrite('enabled', enabled.checked ? 'on' : 'off');
-        window.setTimeout(() => window.location.reload(), 150);
+    enabled.addEventListener('change', async () => {
+        const next = enabled.checked ? 'on' : 'off';
+
+        /* Disabling must restore the SillyTavern preferences that theme.js
+           changed. Otherwise deleting the extension can leave chat width,
+           avatars and message controls in the Telegram configuration. */
+        if (next === 'off') {
+            enabled.disabled = true;
+            try {
+                const { restorePreviousTheme } = await import('./theme.js');
+                restorePreviousTheme();
+            } catch (error) {
+                console.warn('[ST Telegram] failed to restore the previous theme:', error);
+            }
+        }
+
+        tgWrite('enabled', next);
+        /* Give SillyTavern's debounced settings save time to persist the
+           restored values before this extension stops loading. */
+        window.setTimeout(() => window.location.reload(), next === 'off' ? 600 : 150);
     });
 
     /* Everything below is live: the palette is a data attribute, so there is

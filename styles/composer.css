@@ -292,9 +292,8 @@
     height: 16px !important;
 }
 
-/* The mic placeholder shown when the field is empty, matching Telegram's
-   resting state. Injected by src/chat.js because SillyTavern has no such
-   control; it is inert and only exists so the FAB is never missing. */
+/* Empty-field mic placeholder. Telegram keeps this resting action neutral;
+   the bright accent circle appears only when there is text to send. */
 .tg-mic {
     --tg-fab-icon: var(--tg-icon-mic);
     grid-area: 1 / 1 !important;
@@ -305,8 +304,8 @@
     border: 0;
     padding: 0;
     border-radius: 50% !important;
-    background: var(--tg-accent) !important;
-    box-shadow: var(--tg-shadow-fab) !important;
+    background: var(--tg-panel) !important;
+    box-shadow: none !important;
     cursor: default;
 }
 
@@ -315,9 +314,13 @@
     display: block;
     width: 22px;
     height: 22px;
-    background-color: var(--tg-text-on-accent);
+    background-color: var(--tg-text-secondary);
     -webkit-mask: var(--tg-icon-mic) center / contain no-repeat;
     mask: var(--tg-icon-mic) center / contain no-repeat;
+}
+
+.tg-mic:hover {
+    background: var(--tg-panel-hover) !important;
 }
 
 /* Only one FAB is visible at a time. src/chat.js sets these flags on <html>

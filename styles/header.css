@@ -61,11 +61,19 @@
 }
 
 .tg-header-btn:hover {
-    background: rgba(255, 255, 255, .12);
+    background: var(--tg-panel-hover);
 }
 
 .tg-header-btn:active {
-    background: rgba(255, 255, 255, .20);
+    background: var(--tg-panel-pressed);
+}
+
+html[data-tg-variant='night'] .tg-header-btn:hover {
+    background: rgba(255, 255, 255, .10);
+}
+
+html[data-tg-variant='night'] .tg-header-btn:active {
+    background: rgba(255, 255, 255, .16);
 }
 
 /* This control opens the navigation drawer on the main chat screen, so it
@@ -83,7 +91,7 @@
     border-radius: 50%;
     overflow: hidden;
     margin: 0 8px 0 2px;
-    background: rgba(255, 255, 255, .18);
+    background: var(--tg-accent);
     cursor: pointer;
 }
 
@@ -140,13 +148,8 @@
     text-overflow: ellipsis;
 }
 
-/* "typing..." is accent-coloured in the app. On Day the action bar is
-   already accent-coloured, so we go white instead to stay legible. */
+/* Active chat state follows the selected Telegram accent. */
 .tg-header-status[data-tg-typing='on'] {
-    color: #fff;
-}
-
-html[data-tg-variant='night'] .tg-header-status[data-tg-typing='on'] {
     color: var(--tg-accent);
 }
 
