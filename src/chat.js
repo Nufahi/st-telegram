@@ -286,15 +286,17 @@ function ensureComposer() {
     const right = document.getElementById('rightSendForm');
     if (!items || !right) return;
 
-    /* Attach button, which SillyTavern has no equivalent of in this row. */
-    if (!items.querySelector(':scope > .tg-attach')) {
-        const attach = el('button', 'tg-attach');
-        attach.type = 'button';
-        attach.setAttribute('aria-label', 'Attach');
-        attach.addEventListener('click', () => {
-            document.getElementById('file_form_input')?.click();
+    /* SillyTavern's options button carries the real action menu. Present it as
+       a wand beside Send/Mic instead of inventing a Telegram attachment flow. */
+    if (!items.querySelector(':scope > .tg-wand')) {
+        const wand = el('button', 'tg-wand');
+        wand.type = 'button';
+        wand.setAttribute('aria-label', 'Message tools');
+        wand.addEventListener('click', (event) => {
+            event.stopPropagation();
+            document.getElementById('options_button')?.click();
         });
-        items.insertBefore(attach, right);
+        items.insertBefore(wand, right);
     }
 
     /* Resting-state mic, so the FAB is never absent. Inert by design: this
@@ -317,6 +319,162 @@ function refreshFab() {
 
     const mode = generating ? 'stop' : ((textarea?.value ?? '').trim() ? 'send' : 'mic');
     if (tgRoot.dataset.tgFab !== mode) tgRoot.dataset.tgFab = mode;
+}
+
+/* ── Telegram message action sheet ─────────────────────────────────────── */
+
+let actionSheet = null;
+let actionTarget = null;
+
+function actionLabel(button) {
+    if (!(button instanceof Element)) return '';
+    const explicit = button.getAttribute('aria-label')
+        || button.getAttribute('title')
+        || button.getAttribute('data-tooltip')
+        || button.textContent?.trim();
+    if (explicit) return explicit.trim();
+    if (button.matches('.swipe_left')) return 'Previous response';
+    if (button.matches('.swipe_right')) return 'Next response';
+    return 'Action';
+}
+
+function actionKind(button) {
+    if (button.matches('.mes_copy')) return 'copy';
+    if (button.matches('.mes_edit')) return 'edit';
+    if (button.matches('.mes_edit_delete')) return 'delete';
+    if (button.matches('.swipe_left')) return 'previous';
+    if (button.matches('.swipe_right')) return 'next';
+    if (button.matches('#option_regenerate')) return 'regenerate';
+    return 'more';
+}
+
+function nativeActionAvailable(button) {
+    return button instanceof HTMLElement
+        && button.isConnected
+        && !button.matches('[disabled], [aria-disabled="true"], .disabled');
+}
+
+function runNativeAction(button) {
+    if (!nativeActionAvailable(button)) return;
+    if (button.matches('.mes_copy')) {
+        try {
+            button.dispatchEvent(new PointerEvent('pointerup', {
+                bubbles: true,
+                cancelable: true,
+                pointerType: 'mouse',
+                isPrimary: true,
+            }));
+        } catch {
+            button.dispatchEvent(new Event('pointerup', { bubbles: true, cancelable: true }));
+        }
+        return;
+    }
+    HTMLElement.prototype.click.call(button);
+}
+
+function closeActionSheet() {
+    actionSheet?.remove();
+    actionSheet = null;
+    actionTarget?.classList.remove('tg-action-target');
+    actionTarget = null;
+    document.body.classList.remove('tg-action-sheet-open');
+}
+
+function collectMessageActions(row) {
+    const primary = [];
+    const more = [];
+    const seen = new Set();
+    const add = (button, forceMore = false) => {
+        if (!nativeActionAvailable(button) || seen.has(button)) return;
+        seen.add(button);
+        const action = { button, label: actionLabel(button), kind: actionKind(button) };
+        if (!forceMore && ['copy', 'edit', 'delete', 'previous', 'next', 'regenerate'].includes(action.kind)) primary.push(action);
+        else more.push(action);
+    };
+
+    const editButton = row.querySelector('.mes_buttons > .mes_edit');
+    add(editButton);
+    add(row.querySelector('.extraMesButtons > .mes_copy'));
+    if (nativeActionAvailable(editButton)) {
+        primary.push({
+            button: editButton,
+            label: 'Delete',
+            kind: 'delete',
+            run: () => {
+                runNativeAction(editButton);
+                window.requestAnimationFrame(() => {
+                    runNativeAction(row.querySelector('.mes_edit_buttons > .mes_edit_delete'));
+                });
+            },
+        });
+    }
+    if (row.matches('.last_mes')) {
+        add(row.querySelector('.swipe_left'));
+        add(row.querySelector('.swipe_right'));
+        add(document.getElementById('option_regenerate'));
+    }
+    for (const button of row.querySelectorAll('.extraMesButtons > .mes_button')) add(button, !button.matches('.mes_copy'));
+
+    return { primary, more };
+}
+
+function makeActionButton(action) {
+    const button = el('button', `tg-message-action tg-action-${action.kind}`);
+    button.type = 'button';
+    button.innerHTML = `<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label"></span>`;
+    button.querySelector('.tg-action-label').textContent = action.label;
+    button.addEventListener('click', () => {
+        closeActionSheet();
+        if (typeof action.run === 'function') action.run();
+        else runNativeAction(action.button);
+    });
+    return button;
+}
+
+function openActionSheet(row) {
+    if (!(row instanceof HTMLElement) || row.getAttribute('is_system') === 'true') return;
+    const actions = collectMessageActions(row);
+    if (!actions.primary.length && !actions.more.length) return;
+
+    closeActionSheet();
+    actionTarget = row;
+    row.classList.add('tg-action-target');
+
+    const sheet = el('div', 'tg-message-action-layer');
+    sheet.innerHTML = '<button type="button" class="tg-message-action-scrim" aria-label="Close message actions"></button><div class="tg-message-action-sheet" role="menu"></div>';
+    const panel = sheet.querySelector('.tg-message-action-sheet');
+    for (const action of actions.primary) panel.append(makeActionButton(action));
+
+    if (actions.more.length) {
+        const moreButton = el('button', 'tg-message-action tg-action-more');
+        moreButton.type = 'button';
+        moreButton.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">More</span>';
+        moreButton.addEventListener('click', () => {
+            panel.replaceChildren(...actions.more.map(makeActionButton));
+            const back = el('button', 'tg-message-action tg-action-back');
+            back.type = 'button';
+            back.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">Back</span>';
+            back.addEventListener('click', () => openActionSheet(row));
+            panel.prepend(back);
+        });
+        panel.append(moreButton);
+    }
+
+    sheet.querySelector('.tg-message-action-scrim').addEventListener('click', closeActionSheet);
+    document.body.append(sheet);
+    actionSheet = sheet;
+    document.body.classList.add('tg-action-sheet-open');
+}
+
+function onMessageActionRequest(event) {
+    if (event.button !== undefined && event.button !== 0) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.closest('a, button, input, textarea, select, .mes_buttons, .mes_edit_buttons, .swipe_left, .swipeRightBlock')) return;
+    const bubble = target.closest('#chat > .mes .mes_block');
+    if (!bubble) return;
+    const row = bubble.closest('#chat > .mes');
+    if (row) openActionSheet(row);
 }
 
 /* ── Drawer ─────────────────────────────────────────────────────────────── */
@@ -586,7 +744,7 @@ const REFRESH_MIN_GAP = 60;
 
 /* Our own nodes. Mutations inside them must never schedule a refresh or we
    feed ourselves forever. */
-const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-scrim, .tg-attach, .tg-mic';
+const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-message-action-layer, .tg-scrim, .tg-wand, .tg-mic';
 
 /* Classes we set on SillyTavern's own nodes. Seeing one of these change is
    never a reason to refresh -- we are the ones who changed it. */
@@ -700,6 +858,7 @@ function runRefresh() {
 /* ── Start ──────────────────────────────────────────────────────────────── */
 
 function start() {
+    tgRoot.dataset.tgMessageActions = 'on';
     observer = new MutationObserver((records) => {
         if (!records.some(mutationMatters)) return;
         if (refreshing) {
@@ -724,9 +883,14 @@ function start() {
     document.addEventListener('mousedown', blockInlineDrawerAutoClose, true);
     document.addEventListener('touchstart', blockInlineDrawerAutoClose, true);
     document.getElementById('send_textarea')?.addEventListener('input', refreshFab);
+    document.getElementById('chat')?.addEventListener('click', onMessageActionRequest);
 
     document.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape') return;
+        if (actionSheet) {
+            closeActionSheet();
+            return;
+        }
         const openPanel = document.querySelector('#top-settings-holder .drawer-content.openDrawer');
         if (openPanel) returnToDrawer(openPanel);
         else toggleDrawer(false);

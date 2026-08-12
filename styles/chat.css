@@ -523,6 +523,100 @@ html[data-tg-debug='on'] #chat > .mes .mesIDDisplay {
     color: var(--tg-accent) !important;
 }
 
+/* Once the replacement menu is wired, remove the old hover icon cluster.
+   Native controls stay connected and are activated by the action sheet. */
+html[data-tg-message-actions='on'] #chat > .mes .mes_buttons,
+html[data-tg-message-actions='on'] #chat > .mes .swipe_left,
+html[data-tg-message-actions='on'] #chat > .mes .swipeRightBlock {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Telegram-style action sheet. Native ST buttons remain in the DOM and keep
+   their handlers; this layer only presents and activates them. */
+.tg-message-action-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    align-items: end;
+    justify-items: center;
+    padding: 12px;
+}
+
+.tg-message-action-scrim {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, .34);
+}
+
+.tg-message-action-sheet {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(100%, 420px);
+    max-height: min(70dvh, 560px);
+    overflow-y: auto;
+    padding: 6px;
+    border-radius: 18px;
+    background: var(--tg-panel);
+    box-shadow: var(--tg-shadow-menu);
+}
+
+.tg-message-action {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--tg-text);
+    font: 15px/1.2 var(--tg-font-ui);
+    text-align: left;
+    cursor: pointer;
+}
+
+.tg-message-action:hover {
+    background: var(--tg-panel-hover);
+}
+
+.tg-action-icon {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    background-color: var(--tg-text-secondary);
+    -webkit-mask: var(--tg-action-icon, var(--tg-icon-section)) center / contain no-repeat;
+    mask: var(--tg-action-icon, var(--tg-icon-section)) center / contain no-repeat;
+}
+
+.tg-action-copy { --tg-action-icon: var(--tg-icon-copy); }
+.tg-action-edit { --tg-action-icon: var(--tg-icon-edit); }
+.tg-action-delete { --tg-action-icon: var(--tg-icon-delete); color: var(--tg-danger); }
+.tg-action-delete .tg-action-icon { background-color: var(--tg-danger); }
+.tg-action-previous { --tg-action-icon: var(--tg-icon-back); }
+.tg-action-next { --tg-action-icon: var(--tg-icon-forward); }
+.tg-action-regenerate { --tg-action-icon: var(--tg-icon-refresh); }
+.tg-action-more { --tg-action-icon: var(--tg-icon-dots); }
+.tg-action-back { --tg-action-icon: var(--tg-icon-back); }
+
+body.tg-action-sheet-open #chat > .mes .mes_buttons,
+body.tg-action-sheet-open #chat > .mes .swipe_left,
+body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+#chat > .mes.tg-action-target .mes_block {
+    outline: 2px solid var(--tg-accent);
+    outline-offset: 2px;
+}
+
 /* The edit toolbar must only appear during an actual edit. SillyTavern
    otherwise leaves it in the flow on some message types. */
 #chat > .mes .mes_edit_buttons {

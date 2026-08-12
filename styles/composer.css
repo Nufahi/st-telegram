@@ -46,8 +46,9 @@
 #nonQRFormItems {
     position: relative !important;
     display: grid !important;
-    /* emoji | textarea | attach | send-fab */
-    grid-template-columns: 44px minmax(0, 1fr) 44px 48px !important;
+    /* textarea | wand | send-fab (the hidden native options control remains
+       available as the wand's real action target). */
+    grid-template-columns: minmax(0, 1fr) 44px 48px !important;
     align-items: end !important;
     gap: 0 !important;
     padding: 4px 4px 4px 6px !important;
@@ -68,7 +69,7 @@
    outside this surface makes the row compact without changing ST's DOM. */
 #nonQRFormItems::before {
     content: '';
-    grid-area: 1 / 1 / 2 / 4;
+    grid-area: 1 / 1 / 2 / 3;
     align-self: stretch;
     z-index: 0;
     background: var(--tg-panel);
@@ -79,7 +80,7 @@
 
 #leftSendForm,
 #send_textarea,
-#nonQRFormItems > .tg-attach,
+#nonQRFormItems > .tg-wand,
 #rightSendForm {
     position: relative !important;
     z-index: 1;
@@ -140,7 +141,7 @@
 /* ── Text field ─────────────────────────────────────────────────────────── */
 
 #send_textarea {
-    grid-column: 2 !important;
+    grid-column: 1 !important;
     background: none !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -175,13 +176,10 @@
     border-radius: 3px;
 }
 
-/* ── Attach button ──────────────────────────────────────────────────────── */
+/* ── Message tools wand ─────────────────────────────────────────────────── */
 
-/* Injected by src/chat.js: SillyTavern has no attach control in this row,
-   and Telegram's composer reads wrong without one. It forwards clicks to
-   SillyTavern's own file input. */
-.tg-attach {
-    grid-column: 3 !important;
+.tg-wand {
+    grid-column: 2 !important;
     align-self: end;
     display: grid;
     place-items: center;
@@ -199,29 +197,33 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-.tg-attach::before {
+.tg-wand::before {
     content: '';
     width: 24px;
     height: 24px;
     background-color: var(--tg-text-hint);
-    -webkit-mask: var(--tg-icon-attach) center / contain no-repeat;
-    mask: var(--tg-icon-attach) center / contain no-repeat;
-    /* Telegram tilts the paperclip. */
-    transform: rotate(45deg);
+    -webkit-mask: var(--tg-icon-wand) center / contain no-repeat;
+    mask: var(--tg-icon-wand) center / contain no-repeat;
 }
 
-.tg-attach:hover {
+.tg-wand:hover {
     background: var(--tg-panel-hover);
 }
 
-.tg-attach:hover::before {
+.tg-wand:hover::before {
     background-color: var(--tg-text-secondary);
+}
+
+/* The native options button remains the functional target but no longer
+   occupies a second visible slot on the left side of the composer. */
+#leftSendForm {
+    display: none !important;
 }
 
 /* ── Send FAB ───────────────────────────────────────────────────────────── */
 
 #rightSendForm {
-    grid-column: 4 !important;
+    grid-column: 3 !important;
     position: relative !important;
     display: grid !important;
     place-items: center !important;
