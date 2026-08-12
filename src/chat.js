@@ -187,6 +187,9 @@ function refreshHeader() {
     if (!node) return;
 
     const peer = currentPeer();
+    const context = getContext();
+    const groupId = context?.groupId ?? context?.group_id;
+    tgRoot.dataset.tgChatType = groupId ? 'group' : 'private';
     const nameEl = node.querySelector('.tg-header-name');
     const statusEl = node.querySelector('.tg-header-status');
     const avatarBox = node.querySelector('.tg-header-avatar');
@@ -322,6 +325,20 @@ function toggleDrawer(open) {
     document.body.classList.toggle('tg-drawer-open', open);
 }
 
+/* Close a native SillyTavern settings panel through its real toggle, then
+   reveal our section launcher. Keeping this in one helper prevents the two
+   drawer state machines from drifting apart on desktop. */
+function returnToDrawer(content = document.querySelector('#top-settings-holder .drawer-content.openDrawer')) {
+    if (!(content instanceof Element)) {
+        toggleDrawer(true);
+        return;
+    }
+
+    const icon = content.parentElement?.querySelector(':scope > .drawer-toggle > .drawer-icon');
+    if (icon instanceof HTMLElement) icon.click();
+    window.requestAnimationFrame(() => toggleDrawer(true));
+}
+
 function ensureScrim() {
     let scrim = document.body.querySelector(':scope > .tg-scrim');
     if (!scrim) {
@@ -424,10 +441,7 @@ function ensureDrawerChrome() {
             back.type = 'button';
             back.setAttribute('aria-label', 'Back to menu');
             back.innerHTML = '<span aria-hidden="true"></span><b>Back</b>';
-            back.addEventListener('click', () => {
-                icon.click();
-                toggleDrawer(true);
-            });
+            back.addEventListener('click', () => returnToDrawer(content));
             content.prepend(back);
         }
     }
@@ -439,7 +453,13 @@ function refreshDrawerIdentity() {
     if (!head) return;
 
     const context = getContext();
-    const name = context?.name1 || 'You';
+    const personaAvatar = context?.userAvatar || context?.user_avatar || null;
+    const personas = context?.powerUserSettings?.personas
+        || context?.power_user?.personas
+        || context?.personas
+        || {};
+    const personaName = personaAvatar ? personas?.[personaAvatar] : null;
+    const name = personaName || context?.name1 || 'You';
     const nameEl = head.querySelector('.tg-drawer-name');
     if (nameEl && nameEl.textContent !== name) nameEl.textContent = name;
 
@@ -448,10 +468,28 @@ function refreshDrawerIdentity() {
     const text = `${count} character${count === 1 ? '' : 's'}`;
     if (sub && sub.textContent !== text) sub.textContent = text;
 
-    const img = head.querySelector('.tg-drawer-avatar img');
-    if (img) {
-        const avatar = context?.userAvatar ? `User Avatars/${context.userAvatar}` : null;
-        if (avatar && img.getAttribute('src') !== avatar) img.src = avatar;
+    const avatarBox = head.querySelector('.tg-drawer-avatar');
+    const img = avatarBox?.querySelector('img');
+    if (img && avatarBox) {
+        let avatar = null;
+        if (personaAvatar) {
+            try {
+                avatar = context.getThumbnailUrl?.('persona', personaAvatar)
+                    || `/User Avatars/${encodeURIComponent(personaAvatar)}`;
+            } catch {
+                avatar = `/User Avatars/${encodeURIComponent(personaAvatar)}`;
+            }
+        }
+
+        if (avatar) {
+            if (img.getAttribute('src') !== avatar) img.src = avatar;
+            img.style.display = '';
+            avatarBox.removeAttribute('data-tg-fallback');
+        } else {
+            img.removeAttribute('src');
+            img.style.display = 'none';
+            avatarBox.setAttribute('data-tg-fallback', (name[0] || '?').toUpperCase());
+        }
     }
 }
 
@@ -688,7 +726,10 @@ function start() {
     document.getElementById('send_textarea')?.addEventListener('input', refreshFab);
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') toggleDrawer(false);
+        if (event.key !== 'Escape') return;
+        const openPanel = document.querySelector('#top-settings-holder .drawer-content.openDrawer');
+        if (openPanel) returnToDrawer(openPanel);
+        else toggleDrawer(false);
     });
 
     window.setInterval(refreshClock, 20000);
@@ -707,4 +748,4 @@ if (typeof jQuery === 'function') {
     start();
 }
 
-export { toggleDrawer, refreshHeader, refreshMessages };
+export { toggleDrawer, returnToDrawer, refreshHeader, refreshMessages };

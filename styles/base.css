@@ -259,10 +259,36 @@ a {
 /* SillyTavern paints drop shadows on icons throughout; they read as dirt at
    Material's flat weight. */
 .fa-solid,
+.fas,
+.fa,
 .fa-regular,
+.far,
 .fa-brands,
+.fab,
 .menu_button,
 .drawer-icon {
     text-shadow: none !important;
     filter: none !important;
+}
+
+/* Some native controls are both .menu_button and Font Awesome icons. The
+   Telegram UI font above must never replace their private-use glyph font or
+   they render as squares/broken characters. Keep this after .menu_button. */
+.fa-solid,
+.fas,
+.fa {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 900 !important;
+}
+
+.fa-regular,
+.far {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 400 !important;
+}
+
+.fa-brands,
+.fab {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
 }

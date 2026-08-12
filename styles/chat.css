@@ -179,6 +179,21 @@ html[data-tg-variant='night'][data-tg-wallpaper='on'] #chat::before {
     display: none !important;
 }
 
+/* Telegram private chats keep identity in the app bar; avatars beside
+   messages are reserved for group conversations. Collapse the avatar column
+   entirely so incoming bubbles align naturally with the left edge. */
+html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] {
+    grid-template-columns: minmax(0, 1fr) !important;
+}
+
+html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mesAvatarWrapper {
+    display: none !important;
+}
+
+html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
+    grid-column: 1 !important;
+}
+
 /* Only the last message of an incoming group shows the avatar; the rest
    keep the column so the bubbles stay aligned. */
 #chat > .mes[is_user='false']:not(.tg-group-end) .mesAvatarWrapper .avatar {
