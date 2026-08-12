@@ -212,10 +212,12 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     /* Tapping it opens the sender's card, as in Telegram. */
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
-}
-
-#chat > .mes .avatar:hover {
-    filter: brightness(1.06);
+    /* SillyTavern dims interactive avatars to .6 and only restores full
+       opacity on hover. Telegram never fades a contact's photo, and on a
+       touch screen there is no hover to undo it, so the avatar just looks
+       permanently washed out. */
+    opacity: 1 !important;
+    filter: none !important;
 }
 
 #chat > .mes .avatar:active {

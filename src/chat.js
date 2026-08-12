@@ -141,32 +141,48 @@ function openChatSearch() {
 
     if (hasPeer) {
         toggleDrawer(false);
-        document.getElementById('option_select_chat')?.click();
-        /* SillyTavern focuses this itself after 200ms; matching that avoids a
-           race where we focus first and it steals the caret back. */
+        /* #option_select_chat sits inside the closed #options popup. It is
+           still in the DOM with a live delegated handler, so clicking it
+           works without showing the menu -- but the click must be deferred
+           for the same reason as openChatMenu: SillyTavern's document-level
+           handlers would otherwise process our still-bubbling event. */
         window.setTimeout(() => {
-            document.getElementById('select_chat_search')?.focus();
-        }, 260);
+            document.getElementById('option_select_chat')?.click();
+            /* SillyTavern focuses this itself 200ms after the view opens;
+               matching that avoids a race where we focus first and it takes
+               the caret back. */
+            window.setTimeout(() => {
+                document.getElementById('select_chat_search')?.focus();
+            }, 280);
+        }, 0);
         return;
     }
 
     openCharacterPanel();
-    window.setTimeout(() => {
-        const field = document.getElementById('character_search_bar');
-        field?.focus();
-    }, 260);
+    whenPanelOpen('right-nav-panel', () => {
+        document.getElementById('character_search_bar')?.focus();
+    });
 }
 
 /* The three-dot menu. SillyTavern's #options popup is the real thing and it
    already carries the chat-level actions Telegram puts here, so we open that
    rather than inventing a parallel menu.
  *
- * It is anchored to #options_button with Popper. That button lives in the
- * composer, so the popup appears above the composer rather than under our
- * header -- acceptable, and far better than a menu whose entries we would
- * have to keep in sync with SillyTavern by hand. */
+ * Forwarding the click naively does NOT work, and this is why:
+ * SillyTavern binds a close-on-outside-click handler to `document`. Our
+ * button's own click keeps bubbling after we synthesise the one on
+ * #options_button, reaches that handler in the same dispatch, and it closes
+ * the menu again because the pointer is over our header rather than over the
+ * button or the menu. The result is a menu that opens and shuts instantly --
+ * indistinguishable from a dead button.
+ *
+ * Deferring to the next macrotask lets our click finish dispatching first, so
+ * SillyTavern's document handler runs while the menu is still closed (it
+ * returns early) and only then do we open it. */
 function openChatMenu() {
-    document.getElementById('options_button')?.click();
+    window.setTimeout(() => {
+        document.getElementById('options_button')?.click();
+    }, 0);
 }
 
 /* Open the Character Management panel, which is where every card, chat file
@@ -176,12 +192,55 @@ function openChatMenu() {
  * clicking the icon is what keeps SillyTavern's open/closed bookkeeping (and
  * the .openDrawer class our CSS keys on) in step. */
 function openCharacterPanel() {
-    const panel = document.getElementById('right-nav-panel');
-    if (!panel?.classList.contains('openDrawer')) {
-        document.querySelector('#rightNavHolder .drawer-icon')?.click();
+    return openNativePanel('#rightNavHolder', 'right-nav-panel');
+}
+
+/* Run a callback once a panel has actually opened.
+ *
+ * requestAnimationFrame is NOT usable here: openNativePanel defers its click
+ * by a macrotask, and a rAF callback runs before that, so the follow-up would
+ * fire against a panel that is still closed. Poll for a few frames instead
+ * and give up quietly rather than acting on the wrong state. */
+function whenPanelOpen(panelId, run, attempts = 12) {
+    const panel = document.getElementById(panelId);
+    if (panel?.classList.contains('openDrawer')) {
+        run(panel);
+        return;
     }
-    /* The launcher would otherwise stay on top of the panel we just opened. */
+    if (attempts <= 0) return;
+    window.setTimeout(() => whenPanelOpen(panelId, run, attempts - 1), 25);
+}
+
+/* Open one of SillyTavern's drawer panels from outside the drawer.
+ *
+ * Two traps, both of which made these buttons look dead:
+ *
+ * 1. The handler is bound to .drawer-toggle, not to the .drawer-icon inside
+ *    it. Clicking the icon works only because the event bubbles, so we click
+ *    the toggle directly and do not depend on that.
+ *
+ * 2. SillyTavern also binds an auto-close to `html` on mousedown/touchstart
+ *    which shuts every unpinned .openDrawer whose subtree was not clicked.
+ *    Our header is outside that subtree, so the click that opens the panel is
+ *    the same gesture that closes it. Deferring by a macrotask lets the
+ *    originating event finish first, so the auto-close runs while nothing is
+ *    open and the panel we then open survives.
+ *
+ * Returns immediately; the panel exists but opens on the next tick. */
+function openNativePanel(drawerSelector, panelId) {
+    const panel = document.getElementById(panelId);
+    /* Close the launcher first so it is not left covering the panel. */
     toggleDrawer(false);
+
+    window.setTimeout(() => {
+        const current = document.getElementById(panelId);
+        if (current?.classList.contains('openDrawer')) return;
+        const toggle = document.querySelector(`${drawerSelector} > .drawer-toggle`)
+            || document.querySelector(`${drawerSelector} .drawer-toggle`)
+            || document.querySelector(`${drawerSelector} .drawer-icon`);
+        if (toggle instanceof HTMLElement) toggle.click();
+    }, 0);
+
     return panel;
 }
 
@@ -208,8 +267,7 @@ function wireHeader(node) {
        current character's card, and handles the group case by itself. */
     const openProfile = () => {
         openCharacterPanel();
-        /* After the panel is in the DOM: the tab button only exists there. */
-        window.requestAnimationFrame(() => {
+        whenPanelOpen('right-nav-panel', () => {
             document.getElementById('rm_button_selected_ch')?.click();
         });
     };
@@ -576,11 +634,7 @@ function onMessageAvatarClick(event) {
 
 /* Open the persona settings, which is the user's own "profile". */
 function openPersonaPanel() {
-    toggleDrawer(false);
-    const panel = document.querySelector('#persona-management-button .drawer-content');
-    if (!panel?.classList.contains('openDrawer')) {
-        document.querySelector('#persona-management-button .drawer-icon')?.click();
-    }
+    openNativePanel('#persona-management-button', 'PersonaManagement');
 }
 
 /* Open a character card by NAME, because that is all a message row carries.
@@ -596,7 +650,7 @@ function openSenderCard(name) {
         const index = characters.findIndex((c) => c?.name === name);
         if (index >= 0) {
             openCharacterPanel();
-            window.requestAnimationFrame(() => {
+            whenPanelOpen('right-nav-panel', () => {
                 /* Prefer SillyTavern's own list entry: it carries the click
                    handler that selects and renders the card. SillyTavern
                    stamps both an id and data-chid onto each row when it
@@ -621,7 +675,7 @@ function openSenderCard(name) {
 
     /* Unknown sender -- the current peer's own card is the best we can do. */
     openCharacterPanel();
-    window.requestAnimationFrame(() => {
+    whenPanelOpen('right-nav-panel', () => {
         document.getElementById('rm_button_selected_ch')?.click();
     });
 }

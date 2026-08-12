@@ -16,8 +16,8 @@
 @import url('./tokens.css?v=0.1.2-slim-composer');
 @import url('./icons.css?v=0.1.2-message-action-sheet');
 @import url('./base.css?v=0.1.2-drawer-identity');
-@import url('./chat.css?v=0.1.2-clickable-avatars');
+@import url('./chat.css?v=0.1.2-avatar-actions');
 @import url('./header.css?v=0.1.2-safe-disable');
 @import url('./composer.css?v=0.1.2-slim-composer');
-@import url('./drawer.css?v=0.1.2-drawer-top-strip');
+@import url('./drawer.css?v=0.1.2-avatar-actions');
 @import url('./frame.css?v=0.1.2-desktop-layout');

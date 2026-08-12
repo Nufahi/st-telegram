@@ -450,6 +450,13 @@ body.tg-drawer-open .tg-scrim {
     bottom: 0 !important;
     z-index: 70 !important;
 
+    /* The closed launcher is hidden with visibility: hidden, and visibility
+       INHERITS. A panel opened while the drawer is shut would therefore be
+       laid out, painted and interactive-free -- invisible for no obvious
+       reason. Opening a character card straight from the chat header does
+       exactly that, so the panel must re-assert its own visibility. */
+    visibility: visible !important;
+
     width: 100% !important;
     max-width: none !important;
     height: 100dvh !important;
