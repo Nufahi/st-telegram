@@ -37,6 +37,13 @@
     display: flex !important;
     flex-direction: column !important;
     align-items: stretch !important;
+    /* SillyTavern sets justify-content: center on this element for its own
+       horizontal top bar. Once we turn it into a tall vertical column that
+       centring applies to the MAIN axis, so the whole menu floats in the
+       middle of the drawer and leaves a band of bare drawer background above
+       the header -- read as "a strange coloured strip at the top", because
+       the header is tinted and the gap above it is not. */
+    justify-content: flex-start !important;
     gap: 0 !important;
 
     width: min(300px, 84vw) !important;
@@ -464,6 +471,23 @@ body.tg-drawer-open .tg-scrim {
 /* SillyTavern animates these with its own show/hide; we only need the closed
    state to be genuinely out of the way. */
 #top-settings-holder .drawer-content.closedDrawer {
+    display: none !important;
+}
+
+/* Character Management is the exception, and it produced the bot's huge round
+   avatar hanging inside the drawer.
+ *
+ * Its panel carries .fillRight, which SillyTavern collapses with height: 0
+ * plus overflow: hidden rather than with .closedDrawer -- so the rule above
+ * never fires for it, while our own `height: 100dvh !important` outranked the
+ * zero height and re-inflated the panel. #avatar_div is display: flex as soon
+ * as a character is selected, so the avatar became visible inside the menu
+ * exactly when you were in a chat with a bot.
+ *
+ * Only panels WITHOUT .openDrawer are collapsed here, so an intentionally
+ * opened Character Management panel still fills the screen normally. */
+#top-settings-holder .drawer-content.fillRight:not(.openDrawer),
+#top-settings-holder .drawer-content.fillLeft:not(.openDrawer) {
     display: none !important;
 }
 
