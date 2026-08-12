@@ -397,6 +397,7 @@ function ensureDrawerChrome() {
     for (const drawer of holder.querySelectorAll(':scope > .drawer')) {
         const toggle = drawer.querySelector(':scope > .drawer-toggle');
         const icon = toggle?.querySelector(':scope > .drawer-icon');
+        const content = drawer.querySelector(':scope > .drawer-content');
         if (!toggle || !icon) continue;
 
         let label = toggle.querySelector(':scope > .tg-drawer-label');
@@ -413,6 +414,21 @@ function ensureDrawerChrome() {
         if (icon.hasAttribute('title')) {
             icon.setAttribute('data-tg-title', icon.getAttribute('title') || '');
             icon.removeAttribute('title');
+        }
+
+        /* Native settings panels cover the launcher on desktop and mobile.
+           Give every panel an explicit way back to the Telegram drawer so a
+           user can switch sections without reloading the whole application. */
+        if (content && !content.querySelector(':scope > .tg-panel-back')) {
+            const back = el('button', 'tg-panel-back');
+            back.type = 'button';
+            back.setAttribute('aria-label', 'Back to menu');
+            back.innerHTML = '<span aria-hidden="true"></span><b>Back</b>';
+            back.addEventListener('click', () => {
+                icon.click();
+                toggleDrawer(true);
+            });
+            content.prepend(back);
         }
     }
 }
@@ -532,7 +548,7 @@ const REFRESH_MIN_GAP = 60;
 
 /* Our own nodes. Mutations inside them must never schedule a refresh or we
    feed ourselves forever. */
-const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-scrim, .tg-attach, .tg-mic';
+const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-scrim, .tg-attach, .tg-mic';
 
 /* Classes we set on SillyTavern's own nodes. Seeing one of these change is
    never a reason to refresh -- we are the ones who changed it. */

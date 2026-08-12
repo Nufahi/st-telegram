@@ -28,8 +28,34 @@ body {
 
 /* SillyTavern's backdrop blur is expensive and un-Telegram. */
 body {
+    background: var(--tg-chat-bg) !important;
+    color: var(--tg-text) !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+}
+
+/* Establish a Telegram-owned colour/font boundary around the surfaces this
+   extension controls. Component files can still override these deliberately,
+   but the active SillyTavern theme no longer supplies their inherited base. */
+#sheld,
+#top-settings-holder,
+#top-settings-holder .drawer-content,
+#options {
+    color: var(--tg-text) !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+#sheld,
+#top-settings-holder .drawer-content,
+#options {
+    color-scheme: light;
+}
+
+html[data-tg-variant='night'] #sheld,
+html[data-tg-variant='night'] #top-settings-holder .drawer-content,
+html[data-tg-variant='night'] #options {
+    color-scheme: dark;
 }
 
 #background,

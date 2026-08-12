@@ -460,6 +460,44 @@ body.tg-drawer-open .tg-scrim {
     display: none !important;
 }
 
+/* Explicit navigation back to the section launcher. Native drawer panels do
+   not consistently expose a close control, especially in desktop layouts. */
+#top-settings-holder .drawer-content > .tg-panel-back {
+    position: sticky;
+    top: -8px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: calc(100% + 24px);
+    min-height: 52px;
+    margin: -8px -12px 8px;
+    padding: 0 16px;
+    border: 0;
+    border-bottom: 1px solid var(--tg-divider);
+    background: var(--tg-panel);
+    color: var(--tg-text);
+    font: inherit;
+    cursor: pointer;
+}
+
+#top-settings-holder .drawer-content > .tg-panel-back > span {
+    width: 24px;
+    height: 24px;
+    background-color: var(--tg-text-secondary);
+    -webkit-mask: var(--tg-icon-back) center / contain no-repeat;
+    mask: var(--tg-icon-back) center / contain no-repeat;
+}
+
+#top-settings-holder .drawer-content > .tg-panel-back > b {
+    font-size: 17px;
+    font-weight: 500;
+}
+
+#top-settings-holder .drawer-content > .tg-panel-back:hover {
+    background: var(--tg-panel-hover);
+}
+
 #top-settings-holder .drawer-content::-webkit-scrollbar {
     width: 3px;
 }
