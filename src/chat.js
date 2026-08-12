@@ -281,23 +281,37 @@ function refreshMessages() {
 
 /* ── Composer ───────────────────────────────────────────────────────────── */
 
+/* Telegram's composer is [emoji][text][attach][send]. SillyTavern's is
+   [hamburger + wand][text][send].
+ *
+ * The mapping we use:
+ *   #options_button        -> emoji, left, where SillyTavern already puts it
+ *   #extensionsMenuButton  -> paperclip, right, next to Send
+ *
+ * An earlier release moved the attach control by hiding #leftSendForm, which
+ * also hid the working emoji button. Nothing is hidden here: the wand is
+ * MOVED, so both controls survive.
+ *
+ * The wand is relocated rather than imitated because SillyTavern anchors
+ * #extensionsMenu to it with Popper. A lookalike button that forwarded the
+ * click would open the real menu positioned over the real (now hidden)
+ * node -- the popup would appear detached from the icon that opened it. */
 function ensureComposer() {
     const items = document.getElementById('nonQRFormItems');
     const right = document.getElementById('rightSendForm');
     if (!items || !right) return;
 
-    /* SillyTavern's options button carries the real action menu. Present it as
-       a wand beside Send/Mic instead of inventing a Telegram attachment flow. */
-    if (!items.querySelector(':scope > .tg-wand')) {
-        const wand = el('button', 'tg-wand');
-        wand.type = 'button';
-        wand.setAttribute('aria-label', 'Message tools');
-        wand.addEventListener('click', (event) => {
-            event.stopPropagation();
-            document.getElementById('options_button')?.click();
-        });
+    /* Extensions register their wand entries asynchronously, and SillyTavern
+       only appends the button itself during initExtensions(), so this can be
+       a no-op for the first few passes. The refresh loop retries. */
+    const wand = document.getElementById('extensionsMenuButton');
+    if (wand && wand.parentElement !== items) {
         items.insertBefore(wand, right);
     }
+
+    /* Remove the imitation wand shipped by the previous release. Users who
+       already loaded it have the node in a cached DOM, not on disk. */
+    for (const stale of items.querySelectorAll(':scope > .tg-wand')) stale.remove();
 
     /* Resting-state mic, so the FAB is never absent. Inert by design: this
        is a layout placeholder, not a fake feature. */
@@ -744,7 +758,7 @@ const REFRESH_MIN_GAP = 60;
 
 /* Our own nodes. Mutations inside them must never schedule a refresh or we
    feed ourselves forever. */
-const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-message-action-layer, .tg-scrim, .tg-wand, .tg-mic';
+const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-message-action-layer, .tg-scrim, .tg-mic';
 
 /* Classes we set on SillyTavern's own nodes. Seeing one of these change is
    never a reason to refresh -- we are the ones who changed it. */
@@ -779,7 +793,21 @@ function mutationMatters(record) {
        us. */
     if (target.closest('#completion_prompt_manager')) return false;
 
-    /* The composer is driven by its own input listener. */
+    /* The composer is driven by its own input listener -- with one exception.
+       SillyTavern appends #extensionsMenuButton during initExtensions(), long
+       after our startup passes, and ensureComposer() has to move it into the
+       Telegram layout. Without this the wand would only be relocated if some
+       unrelated event happened to schedule a refresh afterwards.
+     *
+     * The test is "needs moving", not "is the wand", so our own relocation --
+     * which fires this same record -- does not schedule a second pass. */
+    if (record.type === 'childList' && [...record.addedNodes].some((node) => {
+        if (!(node instanceof Element)) return false;
+        const found = node.id === 'extensionsMenuButton' ? node : node.querySelector?.('#extensionsMenuButton');
+        return Boolean(found) && found.parentElement?.id !== 'nonQRFormItems';
+    })) {
+        return true;
+    }
     if (target.closest('#send_form, #form_sheld')) return false;
 
     if (record.type === 'attributes') {

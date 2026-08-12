@@ -6,9 +6,21 @@
  *
  * SillyTavern's structure, which we restyle in place:
  *   #form_sheld > #send_form > #nonQRFormItems
- *     > #leftSendForm (#options_button)
+ *     > #leftSendForm (#options_button, #extensionsMenuButton)
  *     > #send_textarea
  *     > #rightSendForm (#mes_stop, #send_but, ...)
+ *
+ * Two native buttons, two different menus, and they must not be confused:
+ *   #options_button       ST's hamburger -> #options. We draw it as the
+ *                         emoji button on the left, where Telegram puts it.
+ *   #extensionsMenuButton ST's real magic wand -> #extensionsMenu (attach
+ *                         file, data bank, image gen). We draw it as the
+ *                         paperclip on the right, where Telegram puts attach.
+ *
+ * The paperclip is the NATIVE wand node, merely relocated by src/chat.js and
+ * repainted here. An imitation button would have to re-open the menu itself,
+ * and Popper anchors that menu to the real element -- so the imitation would
+ * drop the popup in the wrong place.
  *
  * #form_sheld is a flex item of #sheld, NOT position:fixed, so it remains
  * attached to the chat layout and grows upward with multiline input.
@@ -46,12 +58,16 @@
 #nonQRFormItems {
     position: relative !important;
     display: grid !important;
-    /* textarea | wand | send-fab (the hidden native options control remains
-       available as the wand's real action target). */
-    grid-template-columns: minmax(0, 1fr) 44px 48px !important;
+    /* emoji | textarea | paperclip | send-fab. The first three sit inside the
+       rounded input pill; the FAB is the separate circle to its right.
+     *
+     * Column 3 is auto, not a fixed 40px: SillyTavern hides the wand until an
+     * extension registers a menu item, and an auto track collapses to zero
+     * instead of leaving a 40px hole inside the pill. */
+    grid-template-columns: 40px minmax(0, 1fr) auto 48px !important;
     align-items: end !important;
     gap: 0 !important;
-    padding: 4px 4px 4px 6px !important;
+    padding: 4px 4px 4px 4px !important;
     margin: 0 !important;
     background: none !important;
     border: 0 !important;
@@ -65,11 +81,12 @@
     }
 }
 
-/* The first three cells are one Telegram-style input pill. Keeping the FAB
-   outside this surface makes the row compact without changing ST's DOM. */
+/* Columns 1-3 (emoji, text, paperclip) are one Telegram-style input pill.
+   Keeping the FAB outside this surface makes the row compact without
+   changing ST's DOM. */
 #nonQRFormItems::before {
     content: '';
-    grid-area: 1 / 1 / 2 / 3;
+    grid-area: 1 / 1 / 2 / 4;
     align-self: stretch;
     z-index: 0;
     background: var(--tg-panel);
@@ -80,7 +97,7 @@
 
 #leftSendForm,
 #send_textarea,
-#nonQRFormItems > .tg-wand,
+#nonQRFormItems > #extensionsMenuButton,
 #rightSendForm {
     position: relative !important;
     z-index: 1;
@@ -88,8 +105,13 @@
 
 /* ── Emoji button (SillyTavern's options/hamburger) ─────────────────────── */
 
+/* This is the button a previous release lost by hiding #leftSendForm wholesale
+   in order to move the attach control. Hiding the container took the working
+   emoji button with it, so the left end of the composer went blank. The
+   container stays visible; only its wand child is relocated. */
 #leftSendForm {
     grid-column: 1 !important;
+    align-self: end !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -141,7 +163,7 @@
 /* ── Text field ─────────────────────────────────────────────────────────── */
 
 #send_textarea {
-    grid-column: 1 !important;
+    grid-column: 2 !important;
     background: none !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -176,54 +198,78 @@
     border-radius: 3px;
 }
 
-/* ── Message tools wand ─────────────────────────────────────────────────── */
+/* ── Attach / wand button ───────────────────────────────────────────────── */
 
-.tg-wand {
-    grid-column: 2 !important;
-    align-self: end;
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    /* The visual control is 40px while Telegram's composer row is 44px.
-       A 2px bottom inset centres it against the 44px Mic/Send control while
-       keeping both anchored to the bottom of a multiline composer. */
-    margin: 0 2px 2px 0;
-    border: 0;
-    padding: 0;
-    background: none;
-    border-radius: 50%;
+/* The NATIVE #extensionsMenuButton, moved into column 3 by src/chat.js and
+   repainted as Telegram's paperclip. It keeps its own click handler and its
+   Popper anchor, so #extensionsMenu opens from the icon the user pressed.
+ *
+ * It is styled here at the #nonQRFormItems level rather than by id alone so
+ * the rules only apply once the node has actually been relocated; while it
+ * still sits in #leftSendForm the block above governs it. */
+#nonQRFormItems > #extensionsMenuButton {
+    grid-column: 3 !important;
+    /* Bottom-aligned so it stays level with Send when the field grows. */
+    align-self: end !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    /* The control is 40px inside a 44px row; a 2px inset optically centres it
+       against the 44px Send/Mic circle. */
+    margin: 0 0 2px 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: none !important;
+    /* Kill the Font Awesome glyph without dropping the class that carries the
+       binding: zero the text and paint our mask into ::before. */
+    color: transparent !important;
+    font-size: 0 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    text-shadow: none !important;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
 
-.tg-wand::before {
-    content: '';
-    width: 24px;
-    height: 24px;
-    background-color: var(--tg-text-hint);
-    -webkit-mask: var(--tg-icon-wand) center / contain no-repeat;
-    mask: var(--tg-icon-wand) center / contain no-repeat;
+#nonQRFormItems > #extensionsMenuButton::before {
+    content: '' !important;
+    display: block !important;
+    width: 24px !important;
+    height: 24px !important;
+    background-color: var(--tg-text-hint) !important;
+    -webkit-mask: var(--tg-icon-attach) center / contain no-repeat !important;
+    mask: var(--tg-icon-attach) center / contain no-repeat !important;
 }
 
-.tg-wand:hover {
-    background: var(--tg-panel-hover);
+#nonQRFormItems > #extensionsMenuButton:hover {
+    background: var(--tg-panel-hover) !important;
 }
 
-.tg-wand:hover::before {
-    background-color: var(--tg-text-secondary);
+#nonQRFormItems > #extensionsMenuButton:hover::before {
+    background-color: var(--tg-text-secondary) !important;
 }
 
-/* The native options button remains the functional target but no longer
-   occupies a second visible slot on the left side of the composer. */
-#leftSendForm {
+/* ST ships the wand with inline style="display: none" and only reveals it
+   once an extension registers a menu item (showHideExtensionsMenu polls for
+   this every second).
+ *
+ * This rule is NOT redundant: the `display: grid !important` above would beat
+ * the inline declaration, so without it the paperclip would show up even when
+ * SillyTavern wants it hidden -- and clicking it would open an empty menu.
+ * Both spacings are matched because the inline value depends on whether it
+ * came from the template or from jQuery. */
+#nonQRFormItems > #extensionsMenuButton[style*='display: none'],
+#nonQRFormItems > #extensionsMenuButton[style*='display:none'] {
     display: none !important;
 }
 
 /* ── Send FAB ───────────────────────────────────────────────────────────── */
 
 #rightSendForm {
-    grid-column: 3 !important;
+    grid-column: 4 !important;
+    align-self: end !important;
     position: relative !important;
     display: grid !important;
     place-items: center !important;
