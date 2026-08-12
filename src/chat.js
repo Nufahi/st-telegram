@@ -195,6 +195,21 @@ function openCharacterPanel() {
     return openNativePanel('#rightNavHolder', 'right-nav-panel');
 }
 
+/* Where the currently open panel was opened from.
+ *
+ * 'drawer'  the user picked a section in the launcher, so Back belongs there
+ * 'chat'    the user tapped the header avatar, a message avatar or search,
+ *           and never saw the launcher -- popping it open on the way back is
+ *           an extra screen they did not ask for
+ *
+ * Without this the drawer slid open every time you closed a character card
+ * you had reached straight from the chat. */
+let panelOrigin = 'drawer';
+
+/* Set while openNativePanel drives a .drawer-toggle itself, so the launcher's
+   own click listener can tell that tap apart from a real one. */
+let openingPanelFromChat = false;
+
 /* Run a callback once a panel has actually opened.
  *
  * requestAnimationFrame is NOT usable here: openNativePanel defers its click
@@ -229,6 +244,10 @@ function whenPanelOpen(panelId, run, attempts = 12) {
  * Returns immediately; the panel exists but opens on the next tick. */
 function openNativePanel(drawerSelector, panelId) {
     const panel = document.getElementById(panelId);
+    /* Every caller of this helper is a chat-side entry point: the header
+       avatar, a message avatar or search. Record that so Back returns to the
+       chat instead of opening a launcher the user never went through. */
+    panelOrigin = 'chat';
     /* Close the launcher first so it is not left covering the panel. */
     toggleDrawer(false);
 
@@ -238,7 +257,13 @@ function openNativePanel(drawerSelector, panelId) {
         const toggle = document.querySelector(`${drawerSelector} > .drawer-toggle`)
             || document.querySelector(`${drawerSelector} .drawer-toggle`)
             || document.querySelector(`${drawerSelector} .drawer-icon`);
-        if (toggle instanceof HTMLElement) toggle.click();
+        if (!(toggle instanceof HTMLElement)) return;
+        openingPanelFromChat = true;
+        try {
+            toggle.click();
+        } finally {
+            openingPanelFromChat = false;
+        }
     }, 0);
 
     return panel;
@@ -698,16 +723,21 @@ function toggleDrawer(open) {
 }
 
 /* Close a native SillyTavern settings panel through its real toggle, then
-   reveal our section launcher. Keeping this in one helper prevents the two
-   drawer state machines from drifting apart on desktop. */
+   return to wherever the user actually came from. Keeping this in one helper
+   prevents the two drawer state machines from drifting apart on desktop. */
 function returnToDrawer(content = document.querySelector('#top-settings-holder .drawer-content.openDrawer')) {
+    const backToChat = panelOrigin === 'chat';
+    /* Consume it: the next panel is 'drawer' again unless someone says so. */
+    panelOrigin = 'drawer';
+
     if (!(content instanceof Element)) {
-        toggleDrawer(true);
+        toggleDrawer(!backToChat);
         return;
     }
 
     const icon = content.parentElement?.querySelector(':scope > .drawer-toggle > .drawer-icon');
     if (icon instanceof HTMLElement) icon.click();
+    if (backToChat) return;
     window.requestAnimationFrame(() => toggleDrawer(true));
 }
 
@@ -793,6 +823,19 @@ function ensureDrawerChrome() {
         if (!label) {
             label = el('span', 'tg-drawer-label');
             toggle.append(label);
+            /* Picking a section IN the launcher means Back belongs in the
+               launcher. Bound once, alongside the label we just created, so
+               it is not re-registered on every refresh pass.
+             *
+             * openNativePanel drives this same toggle programmatically, and
+             * without the guard that click would immediately overwrite the
+             * 'chat' origin it had just set. An explicit flag is used rather
+             * than event.isTrusted because it states the intent directly and
+             * can be exercised by a test, which synthetic clicks cannot do
+             * for isTrusted. */
+            toggle.addEventListener('click', () => {
+                if (!openingPanelFromChat) panelOrigin = 'drawer';
+            });
         }
 
         const cls = [...icon.classList].find((c) => DRAWER_LABELS[c]);
