@@ -67,9 +67,14 @@ html[data-tg-variant='night'] #options {
 /* ── Controls with no Telegram equivalent ───────────────────────────────── */
 
 /* Hotswap character strip, floating prompt, the "AI is generating" timer bar
-   and the rest of SillyTavern's desktop affordances. */
+   and the rest of SillyTavern's desktop affordances.
+ *
+ * #HotSwapWrapper is capitalised exactly as SillyTavern spells it. This rule
+ * previously read #hotswapWrapper and therefore never matched: ID selectors
+ * are case-sensitive, so the favourite-character strip stayed visible and its
+ * large round avatars hung below the drawer's section list. */
 #top-bar,
-#hotswapWrapper,
+#HotSwapWrapper,
 #rm_print_characters_pagination,
 .zoomed_avatar,
 #sheldheader,

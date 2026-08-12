@@ -612,13 +612,57 @@ function ensureDrawerChrome() {
     }
 }
 
+/* Which persona is active.
+ *
+ * getContext() does NOT expose it. The live value is the user_avatar module
+ * binding in scripts/personas.js, which the context bridge never re-exports.
+ * The previous code read context.userAvatar and context.user_avatar -- both
+ * permanently undefined, which is why the drawer showed a fallback letter
+ * instead of the persona's picture.
+ *
+ * SillyTavern does publish the value in the DOM, so we read it from there:
+ *   1. the persona list marks the active entry with .selected
+ *   2. failing that, any user message carries the same avatar in its <img>
+ * Both are what SillyTavern itself renders, so we cannot drift out of sync. */
+function currentPersonaAvatar() {
+    const selected = document.querySelector('#user_avatar_block .avatar-container.selected');
+    const id = selected?.getAttribute('data-avatar-id');
+    if (id) return id;
+    return null;
+}
+
+/* The persona picture as a URL. Preferred over the raw id because the message
+   list already holds a resolved, cache-correct src. */
+function currentPersonaAvatarUrl() {
+    const id = currentPersonaAvatar();
+    if (id) {
+        const context = getContext();
+        try {
+            const url = context?.getThumbnailUrl?.('persona', id);
+            if (url) return url;
+        } catch {
+            /* fall through to the DOM copy */
+        }
+        /* SillyTavern serves persona files from a path WITHOUT a leading
+           slash. The old code hardcoded '/User Avatars/...', which 404s when
+           SillyTavern is mounted under a sub-path. */
+        return `User Avatars/${encodeURIComponent(id)}`;
+    }
+
+    /* No persona panel rendered yet: reuse whatever the chat is showing for
+       the user's own messages. */
+    const fromChat = document.querySelector('#chat > .mes[is_user="true"] .avatar img');
+    const src = fromChat?.getAttribute('src');
+    return src || null;
+}
+
 function refreshDrawerIdentity() {
     const holder = document.getElementById('top-settings-holder');
     const head = holder?.querySelector(':scope > .tg-drawer-head');
     if (!head) return;
 
     const context = getContext();
-    const personaAvatar = context?.userAvatar || context?.user_avatar || null;
+    const personaAvatar = currentPersonaAvatar();
     const personas = context?.powerUserSettings?.personas
         || context?.power_user?.personas
         || context?.personas
@@ -636,15 +680,7 @@ function refreshDrawerIdentity() {
     const avatarBox = head.querySelector('.tg-drawer-avatar');
     const img = avatarBox?.querySelector('img');
     if (img && avatarBox) {
-        let avatar = null;
-        if (personaAvatar) {
-            try {
-                avatar = context.getThumbnailUrl?.('persona', personaAvatar)
-                    || `/User Avatars/${encodeURIComponent(personaAvatar)}`;
-            } catch {
-                avatar = `/User Avatars/${encodeURIComponent(personaAvatar)}`;
-            }
-        }
+        const avatar = currentPersonaAvatarUrl();
 
         if (avatar) {
             if (img.getAttribute('src') !== avatar) img.src = avatar;
