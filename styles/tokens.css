@@ -19,10 +19,9 @@
 /* ══ Metrics — shared by both variants ═══════════════════════════════════ */
 
 :root {
-    /* Telegram Android's action bar is 56dp; the composer is 48dp of content
-       plus padding. These two drive nearly every vertical offset. */
+    /* Telegram Android's action bar is 56dp; composer controls are 44dp. */
     --tg-header-height: 56px;
-    --tg-composer-height: 48px;
+    --tg-composer-height: 44px;
 
     /* The phone frame on desktop. 420px is a large-phone logical width, which
        is what Telegram's own layout is designed against. */

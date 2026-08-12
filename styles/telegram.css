@@ -13,11 +13,11 @@
  * under 60 KB.
  */
 
-@import url('./tokens.css');
+@import url('./tokens.css?v=0.1.2-compact-composer');
 @import url('./icons.css');
 @import url('./base.css');
 @import url('./chat.css');
 @import url('./header.css');
-@import url('./composer.css');
+@import url('./composer.css?v=0.1.2-compact-composer');
 @import url('./drawer.css');
 @import url('./frame.css');

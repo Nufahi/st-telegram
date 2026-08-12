@@ -456,16 +456,6 @@ function blockInlineDrawerAutoClose(event) {
     }
 }
 
-/* Close the drawer once a panel opens: in Telegram the drawer is a launcher,
-   it does not stay behind the screen it opened. */
-function closeDrawerOnPanelOpen(event) {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-    if (target.closest('#top-settings-holder .drawer-toggle')) {
-        window.setTimeout(() => toggleDrawer(false), 180);
-    }
-}
-
 /* ── Status bar clock ───────────────────────────────────────────────────── */
 
 function refreshClock() {
@@ -664,8 +654,6 @@ function start() {
     document.addEventListener('touchstart', blockDrawerAutoClose, true);
     document.addEventListener('mousedown', blockInlineDrawerAutoClose, true);
     document.addEventListener('touchstart', blockInlineDrawerAutoClose, true);
-    document.addEventListener('click', closeDrawerOnPanelOpen, true);
-
     document.getElementById('send_textarea')?.addEventListener('input', refreshFab);
 
     document.addEventListener('keydown', (event) => {
