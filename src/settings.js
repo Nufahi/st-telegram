@@ -61,6 +61,23 @@ function buildPanel() {
                 flex: 0 0 auto;
                 margin: 0;
             }
+            #${PANEL_ID} .tg-range-control {
+                flex: 0 0 auto;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 150px;
+            }
+            #${PANEL_ID} .tg-range-control input[type="range"] {
+                width: 112px;
+                margin: 0;
+            }
+            #${PANEL_ID} .tg-range-value {
+                width: 32px;
+                font-size: 13px;
+                text-align: right;
+                color: var(--tg-text-secondary, currentColor);
+            }
             #${PANEL_ID} .tg-note {
                 opacity: .65;
                 font-size: 12px;
@@ -108,6 +125,15 @@ function buildPanel() {
                     <select id="tg-accent">${accentOptions}</select>
                 </div>
                 <div class="tg-row">
+                    <label for="tg-message-font-size">Message text size
+                        <small>Changes only the text inside message bubbles.</small>
+                    </label>
+                    <div class="tg-range-control">
+                        <input type="range" id="tg-message-font-size" min="14" max="22" step="1">
+                        <output class="tg-range-value" for="tg-message-font-size"></output>
+                    </div>
+                </div>
+                <div class="tg-row">
                     <label for="tg-wallpaper">Chat wallpaper</label>
                     <input type="checkbox" id="tg-wallpaper">
                 </div>
@@ -131,6 +157,8 @@ function wire(panel) {
     const dayStart = $('#tg-day-start');
     const nightStart = $('#tg-night-start');
     const accent = $('#tg-accent');
+    const messageFontSize = $('#tg-message-font-size');
+    const messageFontSizeValue = panel.querySelector('.tg-range-value');
     const wallpaper = $('#tg-wallpaper');
     const motion = $('#tg-motion');
 
@@ -141,6 +169,7 @@ function wire(panel) {
     dayStart.value = tgReadRaw('theme-day-start', '07:00');
     nightStart.value = tgReadRaw('theme-night-start', '19:00');
     accent.value = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
+    messageFontSize.value = String(Math.min(22, Math.max(14, Number(tgReadRaw('message-font-size', '16')) || 16)));
     wallpaper.checked = tgRead('wallpaper', ['on', 'off'], 'on') === 'on';
     motion.checked = tgRead('motion', ['on', 'off'], 'on') === 'on';
 
@@ -190,6 +219,16 @@ function wire(panel) {
         tgWrite('accent', accent.value);
         tgRoot.dataset.tgAccent = accent.value;
     });
+
+    const applyMessageFontSize = () => {
+        const size = Math.min(22, Math.max(14, Number(messageFontSize.value) || 16));
+        messageFontSize.value = String(size);
+        messageFontSizeValue.value = `${size}px`;
+        tgRoot.style.setProperty('--tg-font-body-size', `${size}px`);
+        tgWrite('message-font-size', String(size));
+    };
+    messageFontSize.addEventListener('input', applyMessageFontSize);
+    applyMessageFontSize();
 
     wallpaper.addEventListener('change', () => {
         tgWrite('wallpaper', wallpaper.checked ? 'on' : 'off');

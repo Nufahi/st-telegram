@@ -29,15 +29,16 @@
     --tg-frame-radius: 0px;
 
     /* Bubbles */
-    --tg-bubble-radius: 12px;
+    /* Telegram Android defaults to a 17dp message bubble radius. */
+    --tg-bubble-radius: 17px;
     /* The small radius on the corner nearest the tail. */
     --tg-bubble-radius-tail: 6px;
     --tg-bubble-max-width: 82%;
     --tg-bubble-gap: 2px;
     /* Gap between two groups from different senders. */
     --tg-bubble-group-gap: 10px;
-    --tg-bubble-pad-y: 6px;
-    --tg-bubble-pad-x: 9px;
+    --tg-bubble-pad-y: 8px;
+    --tg-bubble-pad-x: 12px;
     --tg-tail-width: 9px;
 
     /* Avatars */

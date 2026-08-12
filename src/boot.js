@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.2';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.2-desktop-layout';
+const TG_STYLE_BUILD = '0.1.2-message-font-size';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the
@@ -144,6 +144,10 @@ tgRoot.dataset.tgMotion = tgRead('motion', ['on', 'off'], 'on');
 tgRoot.dataset.tgFrame = 'off';
 /* Telegram's tiled doodle wallpaper behind the chat. */
 tgRoot.dataset.tgWallpaper = tgRead('wallpaper', ['on', 'off'], 'on');
+/* Telegram exposes message text size independently from the rest of the UI.
+   Clamp stored values so a malformed localStorage entry cannot break chat. */
+const tgMessageFontSize = Math.min(22, Math.max(14, Number(tgReadRaw('message-font-size', '16')) || 16));
+tgRoot.style.setProperty('--tg-font-body-size', `${tgMessageFontSize}px`);
 
 /* ── Stylesheet ──────────────────────────────────────────────────────────── */
 
