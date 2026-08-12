@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.2';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.2-compact-composer';
+const TG_STYLE_BUILD = '0.1.2-desktop-layout';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the
@@ -139,8 +139,9 @@ tgRoot.dataset.tgVariant = TG_VARIANT;
 tgRoot.dataset.tgAccent = TG_ACCENT;
 tgRoot.dataset.tgEnabled = TG_ENABLED ? 'on' : 'off';
 tgRoot.dataset.tgMotion = tgRead('motion', ['on', 'off'], 'on');
-/* The phone frame on desktop. 'on' centres the UI in a phone-shaped column. */
-tgRoot.dataset.tgFrame = tgRead('frame', ['on', 'off'], 'on');
+/* This is an application theme, not a phone mockup. Keep the old data flag
+   pinned off so existing frame.css rules remain harmless during migration. */
+tgRoot.dataset.tgFrame = 'off';
 /* Telegram's tiled doodle wallpaper behind the chat. */
 tgRoot.dataset.tgWallpaper = tgRead('wallpaper', ['on', 'off'], 'on');
 

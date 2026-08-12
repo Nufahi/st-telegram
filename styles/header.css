@@ -68,7 +68,9 @@
     background: rgba(255, 255, 255, .20);
 }
 
-.tg-header-back { --tg-btn-icon: var(--tg-icon-back); }
+/* This control opens the navigation drawer on the main chat screen, so it
+   uses Telegram's hamburger rather than a misleading back arrow. */
+.tg-header-back { --tg-btn-icon: var(--tg-icon-menu); }
 .tg-header-search { --tg-btn-icon: var(--tg-icon-search); }
 .tg-header-menu { --tg-btn-icon: var(--tg-icon-dots); }
 

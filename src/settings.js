@@ -108,12 +108,6 @@ function buildPanel() {
                     <select id="tg-accent">${accentOptions}</select>
                 </div>
                 <div class="tg-row">
-                    <label for="tg-frame">Phone frame on desktop
-                        <small>Centres the app in a phone-shaped bezel.</small>
-                    </label>
-                    <input type="checkbox" id="tg-frame">
-                </div>
-                <div class="tg-row">
                     <label for="tg-wallpaper">Chat wallpaper</label>
                     <input type="checkbox" id="tg-wallpaper">
                 </div>
@@ -137,7 +131,6 @@ function wire(panel) {
     const dayStart = $('#tg-day-start');
     const nightStart = $('#tg-night-start');
     const accent = $('#tg-accent');
-    const frame = $('#tg-frame');
     const wallpaper = $('#tg-wallpaper');
     const motion = $('#tg-motion');
 
@@ -148,7 +141,6 @@ function wire(panel) {
     dayStart.value = tgReadRaw('theme-day-start', '07:00');
     nightStart.value = tgReadRaw('theme-night-start', '19:00');
     accent.value = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
-    frame.checked = tgRead('frame', ['on', 'off'], 'on') === 'on';
     wallpaper.checked = tgRead('wallpaper', ['on', 'off'], 'on') === 'on';
     motion.checked = tgRead('motion', ['on', 'off'], 'on') === 'on';
 
@@ -197,11 +189,6 @@ function wire(panel) {
     accent.addEventListener('change', () => {
         tgWrite('accent', accent.value);
         tgRoot.dataset.tgAccent = accent.value;
-    });
-
-    frame.addEventListener('change', () => {
-        tgWrite('frame', frame.checked ? 'on' : 'off');
-        tgRoot.dataset.tgFrame = frame.checked ? 'on' : 'off';
     });
 
     wallpaper.addEventListener('change', () => {

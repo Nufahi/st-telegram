@@ -10,10 +10,8 @@
  *     > #send_textarea
  *     > #rightSendForm (#mes_stop, #send_but, ...)
  *
- * #form_sheld is a flex item of #sheld, NOT position:fixed. Fixed positioning
- * here breaks inside the desktop phone frame, whose transform creates a new
- * containing block -- the composer would anchor to the viewport instead of
- * the frame and float outside it.
+ * #form_sheld is a flex item of #sheld, NOT position:fixed, so it remains
+ * attached to the chat layout and grows upward with multiline input.
  */
 
 #form_sheld {
@@ -56,6 +54,14 @@
     margin: 0 !important;
     background: none !important;
     border: 0 !important;
+}
+
+@media (min-width: 701px) {
+    #nonQRFormItems {
+        width: min(100%, 960px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 }
 
 /* The first three cells are one Telegram-style input pill. Keeping the FAB

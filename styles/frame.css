@@ -167,14 +167,16 @@
         max-width: calc(var(--tg-frame-width) - 40px) !important;
     }
 
-    /* Frame off: fill the viewport but keep a readable column, the way
-       Telegram Web behaves when the window is narrow. */
+    /* Desktop app layout: use the available viewport. Readability is handled
+       by the centred message stream and composer rather than a phone shell. */
     html[data-tg-frame='off'] #sheld {
-        left: 50% !important;
-        right: auto !important;
-        margin-left: calc(min(560px, 100vw) / -2) !important;
-        width: min(560px, 100vw) !important;
-        max-width: min(560px, 100vw) !important;
+        inset: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: 100dvh !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
     }
 }
 

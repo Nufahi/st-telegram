@@ -139,6 +139,16 @@ html[data-tg-variant='night'][data-tg-wallpaper='on'] #chat::before {
     font-size: var(--tg-font-body-size) !important;
 }
 
+/* On desktop the application fills the window, but the conversation remains
+   a readable central stream instead of stretching bubbles across the screen. */
+@media (min-width: 701px) {
+    #chat > .mes {
+        width: min(100%, 960px) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
 /* Last message in a sender-group gets the wider gap below it. */
 #chat > .mes.tg-group-end {
     margin-bottom: var(--tg-bubble-group-gap) !important;
