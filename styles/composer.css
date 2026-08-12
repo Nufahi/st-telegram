@@ -182,12 +182,15 @@
    SillyTavern's own file input. */
 .tg-attach {
     grid-column: 3 !important;
-    align-self: center;
+    align-self: end;
     display: grid;
     place-items: center;
     width: 40px;
     height: 40px;
-    margin: 0 2px 0 0;
+    /* The visual control is 40px while Telegram's composer row is 44px.
+       A 2px bottom inset centres it against the 44px Mic/Send control while
+       keeping both anchored to the bottom of a multiline composer. */
+    margin: 0 2px 2px 0;
     border: 0;
     padding: 0;
     background: none;

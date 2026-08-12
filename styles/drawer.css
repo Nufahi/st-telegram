@@ -288,10 +288,9 @@ body.tg-drawer-open #top-settings-holder {
     height: 24px !important;
     background-color: var(--tg-text-secondary) !important;
     background-image: none !important;
-    /* Default: no mask, so an unmapped drawer shows nothing rather than a
-       stale icon inherited from the rule above it. */
-    -webkit-mask: none !important;
-    mask: none !important;
+    /* Stable fallback for new or third-party SillyTavern drawers. */
+    -webkit-mask: var(--tg-icon-section) center / contain no-repeat !important;
+    mask: var(--tg-icon-section) center / contain no-repeat !important;
 }
 
 #top-settings-holder > .drawer > .drawer-toggle > .drawer-icon::after {
@@ -345,8 +344,8 @@ body.tg-drawer-open #top-settings-holder {
 
 #top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-face-smile::before,
 #top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-user-tie::before {
-    -webkit-mask: var(--tg-icon-user) center / contain no-repeat !important;
-    mask: var(--tg-icon-user) center / contain no-repeat !important;
+    -webkit-mask: var(--tg-icon-persona) center / contain no-repeat !important;
+    mask: var(--tg-icon-persona) center / contain no-repeat !important;
 }
 
 #top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-address-card::before,
@@ -508,6 +507,15 @@ body.tg-drawer-open .tg-scrim {
 }
 
 /* Inside the panels, give SillyTavern's controls Material shapes. */
+#top-settings-holder .drawer-content label,
+#top-settings-holder .drawer-content legend,
+#top-settings-holder .drawer-content .text_pole,
+#top-settings-holder .drawer-content .range-block-title {
+    color: var(--tg-text) !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
 #top-settings-holder .drawer-content .inline-drawer-toggle,
 #top-settings-holder .drawer-content .inline-drawer-header {
     background: none !important;
@@ -535,6 +543,10 @@ body.tg-drawer-open .tg-scrim {
 }
 
 #top-settings-holder .drawer-content input[type='text'],
+#top-settings-holder .drawer-content input[type='search'],
+#top-settings-holder .drawer-content input[type='email'],
+#top-settings-holder .drawer-content input[type='url'],
+#top-settings-holder .drawer-content input[type='time'],
 #top-settings-holder .drawer-content input[type='number'],
 #top-settings-holder .drawer-content input[type='password'],
 #top-settings-holder .drawer-content select,
@@ -542,7 +554,39 @@ body.tg-drawer-open .tg-scrim {
     background: var(--tg-panel-sunken) !important;
     color: var(--tg-text) !important;
     border: 1px solid var(--tg-divider-strong) !important;
-    border-radius: 6px !important;
+    border-radius: 8px !important;
     box-shadow: none !important;
+    outline: none !important;
+    font-family: var(--tg-font-ui) !important;
     font-size: 14px !important;
+    text-shadow: none !important;
+}
+
+#top-settings-holder .drawer-content input::placeholder,
+#top-settings-holder .drawer-content textarea::placeholder {
+    color: var(--tg-text-hint) !important;
+    opacity: 1 !important;
+}
+
+#top-settings-holder .drawer-content input:focus,
+#top-settings-holder .drawer-content select:focus,
+#top-settings-holder .drawer-content textarea:focus {
+    border-color: var(--tg-accent) !important;
+    box-shadow: 0 0 0 1px var(--tg-accent) !important;
+}
+
+#top-settings-holder .drawer-content input:disabled,
+#top-settings-holder .drawer-content select:disabled,
+#top-settings-holder .drawer-content textarea:disabled,
+#top-settings-holder .drawer-content button:disabled {
+    opacity: .55 !important;
+}
+
+#top-settings-holder .drawer-content input[type='checkbox'] {
+    accent-color: var(--tg-accent) !important;
+}
+
+#top-settings-holder .drawer-content input[type='range'] {
+    accent-color: var(--tg-accent) !important;
+    filter: none !important;
 }

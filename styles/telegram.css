@@ -14,10 +14,10 @@
  */
 
 @import url('./tokens.css?v=0.1.2-modern-day-header');
-@import url('./icons.css?v=0.1.2-emergency-disable');
+@import url('./icons.css?v=0.1.2-drawer-icon-fallback');
 @import url('./base.css?v=0.1.2-surface-isolation');
 @import url('./chat.css?v=0.1.2-desktop-layout');
 @import url('./header.css?v=0.1.2-safe-disable');
-@import url('./composer.css?v=0.1.2-panel-back-attach-align');
-@import url('./drawer.css?v=0.1.2-panel-back-attach-align');
+@import url('./composer.css?v=0.1.2-attach-bottom-align');
+@import url('./drawer.css?v=0.1.2-drawer-icon-fallback');
 @import url('./frame.css?v=0.1.2-desktop-layout');
