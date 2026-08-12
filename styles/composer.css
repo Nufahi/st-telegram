@@ -64,10 +64,19 @@
      * Column 3 is auto, not a fixed 40px: SillyTavern hides the wand until an
      * extension registers a menu item, and an auto track collapses to zero
      * instead of leaving a 40px hole inside the pill. */
-    grid-template-columns: 40px minmax(0, 1fr) auto 48px !important;
+    grid-template-columns: var(--tg-composer-button) minmax(0, 1fr) auto 48px !important;
     align-items: end !important;
     gap: 0 !important;
-    padding: 4px 4px 4px 4px !important;
+    /* A thin strip, as on Telegram. The row is --tg-composer-height and the
+       gutter adds only a few pixels around it.
+     *
+     * Every child is pinned to grid-row 1 explicitly. Auto-placement is not
+       enough: in the DOM the wand precedes the textarea, so once the wand
+       claims column 3 the cursor cannot move back to column 2 and the
+       textarea is pushed onto a SECOND ROW -- which is what made the strip
+       114px tall instead of 50px. */
+    grid-template-rows: auto !important;
+    padding: var(--tg-composer-gutter) !important;
     margin: 0 !important;
     background: none !important;
     border: 0 !important;
@@ -95,40 +104,57 @@
     pointer-events: none;
 }
 
-#leftSendForm,
+/* Lift the real controls above the pill drawn by ::before, which would
+   otherwise cover them and swallow their clicks.
+ *
+ * These are the buttons themselves, not #leftSendForm: that element is
+ * display: contents, so it generates no box and position/z-index on it would
+ * be ignored -- the emoji button would sit under the pill and stop
+ * responding. */
+#nonQRFormItems #options_button,
+#nonQRFormItems #extensionsMenuButton,
 #send_textarea,
-#nonQRFormItems > #extensionsMenuButton,
 #rightSendForm {
     position: relative !important;
     z-index: 1;
 }
 
-/* ── Emoji button (SillyTavern's options/hamburger) ─────────────────────── */
+/* ── The left container is dissolved ────────────────────────────────────── */
 
-/* This is the button a previous release lost by hiding #leftSendForm wholesale
-   in order to move the attach control. Hiding the container took the working
-   emoji button with it, so the left end of the composer went blank. The
-   container stays visible; only its wand child is relocated. */
+/* #leftSendForm holds BOTH native buttons: #options_button and, once
+   extensions load, #extensionsMenuButton. It is a flex box with SillyTavern's
+   own flex-wrap: wrap.
+ *
+ * That combination caused the bug this rule fixes. Placing the container in a
+ * single 40px grid column left no room for two 40px buttons side by side, so
+ * the wand wrapped onto a second line: the paperclip rendered UNDER the emoji
+ * and the composer grew to roughly double height. The visible symptoms --
+ * "the clip is at the bottom" and "the bar is too tall" -- were one bug.
+ *
+ * display: contents removes the container's own box from the layout while its
+ * children stay in the tree, so both buttons become direct grid items of
+ * #nonQRFormItems and can be placed in separate columns. No DOM surgery is
+ * needed, and because Popper positions menus from getBoundingClientRect, both
+ * popups still open exactly where their icon is drawn. */
 #leftSendForm {
-    grid-column: 1 !important;
-    align-self: end !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    height: var(--tg-composer-height) !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: none !important;
-    border: 0 !important;
-    gap: 0 !important;
+    display: contents !important;
 }
 
-#leftSendForm > div,
-#leftSendForm > #options_button {
+/* Shared circular-control shape for both native buttons. */
+#nonQRFormItems #options_button,
+#nonQRFormItems #extensionsMenuButton {
+    grid-row: 1 !important;
+    align-self: end !important;
     display: grid !important;
     place-items: center !important;
-    width: 40px !important;
-    height: 40px !important;
+    width: var(--tg-composer-button) !important;
+    height: var(--tg-composer-button) !important;
+    /* 40px control inside the 44px row: a 2px bottom inset puts its centre on
+       the same line as the 44px Send circle, and keeps it there when the
+       textarea grows to multiple lines. */
+    margin: 0 0 2px 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
     border-radius: 50% !important;
     color: transparent !important;
     font-size: 0 !important;
@@ -137,12 +163,25 @@
     filter: none !important;
     text-shadow: none !important;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#nonQRFormItems #options_button {
+    grid-column: 1 !important;
+}
+
+/* Any further control an extension drops into the left container shares the
+   emoji cell rather than silently auto-placing into the text column. */
+#leftSendForm > div:not(#options_button):not(#extensionsMenuButton) {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    align-self: end !important;
 }
 
 /* Replace the Font Awesome glyph rather than removing its class: the class
    carries SillyTavern's own click binding. We override the ::before that
    Font Awesome draws into, which kills the glyph and paints ours in one go. */
-#leftSendForm > #options_button::before {
+#nonQRFormItems #options_button::before {
     content: '' !important;
     display: block !important;
     width: 24px !important;
@@ -152,11 +191,11 @@
     mask: var(--tg-icon-emoji) center / contain no-repeat !important;
 }
 
-#leftSendForm > #options_button:hover::before {
+#nonQRFormItems #options_button:hover::before {
     background-color: var(--tg-text-secondary) !important;
 }
 
-#leftSendForm > #options_button:hover {
+#nonQRFormItems #options_button:hover {
     background: var(--tg-panel-hover) !important;
 }
 
@@ -164,6 +203,7 @@
 
 #send_textarea {
     grid-column: 2 !important;
+    grid-row: 1 !important;
     background: none !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -173,15 +213,28 @@
     /* Never below 16px: iOS zooms the whole page when a focused input has a
        smaller font size, and there is no way to zoom back out. */
     font-size: 16px !important;
-    line-height: 1.3 !important;
+    line-height: 20px !important;
     box-sizing: border-box !important;
-    padding: 11px 4px !important;
+    /* (44 - 20) / 2 = 12px, so a single line sits centred in the row without
+       needing a min-height taller than the row itself. Horizontal padding is
+       small because the emoji and clip buttons already inset the text. */
+    padding: 12px 2px !important;
     margin: 0 !important;
+    /* 20px of line + 24px of padding is exactly the 44px row, so a single
+       line fills the strip precisely.
+     *
+     * `height: auto` is load-bearing. SillyTavern's own rule sets a fixed
+       height AND field-sizing: content, so the box grows with its content
+       automatically. Leaving ST's fixed height in place made the field 64px
+       -- taller than the 44px row -- and that alone padded the whole strip.
+       auto lets field-sizing do the growing from the min-height floor. */
+    height: auto !important;
     min-height: var(--tg-composer-height) !important;
+    field-sizing: content;
     max-height: 40dvh !important;
     resize: none !important;
     overflow-y: auto !important;
-    align-self: center !important;
+    align-self: end !important;
 }
 
 #send_textarea::placeholder {
@@ -200,40 +253,22 @@
 
 /* ── Attach / wand button ───────────────────────────────────────────────── */
 
-/* The NATIVE #extensionsMenuButton, moved into column 3 by src/chat.js and
-   repainted as Telegram's paperclip. It keeps its own click handler and its
-   Popper anchor, so #extensionsMenu opens from the icon the user pressed.
+/* The NATIVE #extensionsMenuButton, repainted as Telegram's paperclip and
+   placed in column 3 -- immediately left of Send, sharing its baseline.
  *
- * It is styled here at the #nonQRFormItems level rather than by id alone so
- * the rules only apply once the node has actually been relocated; while it
- * still sits in #leftSendForm the block above governs it. */
-#nonQRFormItems > #extensionsMenuButton {
+ * It stays a child of #leftSendForm in the DOM; only the grid places it here.
+ * That is why the container is display: contents. Keeping SillyTavern's own
+ * tree intact means its click handler, its Popper anchor and its show/hide
+ * polling all keep working untouched.
+ *
+ * Its box and colours come from the shared rule above; this only positions
+ * it and overrides ST's `order: 4`, which is meaningless in our grid. */
+#nonQRFormItems #extensionsMenuButton {
     grid-column: 3 !important;
-    /* Bottom-aligned so it stays level with Send when the field grows. */
-    align-self: end !important;
-    display: grid !important;
-    place-items: center !important;
-    width: 40px !important;
-    height: 40px !important;
-    /* The control is 40px inside a 44px row; a 2px inset optically centres it
-       against the 44px Send/Mic circle. */
-    margin: 0 0 2px 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    background: none !important;
-    /* Kill the Font Awesome glyph without dropping the class that carries the
-       binding: zero the text and paint our mask into ::before. */
-    color: transparent !important;
-    font-size: 0 !important;
-    opacity: 1 !important;
-    filter: none !important;
-    text-shadow: none !important;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    order: 0 !important;
 }
 
-#nonQRFormItems > #extensionsMenuButton::before {
+#nonQRFormItems #extensionsMenuButton::before {
     content: '' !important;
     display: block !important;
     width: 24px !important;
@@ -243,11 +278,11 @@
     mask: var(--tg-icon-attach) center / contain no-repeat !important;
 }
 
-#nonQRFormItems > #extensionsMenuButton:hover {
+#nonQRFormItems #extensionsMenuButton:hover {
     background: var(--tg-panel-hover) !important;
 }
 
-#nonQRFormItems > #extensionsMenuButton:hover::before {
+#nonQRFormItems #extensionsMenuButton:hover::before {
     background-color: var(--tg-text-secondary) !important;
 }
 
@@ -260,8 +295,8 @@
  * SillyTavern wants it hidden -- and clicking it would open an empty menu.
  * Both spacings are matched because the inline value depends on whether it
  * came from the template or from jQuery. */
-#nonQRFormItems > #extensionsMenuButton[style*='display: none'],
-#nonQRFormItems > #extensionsMenuButton[style*='display:none'] {
+#nonQRFormItems #extensionsMenuButton[style*='display: none'],
+#nonQRFormItems #extensionsMenuButton[style*='display:none'] {
     display: none !important;
 }
 
@@ -269,6 +304,7 @@
 
 #rightSendForm {
     grid-column: 4 !important;
+    grid-row: 1 !important;
     align-self: end !important;
     position: relative !important;
     display: grid !important;

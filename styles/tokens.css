@@ -23,6 +23,15 @@
     --tg-header-height: 56px;
     --tg-composer-height: 44px;
 
+    /* The composer's circular controls. 40dp of touch target inside the 44dp
+       row, which is what makes the icons look inset rather than crowded. */
+    --tg-composer-button: 40px;
+
+    /* Breathing room around the input row. Telegram's composer is a thin
+       strip: the pill is the row height and the strip adds almost nothing.
+       Anything larger reads as a desktop chat client, not as Telegram. */
+    --tg-composer-gutter: 3px;
+
     /* The phone frame on desktop. 420px is a large-phone logical width, which
        is what Telegram's own layout is designed against. */
     --tg-frame-width: 420px;
