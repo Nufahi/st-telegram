@@ -363,7 +363,10 @@ function ensureDrawerChrome() {
         head.innerHTML = `
             <div class="tg-drawer-head-top">
                 <div class="tg-drawer-avatar"><img alt=""></div>
-                <button type="button" class="tg-drawer-theme" aria-label="Toggle theme"></button>
+                <div class="tg-drawer-actions">
+                    <button type="button" class="tg-drawer-theme" aria-label="Toggle theme"></button>
+                    <button type="button" class="tg-drawer-disable" aria-label="Disable Telegram theme" title="Disable Telegram theme"></button>
+                </div>
             </div>
             <div class="tg-drawer-name"></div>
             <div class="tg-drawer-sub"></div>`;
@@ -374,6 +377,18 @@ function ensureDrawerChrome() {
                scheduler would immediately undo the user's choice. */
             tgWrite('theme-auto', 'manual');
             tgApplyVariant(next);
+        });
+        head.querySelector('.tg-drawer-disable')?.addEventListener('click', async () => {
+            const button = head.querySelector('.tg-drawer-disable');
+            if (button) button.disabled = true;
+            try {
+                const { restorePreviousTheme } = await import('./theme.js');
+                restorePreviousTheme();
+            } catch (error) {
+                console.warn('[ST Telegram] emergency disable could not restore settings:', error);
+            }
+            tgWrite('enabled', 'off');
+            window.setTimeout(() => window.location.reload(), 600);
         });
         holder.prepend(head);
     }

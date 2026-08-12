@@ -149,7 +149,14 @@ body.tg-drawer-open #top-settings-holder {
     display: block;
 }
 
-.tg-drawer-theme {
+.tg-drawer-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.tg-drawer-theme,
+.tg-drawer-disable {
     display: grid;
     place-items: center;
     width: 38px;
@@ -162,7 +169,8 @@ body.tg-drawer-open #top-settings-holder {
     -webkit-tap-highlight-color: transparent;
 }
 
-.tg-drawer-theme::before {
+.tg-drawer-theme::before,
+.tg-drawer-disable::before {
     content: '';
     width: 22px;
     height: 22px;
@@ -171,8 +179,19 @@ body.tg-drawer-open #top-settings-holder {
     mask: var(--tg-icon-moon) center / contain no-repeat;
 }
 
-.tg-drawer-theme:hover {
+.tg-drawer-disable::before {
+    -webkit-mask: var(--tg-icon-power) center / contain no-repeat;
+    mask: var(--tg-icon-power) center / contain no-repeat;
+}
+
+.tg-drawer-theme:hover,
+.tg-drawer-disable:hover {
     background: rgba(255, 255, 255, .14);
+}
+
+.tg-drawer-disable:disabled {
+    opacity: .55;
+    cursor: wait;
 }
 
 .tg-drawer-name {
