@@ -94,7 +94,7 @@ html[data-tg-enabled='on'] body #loader::before {
 }
 
 html[data-tg-enabled='on'] body #loader::after {
-    content: 'СиллиТелеграм\A by Kamoi' !important;
+    content: 'SillyTelegram\A by Kamoi' !important;
     display: block !important;
     visibility: visible !important;
     color: var(--tg-text) !important;
