@@ -376,17 +376,14 @@ function refreshHeader() {
 
 /* ── Message grouping, tails, date pills ────────────────────────────────── */
 
-/* Telegram groups nearby messages from the same sender on the same day: only
-   the first carries the name, only the last carries the avatar and the tail.
+/* Telegram groups consecutive messages from the same sender on the same day:
+   only the first carries the name, only the last carries the avatar and tail.
    We tag rows with .tg-group-start / .tg-group-end and let CSS do the rest. */
-const MESSAGE_GROUP_WINDOW_MS = 5 * 60 * 1000;
-
 function messagesShareGroup(current, adjacent) {
     if (!current || !adjacent || current.key !== adjacent.key) return false;
     if (!current.date && !adjacent.date) return true;
     if (!current.date || !adjacent.date) return false;
-    return dateKey(current.date) === dateKey(adjacent.date)
-        && Math.abs(current.date.getTime() - adjacent.date.getTime()) <= MESSAGE_GROUP_WINDOW_MS;
+    return dateKey(current.date) === dateKey(adjacent.date);
 }
 
 function refreshMessages() {
@@ -615,6 +612,20 @@ function makeActionButton(action) {
     const button = el('button', `tg-message-action tg-action-${action.kind}`);
     button.type = 'button';
     button.innerHTML = `<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label"></span>`;
+    button.setAttribute('aria-label', action.label);
+    button.title = action.label;
+    if (action.kind === 'more' && action.button instanceof Element) {
+        const icon = button.querySelector('.tg-action-icon');
+        const nativeIcon = action.button.matches('.fa, .fas, .far, .fab, [class*="fa-"]')
+            ? action.button
+            : action.button.querySelector('.fa, .fas, .far, .fab, [class*="fa-"]');
+        const nativeIconClasses = nativeIcon
+            ? [...nativeIcon.classList].filter(name => name === 'fa' || name.startsWith('fa-'))
+            : [];
+        if (nativeIconClasses.length) {
+            icon.classList.add('tg-action-native-icon', ...nativeIconClasses);
+        }
+    }
     button.querySelector('.tg-action-label').textContent = action.label;
     button.addEventListener('click', () => {
         closeActionSheet();
@@ -643,9 +654,12 @@ function openActionSheet(row) {
         moreButton.type = 'button';
         moreButton.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">More</span>';
         moreButton.addEventListener('click', () => {
+            panel.dataset.tgActionPage = 'more';
             panel.replaceChildren(...actions.more.map(makeActionButton));
             const back = el('button', 'tg-message-action tg-action-back');
             back.type = 'button';
+            back.setAttribute('aria-label', 'Back');
+            back.title = 'Back';
             back.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">Back</span>';
             back.addEventListener('click', () => openActionSheet(row));
             panel.prepend(back);

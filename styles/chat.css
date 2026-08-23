@@ -694,6 +694,38 @@ html[data-tg-message-actions='on'] #chat > .mes .swipeRightBlock {
     opacity: 1 !important;
 }
 
+.tg-action-icon.tg-action-native-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    -webkit-mask: none !important;
+    mask: none !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 18px !important;
+}
+
+.tg-message-action-sheet[data-tg-action-page='more'] {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+    gap: 4px;
+}
+
+.tg-message-action-sheet[data-tg-action-page='more'] .tg-message-action {
+    justify-content: center;
+    min-height: 48px;
+    padding: 0;
+}
+
+.tg-message-action-sheet[data-tg-action-page='more'] .tg-action-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 .tg-action-copy { --tg-action-icon: var(--tg-icon-copy); }
 .tg-action-edit { --tg-action-icon: var(--tg-icon-edit); }
 .tg-action-delete { --tg-action-icon: var(--tg-icon-delete); color: var(--tg-danger); }
@@ -835,40 +867,18 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
 }
 
 #chat > .mes .mes_reasoning_actions {
-    align-items: center !important;
-    gap: 2px !important;
-    margin: 0 !important;
-}
-
-#chat > .mes .mes_reasoning_actions :is(.mes_button, .menu_button) {
-    width: 24px !important;
-    min-width: 24px !important;
-    height: 24px !important;
-    min-height: 24px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    background: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    color: var(--tg-text-hint) !important;
-    font-size: 11px !important;
-    opacity: 1 !important;
-}
-
-#chat > .mes .mes_reasoning_actions :is(.mes_button, .menu_button):hover {
-    background: var(--tg-panel-hover) !important;
-    color: var(--tg-accent) !important;
+    display: none !important;
 }
 
 #chat > .mes .mes_reasoning_arrow {
+    display: inline-block !important;
     position: static !important;
     width: auto !important;
     height: auto !important;
     margin: 0 !important;
     color: inherit !important;
     font-size: 9px !important;
+    visibility: visible !important;
     opacity: .8 !important;
     transform: rotate(0deg) !important;
 }

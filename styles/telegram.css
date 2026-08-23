@@ -15,9 +15,9 @@
 
 @import url('./tokens.css?v=0.1.2-slim-composer');
 @import url('./icons.css?v=0.1.2-message-action-sheet');
-@import url('./base.css?v=0.1.2-theme-isolation');
-@import url('./chat.css?v=0.1.2-actions-reasoning');
+@import url('./base.css?v=0.1.2-panel-isolation');
+@import url('./chat.css?v=0.1.2-native-action-icons');
 @import url('./header.css?v=0.1.2-theme-isolation');
 @import url('./composer.css?v=0.1.2-theme-isolation');
-@import url('./drawer.css?v=0.1.2-theme-isolation');
+@import url('./drawer.css?v=0.1.2-panel-isolation');
 @import url('./frame.css?v=0.1.2-desktop-layout');

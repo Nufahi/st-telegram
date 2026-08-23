@@ -569,6 +569,129 @@ body.tg-drawer-open .tg-scrim {
 }
 
 /* Inside the panels, give SillyTavern's controls Material shapes. */
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(h1, h2, h3, h4, h5, h6) {
+    background: transparent !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(h1, h2, h3) {
+    font-weight: 500 !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(h4, h5, h6) {
+    font-weight: 600 !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(p, li, dt, dd) {
+    color: var(--tg-text) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(
+    small,
+    .slider_hint,
+    .toggle-description,
+    .wi-enter-footer-text
+) {
+    color: var(--tg-text-secondary) !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content hr {
+    height: 1px !important;
+    min-height: 1px !important;
+    margin: 10px 0 !important;
+    border: 0 !important;
+    background: var(--tg-divider) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content fieldset {
+    border: 1px solid var(--tg-divider) !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content fieldset > legend {
+    background: var(--tg-panel) !important;
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(
+    .inline-drawer,
+    .inline-drawer-content,
+    .settingsSectionWrap,
+    .standoutHeader
+) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .standoutHeader ~ .inline-drawer-content {
+    background: var(--tg-panel-sunken) !important;
+    border-color: var(--tg-divider) !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .info-block {
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(table, th, td) {
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content th {
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content td {
+    background-color: transparent !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content :is(code, pre) {
+    background: var(--tg-code-bg) !important;
+    background-image: none !important;
+    color: var(--tg-code-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: none !important;
+    font-family: var(--tg-font-mono) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content a {
+    color: var(--tg-link) !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
 #top-settings-holder .drawer-content label,
 #top-settings-holder .drawer-content legend,
 #top-settings-holder .drawer-content .text_pole,
@@ -602,6 +725,27 @@ body.tg-drawer-open .tg-scrim {
 
 #top-settings-holder .drawer-content .menu_button:hover {
     background: var(--tg-accent-pressed) !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content button:not(
+    .menu_button,
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands,
+    .tg-panel-back
+) {
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider-strong) !important;
+    box-shadow: none !important;
+    filter: none !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
 }
 
 #top-settings-holder .drawer-content input[type='text'],

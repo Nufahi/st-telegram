@@ -137,6 +137,78 @@ html[data-tg-variant='night'] #options {
     line-height: 1.4 !important;
 }
 
+html[data-tg-enabled='on'] .popup :is(h1, h2, h3, h4, h5, h6, p, label, legend, li, dt, dd) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: none !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .popup :is(small, .slider_hint, .toggle-description) {
+    color: var(--tg-text-secondary) !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .popup hr {
+    height: 1px !important;
+    min-height: 1px !important;
+    margin: 10px 0 !important;
+    border: 0 !important;
+    background: var(--tg-divider) !important;
+    background-image: none !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] .popup fieldset {
+    border: 1px solid var(--tg-divider) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .popup :is(.inline-drawer, .inline-drawer-content, .settingsSectionWrap, .standoutHeader) {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] .popup .info-block {
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] .popup :is(table, th, td) {
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .popup th {
+    background: var(--tg-panel-sunken) !important;
+}
+
+html[data-tg-enabled='on'] .popup :is(code, pre) {
+    background: var(--tg-code-bg) !important;
+    color: var(--tg-code-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: none !important;
+    font-family: var(--tg-font-mono) !important;
+    text-shadow: none !important;
+}
+
 .popup .popup-controls {
     gap: 8px !important;
     padding: 4px 8px 8px !important;
@@ -163,7 +235,18 @@ html[data-tg-variant='night'] #options {
     opacity: 1 !important;
 }
 
-.popup input:not([type='checkbox']):not([type='radio']):not([type='range']),
+.popup input[type='text'],
+.popup input[type='search'],
+.popup input[type='email'],
+.popup input[type='url'],
+.popup input[type='tel'],
+.popup input[type='date'],
+.popup input[type='datetime-local'],
+.popup input[type='month'],
+.popup input[type='week'],
+.popup input[type='time'],
+.popup input[type='number'],
+.popup input[type='password'],
 .popup select,
 .popup textarea {
     background: var(--tg-panel-sunken) !important;
@@ -189,6 +272,28 @@ html[data-tg-variant='night'] #options {
 .popup .popup-button-cancel:hover,
 .popup .menu_button:hover {
     background: var(--tg-accent-soft) !important;
+}
+
+html[data-tg-enabled='on'] .popup button:not(
+    .popup-button-ok,
+    .popup-button-cancel,
+    .menu_button,
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+) {
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider-strong) !important;
+    box-shadow: none !important;
+    filter: none !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
 }
 
 .popup_background,
