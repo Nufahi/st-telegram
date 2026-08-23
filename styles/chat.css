@@ -264,8 +264,6 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
 
 #chat > .mes[is_user='false'].tg-group-end .mes_block::after {
     left: calc(var(--tg-tail-width) * -1 + 1px);
-    clip-path: path('M9 13C4 13 1 9 0 13L9 13Z');
-    /* Fallback for engines without path(): a simple corner wedge. */
     clip-path: polygon(100% 0, 100% 100%, 0 100%);
     border-bottom-left-radius: 10px;
 }
@@ -278,6 +276,18 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     right: calc(var(--tg-tail-width) * -1 + 1px);
     clip-path: polygon(0 0, 0 100%, 100% 100%);
     border-bottom-right-radius: 10px;
+}
+
+/* A curved Telegram tail where path() is supported. Keep the polygons above
+   as a functional fallback instead of accidentally overriding the curves. */
+@supports (clip-path: path('M0 0L1 1Z')) {
+    #chat > .mes[is_user='false'].tg-group-end .mes_block::after {
+        clip-path: path('M9 0V13H0C4 11 7 7 9 0Z');
+    }
+
+    #chat > .mes[is_user='true'].tg-group-end .mes_block::after {
+        clip-path: path('M0 0V13H9C5 11 2 7 0 0Z');
+    }
 }
 
 /* ── Sender name ────────────────────────────────────────────────────────── */
