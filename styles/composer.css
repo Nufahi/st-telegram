@@ -76,25 +76,16 @@ div#send_form.compact {
 
 #nonQRFormItems {
     position: relative !important;
-    display: grid !important;
-    /* emoji | textarea | paperclip | send-fab. The first three sit inside the
-       rounded input pill; the FAB is the separate circle to its right.
-     *
-     * Column 3 is auto, not a fixed 40px: SillyTavern hides the wand until an
-     * extension registers a menu item, and an auto track collapses to zero
-     * instead of leaving a 40px hole inside the pill. */
-    grid-template-columns: var(--tg-composer-button) minmax(0, 1fr) auto 48px !important;
+    display: flex !important;
+    /* Natural flow is important here. Extensions add an arbitrary number of
+       controls to either native button cluster, so a fixed four-column grid
+       makes them overlap or wrap onto a second row. The order rules below
+       produce:
+       [left extensions][emoji][text][right extensions][clip][send]. */
     align-items: end !important;
     gap: 0 !important;
     /* A thin strip, as on Telegram. The row is --tg-composer-height and the
-       gutter adds only a few pixels around it.
-     *
-     * Every child is pinned to grid-row 1 explicitly. Auto-placement is not
-       enough: in the DOM the wand precedes the textarea, so once the wand
-       claims column 3 the cursor cannot move back to column 2 and the
-       textarea is pushed onto a SECOND ROW -- which is what made the strip
-       114px tall instead of 50px. */
-    grid-template-rows: auto !important;
+       gutter adds only a few pixels around it. */
     padding: 0 var(--tg-composer-gutter) var(--tg-composer-gutter) !important;
     margin: 0 !important;
     background: none !important;
@@ -109,13 +100,13 @@ div#send_form.compact {
     }
 }
 
-/* Columns 1-3 (emoji, text, paperclip) are one Telegram-style input pill.
-   Keeping the FAB outside this surface makes the row compact without
-   changing ST's DOM. */
+/* Every control except the Send FAB belongs to one Telegram-style input pill.
+   Absolute insets keep the FAB outside while the left and right extension
+   groups can grow naturally. */
 #nonQRFormItems::before {
     content: '';
-    grid-area: 1 / 1 / 2 / 4;
-    align-self: stretch;
+    position: absolute;
+    inset: 0 calc(var(--tg-composer-gutter) + 48px) var(--tg-composer-gutter) var(--tg-composer-gutter);
     z-index: 0;
     background: var(--tg-panel);
     background-image: none !important;
@@ -127,17 +118,12 @@ div#send_form.compact {
     opacity: 1 !important;
 }
 
-/* Lift the real controls above the pill drawn by ::before, which would
-   otherwise cover them and swallow their clicks.
- *
- * These are the buttons themselves, not #leftSendForm: that element is
- * display: contents, so it generates no box and position/z-index on it would
- * be ignored -- the emoji button would sit under the pill and stop
- * responding. */
-#nonQRFormItems #options_button,
-#nonQRFormItems #extensionsMenuButton,
+/* Lift the real controls above the pill drawn by ::before. Both native
+   wrappers are display:contents and therefore cannot provide this stacking
+   context themselves. */
+#leftSendForm > *,
 #send_textarea,
-#rightSendForm {
+#rightSendForm > * {
     position: relative !important;
     z-index: 1;
 }
@@ -155,8 +141,8 @@ div#send_form.compact {
  * "the clip is at the bottom" and "the bar is too tall" -- were one bug.
  *
  * display: contents removes the container's own box from the layout while its
- * children stay in the tree, so both buttons become direct grid items of
- * #nonQRFormItems and can be placed in separate columns. No DOM surgery is
+ * children stay in the tree, so both buttons become direct flex items of
+ * #nonQRFormItems and can be placed independently. No DOM surgery is
  * needed, and because Popper positions menus from getBoundingClientRect, both
  * popups still open exactly where their icon is drawn. */
 #leftSendForm {
@@ -166,7 +152,6 @@ div#send_form.compact {
 /* Shared circular-control shape for both native buttons. */
 #nonQRFormItems #options_button,
 #nonQRFormItems #extensionsMenuButton {
-    grid-row: 1 !important;
     align-self: end !important;
     display: grid !important;
     place-items: center !important;
@@ -196,15 +181,32 @@ div#send_form.compact {
 }
 
 #nonQRFormItems #options_button {
-    grid-column: 1 !important;
+    order: 2 !important;
+    flex: 0 0 var(--tg-composer-button) !important;
 }
 
-/* Any further control an extension drops into the left container shares the
-   emoji cell rather than silently auto-placing into the text column. */
-#leftSendForm > div:not(#options_button):not(#extensionsMenuButton) {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
+/* StoryForge and similar extensions insert their controls immediately before
+   #options_button. Keep every such control in that same order, but let the
+   pill gain one compact button-width for each instead of stacking them. */
+#leftSendForm > :not(#options_button):not(#extensionsMenuButton) {
+    order: 1 !important;
+    flex: 0 0 var(--tg-composer-button) !important;
+    width: var(--tg-composer-button) !important;
+    height: var(--tg-composer-button) !important;
     align-self: end !important;
+    margin: 0 0 2px !important;
+    padding: 0 !important;
+    color: var(--tg-text-hint) !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+#leftSendForm > :not(#options_button):not(#extensionsMenuButton):hover {
+    color: var(--tg-text-secondary) !important;
+    background: var(--tg-panel-hover) !important;
 }
 
 /* Replace the Font Awesome glyph rather than removing its class: the class
@@ -231,8 +233,10 @@ div#send_form.compact {
 /* ── Text field ─────────────────────────────────────────────────────────── */
 
 #send_textarea {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
+    order: 3 !important;
+    flex: 1 1 0 !important;
+    width: auto !important;
+    min-width: 0 !important;
     background: none !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -283,18 +287,18 @@ div#send_form.compact {
 /* ── Attach / wand button ───────────────────────────────────────────────── */
 
 /* The NATIVE #extensionsMenuButton, repainted as Telegram's paperclip and
-   placed in column 3 -- immediately left of Send, sharing its baseline.
+   placed immediately left of Send, sharing its baseline.
  *
- * It stays a child of #leftSendForm in the DOM; only the grid places it here.
+ * It stays a child of #leftSendForm in the DOM; flex order places it here.
  * That is why the container is display: contents. Keeping SillyTavern's own
  * tree intact means its click handler, its Popper anchor and its show/hide
  * polling all keep working untouched.
  *
  * Its box and colours come from the shared rule above; this only positions
- * it and overrides ST's `order: 4`, which is meaningless in our grid. */
+ * it and overrides ST's native order. */
 #nonQRFormItems #extensionsMenuButton {
-    grid-column: 3 !important;
-    order: 0 !important;
+    order: 5 !important;
+    flex: 0 0 var(--tg-composer-button) !important;
 }
 
 #nonQRFormItems #extensionsMenuButton::before {
@@ -332,26 +336,39 @@ div#send_form.compact {
 /* ── Send FAB ───────────────────────────────────────────────────────────── */
 
 #rightSendForm {
-    grid-column: 4 !important;
-    grid-row: 1 !important;
-    align-self: end !important;
-    position: relative !important;
-    display: grid !important;
-    place-items: center !important;
-    width: 48px !important;
-    height: var(--tg-composer-height) !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: none !important;
-    border: 0 !important;
-    gap: 0 !important;
+    display: contents !important;
 }
 
-/* Everything in this cluster stacks in the same cell so the mic/send/stop
-   swap is a crossfade in place rather than a reflow. */
+/* ACE Draft Upgrader and other right-side extensions insert controls before
+   #send_but. display:contents above exposes those nodes to the composer's
+   flex flow; order 4 deliberately puts them before the native paperclip. */
+#rightSendForm > :not(#send_but):not(#mes_stop):not(.tg-mic):not(.stscript_btn):not(#mes_impersonate):not(#mes_continue) {
+    order: 4 !important;
+    flex: 0 0 var(--tg-composer-button) !important;
+    align-self: end !important;
+    width: var(--tg-composer-button) !important;
+    height: var(--tg-composer-button) !important;
+    margin: 0 0 2px !important;
+    padding: 0 !important;
+    color: var(--tg-text-hint) !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+#rightSendForm > :not(#send_but):not(#mes_stop):not(.tg-mic):not(.stscript_btn):not(#mes_impersonate):not(#mes_continue):hover {
+    color: var(--tg-text-secondary) !important;
+    background: var(--tg-panel-hover) !important;
+}
+
+/* Mic, Send and Stop share one order slot; only one is displayed at a time. */
 #rightSendForm > #send_but,
 #rightSendForm > #mes_stop {
-    grid-area: 1 / 1 !important;
+    order: 6 !important;
+    flex: 0 0 44px !important;
+    align-self: end !important;
     display: grid !important;
     place-items: center !important;
     width: 44px !important;
@@ -359,6 +376,7 @@ div#send_form.compact {
     appearance: none !important;
     -webkit-appearance: none !important;
     border: 0 !important;
+    margin: 0 2px 0 2px !important;
     padding: 0 !important;
     border-radius: 50% !important;
     background: var(--tg-accent) !important;
@@ -415,11 +433,14 @@ div#send_form.compact {
    only the glyph changes when the textarea gains content. */
 .tg-mic {
     --tg-fab-icon: var(--tg-icon-mic);
-    grid-area: 1 / 1 !important;
+    order: 6 !important;
+    flex: 0 0 44px !important;
+    align-self: end !important;
     display: grid !important;
     place-items: center !important;
     width: 44px !important;
     height: 44px !important;
+    margin: 0 2px 0 2px !important;
     border: 0;
     padding: 0;
     border-radius: 50% !important;
