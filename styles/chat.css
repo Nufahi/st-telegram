@@ -31,7 +31,7 @@ body {
 }
 
 #sheld {
-    background: var(--tg-chat-bg) !important;
+    background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
     /* The chat column owns the full viewport; the phone frame (frame.css)
@@ -55,15 +55,14 @@ body {
 }
 
 /* ── Wallpaper ─────────────────────────────────────────────────────────────
-   Telegram's default Day wallpaper is a tiled doodle pattern. We approximate
-   it with layered radial gradients rather than shipping a bitmap: it scales
-   to any DPI, costs no request, and tints itself from the palette. */
+   The image is owned by SillyTavern's native background picker. This layer
+   only applies a light Telegram palette tint so bubbles remain readable. */
 
 #chat {
     position: relative !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
-    background: var(--tg-chat-bg) !important;
+    background: transparent !important;
     background-image: none !important;
     backdrop-filter: none !important;
     overflow-y: auto !important;
@@ -82,25 +81,11 @@ html[data-tg-wallpaper='on'] #chat::before {
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: .5;
-    background-color: var(--tg-chat-bg);
-    background-image:
-        radial-gradient(circle at 12% 18%, rgba(0, 0, 0, .05) 0 8px, transparent 9px),
-        radial-gradient(circle at 62% 34%, rgba(0, 0, 0, .04) 0 11px, transparent 12px),
-        radial-gradient(circle at 84% 12%, rgba(0, 0, 0, .05) 0 6px, transparent 7px),
-        radial-gradient(circle at 32% 72%, rgba(0, 0, 0, .04) 0 13px, transparent 14px),
-        radial-gradient(circle at 78% 84%, rgba(0, 0, 0, .05) 0 9px, transparent 10px);
-    background-size: 220px 220px;
+    background: rgba(213, 219, 223, .20);
 }
 
 html[data-tg-variant='night'][data-tg-wallpaper='on'] #chat::before {
-    opacity: .55;
-    background-image:
-        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .035) 0 8px, transparent 9px),
-        radial-gradient(circle at 62% 34%, rgba(255, 255, 255, .028) 0 11px, transparent 12px),
-        radial-gradient(circle at 84% 12%, rgba(255, 255, 255, .035) 0 6px, transparent 7px),
-        radial-gradient(circle at 32% 72%, rgba(255, 255, 255, .028) 0 13px, transparent 14px),
-        radial-gradient(circle at 78% 84%, rgba(255, 255, 255, .035) 0 9px, transparent 10px);
+    background: rgba(14, 22, 33, .38);
 }
 
 /* Telegram's scrollbar is an overlay thumb with no track. */

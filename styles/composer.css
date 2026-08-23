@@ -379,8 +379,8 @@
     height: 16px !important;
 }
 
-/* Empty-field mic placeholder. Telegram keeps this resting action neutral;
-   the bright accent circle appears only when there is text to send. */
+/* Empty-field mic placeholder. Keep the FAB visually consistent with Send:
+   only the glyph changes when the textarea gains content. */
 .tg-mic {
     --tg-fab-icon: var(--tg-icon-mic);
     grid-area: 1 / 1 !important;
@@ -391,9 +391,10 @@
     border: 0;
     padding: 0;
     border-radius: 50% !important;
-    background: var(--tg-panel) !important;
-    box-shadow: none !important;
+    background: var(--tg-accent) !important;
+    box-shadow: var(--tg-shadow-fab) !important;
     cursor: default;
+    transition: background var(--tg-dur-short) var(--tg-ease);
 }
 
 .tg-mic::before {
@@ -401,13 +402,13 @@
     display: block;
     width: 22px;
     height: 22px;
-    background-color: var(--tg-text-secondary);
+    background-color: var(--tg-text-on-accent);
     -webkit-mask: var(--tg-icon-mic) center / contain no-repeat;
     mask: var(--tg-icon-mic) center / contain no-repeat;
 }
 
 .tg-mic:hover {
-    background: var(--tg-panel-hover) !important;
+    background: var(--tg-accent-pressed) !important;
 }
 
 /* Only one FAB is visible at a time. src/chat.js sets these flags on <html>

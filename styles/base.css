@@ -58,12 +58,6 @@ html[data-tg-variant='night'] #options {
     color-scheme: dark;
 }
 
-#background,
-#bg1,
-#bg_custom {
-    display: none !important;
-}
-
 /* ── Controls with no Telegram equivalent ───────────────────────────────── */
 
 /* Hotswap character strip, floating prompt, the "AI is generating" timer bar
