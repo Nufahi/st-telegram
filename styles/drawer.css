@@ -513,9 +513,11 @@ body.tg-drawer-open .tg-scrim {
     display: none !important;
 }
 
-/* Panels already fill the viewport, so pinning the AI configuration drawer is
-   meaningless in this layout. */
-#top-settings-holder .drawer-content #lm_button_panel_pin_div {
+/* Panels already fill the viewport, so their native pin controls are
+   meaningless. Removing the character pin also lets the list button occupy
+   the first slot beside the favorite-character strip. */
+#top-settings-holder .drawer-content #lm_button_panel_pin_div,
+#top-settings-holder .drawer-content #rm_button_panel_pin_div {
     display: none !important;
 }
 
@@ -537,7 +539,7 @@ html[data-tg-enabled='on'] #CharListButtonAndHotSwaps {
 
 html[data-tg-enabled='on'] #CharListButtonAndHotSwaps > .flexFlowColumn {
     flex: 0 0 auto !important;
-    gap: 2px !important;
+    gap: 0 !important;
 }
 
 html[data-tg-enabled='on'] #CharListButtonAndHotSwaps #HotSwapWrapper {
