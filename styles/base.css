@@ -56,7 +56,7 @@ html[data-tg-enabled='on'] body #loader {
     border: 0 !important;
     border-radius: 0 !important;
     outline: 0 !important;
-    background: var(--tg-panel) !important;
+    background: var(--tg-accent) !important;
     background-image: none !important;
     box-shadow: none !important;
     color: var(--tg-text) !important;
@@ -77,18 +77,18 @@ html[data-tg-enabled='on'] body #loader > * {
 html[data-tg-enabled='on'] body #loader::before {
     content: '' !important;
     display: block !important;
-    flex: 0 0 82px !important;
-    width: 82px !important;
-    height: 82px !important;
+    flex: 0 0 72px !important;
+    width: 72px !important;
+    height: 72px !important;
     border: 0 !important;
-    border-radius: 50% !important;
-    background-color: #3390ec !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='m9.78 18.65.28-4.23 7.68-6.92c.34-.3-.07-.45-.52-.18L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2 1.93c-.23.23-.42.42-.82.42z'/%3E%3C/svg%3E") !important;
     background-position: 52% 50% !important;
     background-repeat: no-repeat !important;
-    background-size: 44px 44px !important;
-    box-shadow: 0 5px 16px rgba(51, 144, 236, .30) !important;
-    filter: none !important;
+    background-size: 64px 64px !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 5px 12px rgba(0, 0, 0, .18)) !important;
     opacity: 1 !important;
     animation: tg-loader-breathe 1.8s ease-in-out infinite !important;
 }
@@ -97,7 +97,7 @@ html[data-tg-enabled='on'] body #loader::after {
     content: 'SillyTelegram\A by Kamoi' !important;
     display: block !important;
     visibility: visible !important;
-    color: var(--tg-text) !important;
+    color: #fff !important;
     font: 500 20px/1.55 var(--tg-font-ui) !important;
     letter-spacing: .01em !important;
     white-space: pre !important;
@@ -126,10 +126,10 @@ html[data-tg-enabled='on'] body #loader::after {
 
 @media (max-width: 500px) {
     html[data-tg-enabled='on'] body #loader::before {
-        flex-basis: 72px !important;
-        width: 72px !important;
-        height: 72px !important;
-        background-size: 38px 38px !important;
+        flex-basis: 64px !important;
+        width: 64px !important;
+        height: 64px !important;
+        background-size: 56px 56px !important;
     }
 
     html[data-tg-enabled='on'] body #loader::after {
@@ -189,15 +189,9 @@ html[data-tg-variant='night'] #options {
 
 /* ── Controls with no Telegram equivalent ───────────────────────────────── */
 
-/* Hotswap character strip, floating prompt, the "AI is generating" timer bar
-   and the rest of SillyTavern's desktop affordances.
- *
- * #HotSwapWrapper is capitalised exactly as SillyTavern spells it. This rule
- * previously read #hotswapWrapper and therefore never matched: ID selectors
- * are case-sensitive, so the favourite-character strip stayed visible and its
- * large round avatars hung below the drawer's section list. */
+/* Floating prompt, the "AI is generating" timer bar and the rest of
+   SillyTavern's desktop affordances without a Telegram equivalent. */
 #top-bar,
-#HotSwapWrapper,
 #rm_print_characters_pagination,
 .zoomed_avatar,
 #sheldheader,

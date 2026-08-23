@@ -513,6 +513,104 @@ body.tg-drawer-open .tg-scrim {
     display: none !important;
 }
 
+/* Panels already fill the viewport, so pinning the AI configuration drawer is
+   meaningless in this layout. */
+#top-settings-holder .drawer-content #lm_button_panel_pin_div {
+    display: none !important;
+}
+
+/* Favorite characters act as Telegram-style stories at the top of Character
+   Management. SillyTavern still creates and owns every avatar and click. */
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 0 10px !important;
+    padding: 6px 4px 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps > .flexFlowColumn {
+    flex: 0 0 auto !important;
+    gap: 2px !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps #HotSwapWrapper {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-wrap: nowrap !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 3px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: var(--tg-scrollbar) transparent !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar {
+    flex: 0 0 48px !important;
+    width: 48px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    padding: 2px !important;
+    border: 2px solid var(--tg-online) !important;
+    border-radius: 50% !important;
+    outline: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    filter: none !important;
+    object-fit: cover !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar:hover {
+    border-color: var(--tg-online) !important;
+    box-shadow: 0 0 0 2px rgba(77, 205, 94, .18) !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline small {
+    color: var(--tg-text-secondary) !important;
+    font: 13px/1.35 var(--tg-font-ui) !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps #rm_button_characters {
+    color: var(--tg-accent) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
 /* Explicit navigation back to the section launcher. Native drawer panels do
    not consistently expose a close control, especially in desktop layouts. */
 #top-settings-holder .drawer-content > .tg-panel-back {
@@ -727,8 +825,67 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content a {
     background: var(--tg-accent-pressed) !important;
 }
 
+/* Inline links that open another native drawer appear in welcome/help copy.
+   Keep their icon and label, but make the control independent of the active
+   SillyTavern preset instead of inheriting its gradients and text effects. */
+html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opener.inline-flex {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    min-height: 36px !important;
+    margin: 2px 3px !important;
+    padding: 7px 12px !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    outline: 0 !important;
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font: 500 14px/1.25 var(--tg-font-ui) !important;
+    letter-spacing: normal !important;
+    text-decoration: none !important;
+    text-shadow: none !important;
+    text-transform: none !important;
+}
+
+html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opener.inline-flex > :is(i, .fa, .fas, .far, .fa-solid, .fa-regular) {
+    flex: 0 0 auto !important;
+    color: var(--tg-accent) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opener.inline-flex > span {
+    color: inherit !important;
+    font: inherit !important;
+}
+
+html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opener.inline-flex:hover {
+    border-color: var(--tg-accent) !important;
+    background: var(--tg-accent-soft) !important;
+}
+
+html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opener.inline-flex:active {
+    background: var(--tg-panel-pressed) !important;
+}
+
+html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opener.inline-flex:focus-visible {
+    border-color: var(--tg-accent) !important;
+    box-shadow: 0 0 0 2px var(--tg-accent-soft) !important;
+}
+
 html[data-tg-enabled='on'] #top-settings-holder .drawer-content button:not(
     .menu_button,
+    .sdc-preset-swatch,
+    .sdc-eyedropper-btn,
+    .sdc-reset-btn,
     .fa,
     .fas,
     .far,
@@ -746,6 +903,104 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content button:not(
     filter: none !important;
     font-family: var(--tg-font-ui) !important;
     text-shadow: none !important;
+}
+
+/* SillyTavern Palette Talk: theme only the control chrome. Preset and custom
+   colours remain owned by the extension and must never be replaced. */
+html[data-tg-enabled='on'] .drawer-content .sdc-inline-color-row {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 7px !important;
+    padding: 7px 8px !important;
+    border: 1px solid var(--tg-divider) !important;
+    border-radius: 10px !important;
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-preset-swatches {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-preset-swatch {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border: 2px solid transparent !important;
+    border-radius: 50% !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .24) !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-preset-swatch.selected {
+    border-color: var(--tg-panel) !important;
+    box-shadow: 0 0 0 2px var(--tg-accent), 0 1px 3px rgba(0, 0, 0, .24) !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-preset-swatch:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-color-divider {
+    background: var(--tg-divider-strong) !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-custom-color-wrapper {
+    border-color: transparent !important;
+    background: transparent !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-custom-color-wrapper.selected {
+    border-color: var(--tg-accent) !important;
+    background: var(--tg-accent-soft) !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content :is(.sdc-eyedropper-btn, .sdc-reset-btn) {
+    border: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text-secondary) !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content :is(.sdc-eyedropper-btn, .sdc-reset-btn):hover {
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-eyedropper-btn-active {
+    color: var(--tg-accent) !important;
+    box-shadow: 0 0 0 2px var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-custom-picker-wrapper {
+    overflow: hidden !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 5px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .drawer-content .sdc-custom-picker-wrapper input[type='color'] {
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    opacity: 1 !important;
 }
 
 #top-settings-holder .drawer-content input[type='text'],
@@ -810,6 +1065,187 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content button:not(
 #top-settings-holder .drawer-content input[type='range'] {
     accent-color: var(--tg-accent) !important;
     filter: none !important;
+}
+
+/* Chat Completion tabs use a plain wrapper whose children otherwise retain
+   the active Tavern theme. Render it as a Telegram segmented control. */
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    gap: 4px !important;
+    margin: 8px 0 !important;
+    padding: 4px !important;
+    border: 1px solid var(--tg-divider) !important;
+    border-radius: 12px !important;
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(button, a, .menu_button) {
+    flex: 1 1 120px !important;
+    min-height: 36px !important;
+    margin: 0 !important;
+    padding: 7px 10px !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text-secondary) !important;
+    filter: none !important;
+    font: 500 14px/1.25 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(button, a, .menu_button):hover {
+    background: var(--tg-panel-hover) !important;
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(.active, .selected, [aria-selected='true']) {
+    background: var(--tg-panel) !important;
+    color: var(--tg-accent) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .12) !important;
+}
+
+html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(button, a, .menu_button):focus-visible {
+    box-shadow: inset 0 0 0 2px var(--tg-accent) !important;
+}
+
+/* Prompt Manager list: retain native grid, sorting and visibility classes,
+   but replace all preset-dependent paint with Telegram surfaces. */
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list {
+    gap: 6px !important;
+    margin: 8px 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: var(--tg-text) !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list li {
+    margin: 0 !important;
+    border: 1px solid var(--tg-divider) !important;
+    border-radius: 10px !important;
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list li.completion_prompt_manager_list_head {
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list li.completion_prompt_manager_prompt {
+    min-height: 46px !important;
+    padding: 8px 10px !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list li.completion_prompt_manager_prompt:hover {
+    border-color: var(--tg-divider-strong) !important;
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager :is(
+    .completion_prompt_manager_header,
+    .completion_prompt_manager_footer
+) {
+    color: var(--tg-text-secondary) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_error {
+    border: 1px solid var(--tg-danger) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-danger) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt_name,
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt_name .prompt-manager-inspect-action {
+    min-width: 0 !important;
+    color: var(--tg-text) !important;
+    text-decoration: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt_name .prompt-manager-inspect-action:hover {
+    color: var(--tg-accent) !important;
+    text-decoration: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list :is(
+    .prompt_manager_prompt_tokens,
+    .completion_prompt_manager_prompt_disabled .completion_prompt_manager_prompt_name,
+    .completion_prompt_manager_prompt_disabled .completion_prompt_manager_prompt_name .prompt-manager-inspect-action
+) {
+    color: var(--tg-text-secondary) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt_disabled {
+    border-color: var(--tg-divider) !important;
+    background: transparent !important;
+    opacity: .62 !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt span span span,
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt_name .fa-solid {
+    color: var(--tg-text-secondary) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt_manager_prompt_controls {
+    align-items: center !important;
+    gap: 2px !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt_manager_prompt_controls > span {
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin: 0 !important;
+    border-radius: 50% !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt_manager_prompt_controls > span:hover {
+    background: var(--tg-accent-soft) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt:not(.completion_prompt_manager_prompt_disabled) .prompt-manager-toggle-action,
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt_name .fa-solid.prompt-manager-overridden {
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt-manager-detach-action {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .drag-handle {
+    color: var(--tg-text-hint) !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_list_separator hr {
+    background: var(--tg-divider) !important;
+    background-image: none !important;
 }
 
 /* The extension's own panel must look identical no matter which ST preset is

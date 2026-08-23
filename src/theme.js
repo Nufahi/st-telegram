@@ -47,7 +47,7 @@ const THEME_VALUES = {
     message_token_count_enabled: true,
     hideChatAvatars_enabled: false,
     expand_message_actions: false,
-    hotswap_enabled: false,
+    hotswap_enabled: true,
     toastr_position: 'toast-bottom-center',
     reduced_motion: false,
 };
