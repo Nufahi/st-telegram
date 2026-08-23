@@ -60,6 +60,8 @@ body {
 
 #chat {
     position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
     flex: 1 1 auto !important;
     min-height: 0 !important;
     background: transparent !important;
