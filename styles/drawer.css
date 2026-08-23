@@ -543,8 +543,10 @@ html[data-tg-enabled='on'] #CharListButtonAndHotSwaps > .flexFlowColumn {
 html[data-tg-enabled='on'] #CharListButtonAndHotSwaps #HotSwapWrapper {
     display: flex !important;
     flex: 1 1 auto !important;
+    align-items: center !important;
     justify-content: flex-start !important;
     min-width: 0 !important;
+    min-height: 54px !important;
     margin: 0 !important;
     overflow: hidden !important;
 }
@@ -568,7 +570,12 @@ html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline {
 html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar {
     flex: 0 0 48px !important;
     width: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
     height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    aspect-ratio: 1 / 1 !important;
     margin: 0 !important;
     padding: 2px !important;
     border: 2px solid var(--tg-online) !important;
@@ -583,13 +590,24 @@ html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .a
 html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar img {
     display: block !important;
     width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
     height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
     border: 0 !important;
     border-radius: 50% !important;
     box-shadow: none !important;
     filter: none !important;
     object-fit: cover !important;
     opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar.avatar_collage {
+    flex-basis: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
 }
 
 html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar:hover {

@@ -448,6 +448,12 @@ html[data-tg-enabled='on'] #chat mark.highlight {
     letter-spacing: normal !important;
 }
 
+/* SillyTavern keeps mutually exclusive menu variants in the same popup and
+   switches them with .displayNone. Do not let our flex reset reveal both. */
+#options .options-content a.displayNone {
+    display: none !important;
+}
+
 #options .options-content a:hover {
     background: var(--tg-panel-hover) !important;
 }
