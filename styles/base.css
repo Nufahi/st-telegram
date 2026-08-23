@@ -52,6 +52,32 @@ body {
     color-scheme: light;
 }
 
+/* Keep dimensions stable even when the active ST theme uses content-box or
+   decorates pseudo-elements. This is intentionally limited to UI surfaces
+   controlled by the extension rather than resetting third-party popups. */
+#sheld,
+#sheld *,
+#sheld *::before,
+#sheld *::after,
+#top-settings-holder,
+#top-settings-holder *,
+#top-settings-holder *::before,
+#top-settings-holder *::after,
+#options,
+#options *,
+#options *::before,
+#options *::after,
+#extensionsMenu,
+#extensionsMenu *,
+#extensionsMenu *::before,
+#extensionsMenu *::after,
+.tg-message-action-layer,
+.tg-message-action-layer *,
+.tg-message-action-layer *::before,
+.tg-message-action-layer *::after {
+    box-sizing: border-box;
+}
+
 html[data-tg-variant='night'] #sheld,
 html[data-tg-variant='night'] #top-settings-holder .drawer-content,
 html[data-tg-variant='night'] #options {
@@ -119,7 +145,10 @@ html[data-tg-variant='night'] #options {
 .popup .popup-button-ok,
 .popup .popup-button-cancel,
 .popup .menu_button {
+    appearance: none !important;
+    -webkit-appearance: none !important;
     background: none !important;
+    background-image: none !important;
     color: var(--tg-accent) !important;
     border: 0 !important;
     border-radius: 6px !important;
@@ -130,6 +159,30 @@ html[data-tg-variant='night'] #options {
     letter-spacing: .3px !important;
     padding: 9px 14px !important;
     min-width: 0 !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+.popup input:not([type='checkbox']):not([type='radio']):not([type='range']),
+.popup select,
+.popup textarea {
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    filter: none !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+.popup input:focus,
+.popup select:focus,
+.popup textarea:focus {
+    border-color: var(--tg-accent) !important;
+    box-shadow: 0 0 0 1px var(--tg-accent) !important;
+    outline: none !important;
 }
 
 .popup .popup-button-ok:hover,

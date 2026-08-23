@@ -217,6 +217,11 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     aspect-ratio: 1 / 1 !important;
     object-fit: cover !important;
     border-radius: 50% !important;
+    max-width: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 /* ── Bubble ─────────────────────────────────────────────────────────────── */
@@ -411,6 +416,44 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     color: var(--tg-text) !important;
 }
 
+#chat > .mes .mes_text :is(h1, h2, h3, h4, h5, h6, ul, ol, li, strong, b, s, del) {
+    color: inherit !important;
+    text-shadow: none !important;
+}
+
+#chat > .mes .mes_text table {
+    max-width: 100% !important;
+    border-collapse: collapse !important;
+    color: inherit !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+#chat > .mes .mes_text :is(th, td) {
+    color: inherit !important;
+    background: transparent !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+}
+
+#chat > .mes .mes_text hr {
+    border: 0 !important;
+    border-top: 1px solid var(--tg-divider-strong) !important;
+    box-shadow: none !important;
+}
+
+#chat > .mes .mes_text mark {
+    background: var(--tg-accent-soft) !important;
+    color: inherit !important;
+}
+
+#chat > .mes .mes_text :is(img, video) {
+    max-width: 100% !important;
+    height: auto !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
 /* ── Timestamp and delivery ticks ───────────────────────────────────────── */
 
 /* Telegram puts the time in the bubble's bottom-right corner and lets the
@@ -476,20 +519,48 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     mask: var(--tg-icon-check-double) center / contain no-repeat;
 }
 
-/* Hide SillyTavern's message-ID chip and token counter inside the bubble.
-   They are debug affordances with no Telegram equivalent; the settings panel
-   can bring them back. */
-#chat > .mes .mesIDDisplay,
-#chat > .mes .tokenCounterDisplay,
-#chat > .mes .mes_timer {
+/* ST's native message diagnostics are moved here by chat.js. They remain the
+   source of truth; this row only gives them a compact home inside the bubble,
+   away from Telegram's time and delivery ticks in the lower-right corner. */
+#chat > .mes .tg-message-meta {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 3px !important;
+    min-height: 0 !important;
+    margin: 5px 0 0 !important;
+    padding: 0 var(--tg-meta-width, 42px) 0 0 !important;
+    color: var(--tg-text-hint) !important;
+    font-family: var(--tg-font-ui) !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+}
+
+#chat > .mes .tg-message-meta:not(:has(> :not(:empty))) {
     display: none !important;
 }
 
-html[data-tg-debug='on'] #chat > .mes .mesIDDisplay {
-    display: inline-block !important;
-    font-size: 10px !important;
-    color: var(--tg-text-hint) !important;
-    opacity: .7;
+#chat > .mes .tg-message-meta > :is(.mesIDDisplay, .tokenCounterDisplay, .mes_timer) {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 1px 5px !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    background: var(--tg-code-bg) !important;
+    color: inherit !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font: inherit !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+}
+
+#chat > .mes .tg-message-meta > :empty {
+    display: none !important;
 }
 
 /* ── Message action buttons ─────────────────────────────────────────────── */
@@ -558,6 +629,13 @@ html[data-tg-message-actions='on'] #chat > .mes .swipeRightBlock {
     border: 0;
     padding: 0;
     background: rgba(0, 0, 0, .34);
+    background-image: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 .tg-message-action-sheet {
@@ -588,6 +666,14 @@ html[data-tg-message-actions='on'] #chat > .mes .swipeRightBlock {
     font: 15px/1.2 var(--tg-font-ui);
     text-align: left;
     cursor: pointer;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
 }
 
 .tg-message-action:hover {
@@ -601,6 +687,10 @@ html[data-tg-message-actions='on'] #chat > .mes .swipeRightBlock {
     background-color: var(--tg-text-secondary);
     -webkit-mask: var(--tg-action-icon, var(--tg-icon-section)) center / contain no-repeat;
     mask: var(--tg-action-icon, var(--tg-icon-section)) center / contain no-repeat;
+    border: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 .tg-action-copy { --tg-action-icon: var(--tg-icon-copy); }
@@ -703,6 +793,12 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     color: var(--tg-text-secondary) !important;
     cursor: pointer;
     list-style: none;
+}
+
+#chat > .mes .mes_reasoning_details summary::-webkit-details-marker,
+#chat > .mes .mes_reasoning_details summary::marker {
+    display: none;
+    content: '';
 }
 
 #chat > .mes .mes_reasoning {

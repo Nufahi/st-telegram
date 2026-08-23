@@ -96,6 +96,13 @@ function dateLabel(date) {
     });
 }
 
+function timeLabel(date) {
+    return date.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
 /* ── Header ─────────────────────────────────────────────────────────────── */
 
 let header = null;
@@ -417,6 +424,27 @@ function refreshMessages() {
         const mesId = Number(row.getAttribute('mesid'));
         const mes = Number.isNaN(mesId) ? null : messages?.[mesId];
         const date = parseMessageDate(mes);
+
+        /* ST renders a full locale date in every bubble. Telegram keeps the
+           date in separators and shows only the local time beside the ticks. */
+        const timestamp = row.querySelector('.ch_name .timestamp');
+        if (timestamp && date) timestamp.textContent = timeLabel(date);
+
+        /* Preserve the native nodes so ST can keep updating their values, but
+           move them out of the narrow avatar column into the message bubble. */
+        const block = row.querySelector(':scope > .mes_block');
+        if (block && !isSystem) {
+            let meta = block.querySelector(':scope > .tg-message-meta');
+            if (!meta) {
+                meta = el('div', 'tg-message-meta');
+                block.append(meta);
+            }
+            for (const selector of ['.mesIDDisplay', '.tokenCounterDisplay', '.mes_timer']) {
+                const badge = row.querySelector(selector);
+                if (badge && badge.parentElement !== meta) meta.append(badge);
+            }
+        }
+
         if (date) {
             const key2 = dateKey(date);
             if (key2 !== lastDateKey) {
@@ -1037,7 +1065,7 @@ const REFRESH_MIN_GAP = 60;
 
 /* Our own nodes. Mutations inside them must never schedule a refresh or we
    feed ourselves forever. */
-const OWNED = '.tg-header, .tg-date-pill, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-message-action-layer, .tg-scrim, .tg-mic';
+const OWNED = '.tg-header, .tg-date-pill, .tg-message-meta, .tg-drawer-head, .tg-drawer-label, .tg-panel-back, .tg-message-action-layer, .tg-scrim, .tg-mic';
 
 /* Classes we set on SillyTavern's own nodes. Seeing one of these change is
    never a reason to refresh -- we are the ones who changed it. */

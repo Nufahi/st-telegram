@@ -118,9 +118,13 @@ div#send_form.compact {
     align-self: stretch;
     z-index: 0;
     background: var(--tg-panel);
+    background-image: none !important;
     border: 1px solid var(--tg-divider);
     border-radius: calc(var(--tg-composer-height) / 2);
     pointer-events: none;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 /* Lift the real controls above the pill drawn by ::before, which would
@@ -173,6 +177,8 @@ div#send_form.compact {
        textarea grows to multiple lines. */
     margin: 0 0 2px 0 !important;
     padding: 0 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
     border: 0 !important;
     border-radius: 50% !important;
     color: transparent !important;
@@ -181,6 +187,10 @@ div#send_form.compact {
     opacity: 1 !important;
     filter: none !important;
     text-shadow: none !important;
+    box-shadow: none !important;
+    background-image: none !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
 }
@@ -346,6 +356,10 @@ div#send_form.compact {
     place-items: center !important;
     width: 44px !important;
     height: 44px !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    border: 0 !important;
+    padding: 0 !important;
     border-radius: 50% !important;
     background: var(--tg-accent) !important;
     color: transparent !important;
@@ -413,6 +427,11 @@ div#send_form.compact {
     box-shadow: var(--tg-shadow-fab) !important;
     cursor: default;
     transition: background var(--tg-dur-short) var(--tg-ease);
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-image: none !important;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 .tg-mic::before {
@@ -482,6 +501,53 @@ html[data-tg-fab='stop'] #rightSendForm > #send_but { display: none !important; 
     padding: 5px 12px !important;
     white-space: nowrap !important;
     box-shadow: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background-image: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font-family: var(--tg-font-ui) !important;
+    line-height: 1.25 !important;
+    text-transform: none !important;
+    letter-spacing: normal !important;
+}
+
+/* The paperclip opens this native SillyTavern menu. Giving the anchor button
+   a Telegram icon is not enough: the popup itself must not retain the active
+   theme's glass, gradient or text palette. */
+#extensionsMenu {
+    background: var(--tg-panel) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: var(--tg-shadow-menu) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    padding: 6px !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+#extensionsMenu :is(button, .menu_button, .list-group-item) {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    background: transparent !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border: 0 !important;
+    border-radius: 6px !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+#extensionsMenu :is(button, .menu_button, .list-group-item):hover {
+    background: var(--tg-panel-hover) !important;
 }
 
 #qr--bar .qr--button:hover {

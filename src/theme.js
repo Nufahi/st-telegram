@@ -40,9 +40,11 @@ const THEME_VALUES = {
     chat_width: 100,
     timestamps_enabled: true,
     timestamp_model_icon: false,
-    timer_enabled: false,
-    mesIDDisplay_enabled: false,
-    message_token_count_enabled: false,
+    /* Keep SillyTavern's native message diagnostics populated. chat.js moves
+       the existing nodes into a compact metadata row inside each bubble. */
+    timer_enabled: true,
+    mesIDDisplay_enabled: true,
+    message_token_count_enabled: true,
     hideChatAvatars_enabled: false,
     expand_message_actions: false,
     hotswap_enabled: false,
