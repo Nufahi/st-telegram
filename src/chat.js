@@ -376,9 +376,19 @@ function refreshHeader() {
 
 /* ── Message grouping, tails, date pills ────────────────────────────────── */
 
-/* Telegram groups consecutive messages from the same sender: only the first
-   carries the name, only the last carries the avatar and the tail. We tag
-   rows with .tg-group-start / .tg-group-end and let CSS do the rest. */
+/* Telegram groups nearby messages from the same sender on the same day: only
+   the first carries the name, only the last carries the avatar and the tail.
+   We tag rows with .tg-group-start / .tg-group-end and let CSS do the rest. */
+const MESSAGE_GROUP_WINDOW_MS = 5 * 60 * 1000;
+
+function messagesShareGroup(current, adjacent) {
+    if (!current || !adjacent || current.key !== adjacent.key) return false;
+    if (!current.date && !adjacent.date) return true;
+    if (!current.date || !adjacent.date) return false;
+    return dateKey(current.date) === dateKey(adjacent.date)
+        && Math.abs(current.date.getTime() - adjacent.date.getTime()) <= MESSAGE_GROUP_WINDOW_MS;
+}
+
 function refreshMessages() {
     const chat = document.getElementById('chat');
     if (!chat) return;
@@ -386,30 +396,32 @@ function refreshMessages() {
     const rows = [...chat.querySelectorAll(':scope > .mes')];
     const context = getContext();
     const messages = context?.chat;
+    const entries = rows.map((row, index) => {
+        const isUser = row.getAttribute('is_user') === 'true';
+        const isSystem = row.getAttribute('is_system') === 'true';
+        const name = row.getAttribute('ch_name') || '';
+        const mesId = Number(row.getAttribute('mesid'));
+        const mes = Number.isNaN(mesId) ? null : messages?.[mesId];
+        return {
+            row,
+            isUser,
+            isSystem,
+            name,
+            key: isSystem ? `sys:${index}` : `${isUser ? 'u' : 'c'}:${name}`,
+            date: parseMessageDate(mes),
+        };
+    });
 
     /* Remove pills before measuring, so their presence never affects the
        grouping decisions. Clear-then-build. */
     for (const pill of chat.querySelectorAll(':scope > .tg-date-pill')) pill.remove();
 
-    let previousKey = null;
     let lastDateKey = null;
 
-    rows.forEach((row, index) => {
-        const isUser = row.getAttribute('is_user') === 'true';
-        const isSystem = row.getAttribute('is_system') === 'true';
-        const name = row.getAttribute('ch_name') || '';
-        const key = isSystem ? `sys:${index}` : `${isUser ? 'u' : 'c'}:${name}`;
-
-        const next = rows[index + 1];
-        const nextIsUser = next?.getAttribute('is_user') === 'true';
-        const nextIsSystem = next?.getAttribute('is_system') === 'true';
-        const nextName = next?.getAttribute('ch_name') || '';
-        const nextKey = next
-            ? (nextIsSystem ? `sys:${index + 1}` : `${nextIsUser ? 'u' : 'c'}:${nextName}`)
-            : null;
-
-        row.classList.toggle('tg-group-start', key !== previousKey);
-        row.classList.toggle('tg-group-end', key !== nextKey);
+    entries.forEach((entry, index) => {
+        const { row, isUser, isSystem, name, date } = entry;
+        row.classList.toggle('tg-group-start', !messagesShareGroup(entry, entries[index - 1]));
+        row.classList.toggle('tg-group-end', !messagesShareGroup(entry, entries[index + 1]));
 
         if (!isUser && !isSystem && name) {
             const idx = String(nameColorIndex(name));
@@ -421,10 +433,6 @@ function refreshMessages() {
         /* Date pill, from the message data rather than the rendered
            timestamp text -- the rendered form is locale-dependent and has
            bitten this kind of code before. */
-        const mesId = Number(row.getAttribute('mesid'));
-        const mes = Number.isNaN(mesId) ? null : messages?.[mesId];
-        const date = parseMessageDate(mes);
-
         /* ST renders a full locale date in every bubble. Telegram keeps the
            date in separators and shows only the local time beside the ticks. */
         const timestamp = row.querySelector('.ch_name .timestamp');
@@ -454,8 +462,6 @@ function refreshMessages() {
                 lastDateKey = key2;
             }
         }
-
-        previousKey = key;
     });
 }
 
@@ -619,9 +625,9 @@ function makeActionButton(action) {
 }
 
 function openActionSheet(row) {
-    if (!(row instanceof HTMLElement) || row.getAttribute('is_system') === 'true') return;
+    if (!(row instanceof HTMLElement) || row.getAttribute('is_system') === 'true') return false;
     const actions = collectMessageActions(row);
-    if (!actions.primary.length && !actions.more.length) return;
+    if (!actions.primary.length && !actions.more.length) return false;
 
     closeActionSheet();
     actionTarget = row;
@@ -651,6 +657,7 @@ function openActionSheet(row) {
     document.body.append(sheet);
     actionSheet = sheet;
     document.body.classList.add('tg-action-sheet-open');
+    return true;
 }
 
 /* Tapping a message avatar opens that sender's card, as it does in Telegram.
@@ -733,15 +740,97 @@ function openSenderCard(name) {
     });
 }
 
-function onMessageActionRequest(event) {
-    if (event.button !== undefined && event.button !== 0) return;
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-    if (target.closest('a, button, input, textarea, select, .mes_buttons, .mes_edit_buttons, .swipe_left, .swipeRightBlock')) return;
+const ACTION_HOLD_MS = 480;
+const ACTION_MOVE_PX = 10;
+const ACTION_EXCLUSION = [
+    'a', 'button', 'input', 'textarea', 'select', 'option', 'label',
+    'summary', '[contenteditable]:not([contenteditable="false"])',
+    'img', 'picture', 'video', 'audio', 'iframe',
+    '.mes_button', '.menu_button', '.mes_buttons', '.mes_edit_buttons',
+    '.swipe_left', '.swipeRightBlock',
+].join(', ');
+
+let actionPress = null;
+let suppressedActionClick = null;
+
+function messageActionRow(target) {
+    if (!(target instanceof Element) || target.closest(ACTION_EXCLUSION)) return null;
     const bubble = target.closest('#chat > .mes .mes_block');
-    if (!bubble) return;
+    if (!bubble) return null;
     const row = bubble.closest('#chat > .mes');
-    if (row) openActionSheet(row);
+    if (!(row instanceof HTMLElement) || row.getAttribute('is_system') === 'true') return null;
+    return { row, bubble };
+}
+
+function selectionTouches(node) {
+    const selection = window.getSelection?.();
+    if (!selection || selection.isCollapsed) return false;
+    return node.contains(selection.anchorNode) || node.contains(selection.focusNode);
+}
+
+function cancelMessageActionPress() {
+    if (!actionPress) return;
+    window.clearTimeout(actionPress.timer);
+    actionPress.row.classList.remove('tg-action-pressing');
+    actionPress = null;
+}
+
+function onMessageActionPointerDown(event) {
+    if (!event.isPrimary || event.button !== 0 || !['touch', 'pen'].includes(event.pointerType)) return;
+    const match = messageActionRow(event.target);
+    if (!match) return;
+
+    cancelMessageActionPress();
+    match.row.classList.add('tg-action-pressing');
+    const press = {
+        ...match,
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        timer: 0,
+    };
+    press.timer = window.setTimeout(() => {
+        if (actionPress !== press || selectionTouches(press.bubble)) {
+            cancelMessageActionPress();
+            return;
+        }
+        cancelMessageActionPress();
+        if (openActionSheet(press.row)) {
+            suppressedActionClick = { row: press.row, until: performance.now() + 700 };
+        }
+    }, ACTION_HOLD_MS);
+    actionPress = press;
+}
+
+function onMessageActionPointerMove(event) {
+    if (!actionPress || event.pointerId !== actionPress.pointerId) return;
+    if (Math.hypot(event.clientX - actionPress.startX, event.clientY - actionPress.startY) > ACTION_MOVE_PX) {
+        cancelMessageActionPress();
+    }
+}
+
+function onMessageActionPointerEnd(event) {
+    if (!actionPress || event.pointerId !== actionPress.pointerId) return;
+    cancelMessageActionPress();
+}
+
+function onMessageActionContextMenu(event) {
+    const match = messageActionRow(event.target);
+    if (!match || selectionTouches(match.bubble)) return;
+    if (actionSheet && actionTarget === match.row) {
+        event.preventDefault();
+        return;
+    }
+    if (openActionSheet(match.row)) event.preventDefault();
+}
+
+function suppressClickAfterLongPress(event) {
+    if (!suppressedActionClick) return;
+    const current = suppressedActionClick;
+    suppressedActionClick = null;
+    if (performance.now() > current.until || !(event.target instanceof Node) || !current.row.contains(event.target)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
 }
 
 /* ── Drawer ─────────────────────────────────────────────────────────────── */
@@ -1069,7 +1158,10 @@ const OWNED = '.tg-header, .tg-date-pill, .tg-message-meta, .tg-drawer-head, .tg
 
 /* Classes we set on SillyTavern's own nodes. Seeing one of these change is
    never a reason to refresh -- we are the ones who changed it. */
-const OWNED_CLASSES = ['tg-group-start', 'tg-group-end', 'tg-drawer-open', 'tg-group-top'];
+const OWNED_CLASSES = [
+    'tg-group-start', 'tg-group-end', 'tg-drawer-open', 'tg-group-top',
+    'tg-action-target', 'tg-action-pressing',
+];
 
 /* Is this node one we created? Used to recognise our own writes coming back
    at us through the observer. */
@@ -1206,9 +1298,17 @@ function start() {
     document.addEventListener('mousedown', blockInlineDrawerAutoClose, true);
     document.addEventListener('touchstart', blockInlineDrawerAutoClose, true);
     document.getElementById('send_textarea')?.addEventListener('input', refreshFab);
-    /* Avatar first: it must claim the click before the action sheet sees it. */
     document.getElementById('chat')?.addEventListener('click', onMessageAvatarClick);
-    document.getElementById('chat')?.addEventListener('click', onMessageActionRequest);
+    document.addEventListener('pointerdown', onMessageActionPointerDown);
+    document.addEventListener('pointermove', onMessageActionPointerMove);
+    document.addEventListener('pointerup', onMessageActionPointerEnd);
+    document.addEventListener('pointercancel', onMessageActionPointerEnd);
+    document.addEventListener('contextmenu', onMessageActionContextMenu);
+    document.addEventListener('click', suppressClickAfterLongPress, true);
+    document.addEventListener('scroll', cancelMessageActionPress, { passive: true, capture: true });
+    document.addEventListener('selectionchange', () => {
+        if (actionPress && selectionTouches(actionPress.bubble)) cancelMessageActionPress();
+    });
 
     document.addEventListener('keydown', (event) => {
         if (event.key !== 'Escape') return;
