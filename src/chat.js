@@ -298,6 +298,7 @@ function wireHeader(node) {
        #rm_button_selected_ch is SillyTavern's equivalent: it selects the
        current character's card, and handles the group case by itself. */
     const openProfile = () => {
+        if (!currentPeer()) return;
         openCharacterPanel();
         whenPanelOpen('right-nav-panel', () => {
             document.getElementById('rm_button_selected_ch')?.click();
@@ -353,23 +354,29 @@ function refreshHeader() {
     const statusEl = node.querySelector('.tg-header-status');
     const avatarBox = node.querySelector('.tg-header-avatar');
     const avatarImg = avatarBox?.querySelector('img');
+    const empty = !peer;
+    node.setAttribute('data-tg-empty', empty ? 'on' : 'off');
 
-    const name = peer?.name ?? 'SillyTavern';
+    const name = peer?.name ?? 'SillyTelegram';
     if (nameEl && nameEl.textContent !== name) nameEl.textContent = name;
 
-    const status = typingActive ? 'typing…' : (peer?.status ?? 'no chat selected');
+    const status = empty ? '' : (typingActive ? 'typing…' : peer.status);
     if (statusEl && statusEl.textContent !== status) statusEl.textContent = status;
-    statusEl?.setAttribute('data-tg-typing', typingActive ? 'on' : 'off');
+    statusEl?.setAttribute('data-tg-typing', !empty && typingActive ? 'on' : 'off');
 
     if (avatarImg) {
         if (peer?.avatar) {
             if (avatarImg.getAttribute('src') !== peer.avatar) avatarImg.src = peer.avatar;
             avatarImg.style.display = '';
             avatarBox?.removeAttribute('data-tg-fallback');
-        } else {
+        } else if (peer) {
             avatarImg.removeAttribute('src');
             avatarImg.style.display = 'none';
             avatarBox?.setAttribute('data-tg-fallback', (name[0] || '?').toUpperCase());
+        } else {
+            avatarImg.removeAttribute('src');
+            avatarImg.style.display = 'none';
+            avatarBox?.removeAttribute('data-tg-fallback');
         }
     }
 }

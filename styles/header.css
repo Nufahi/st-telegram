@@ -171,6 +171,244 @@ html[data-tg-variant='night'] .tg-header-btn:active {
     color: var(--tg-accent);
 }
 
+/* With no selected conversation the header becomes a simple app title. */
+.tg-header[data-tg-empty='on'] .tg-header-avatar,
+.tg-header[data-tg-empty='on'] .tg-header-status {
+    display: none;
+}
+
+.tg-header[data-tg-empty='on'] .tg-header-titles {
+    cursor: default;
+    padding-left: 6px;
+}
+
+.tg-header[data-tg-empty='on'] .tg-header-name {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* ── Top Info Bar extension ────────────────────────────────────────────────
+   The extension inserts these nodes as flex siblings immediately before
+   #chat. Its stock fixed-height/wrapping combination lets wrapped controls
+   overflow into the conversation, so keep each strip to one scrollable row. */
+
+html[data-tg-enabled='on'] #sheld > #extensionTopBar,
+html[data-tg-enabled='on'] #sheld > #extensionConnectionProfiles {
+    position: relative !important;
+    z-index: 20 !important;
+    flex: 0 0 44px !important;
+    display: flex !important;
+    flex-flow: row nowrap !important;
+    align-items: center !important;
+    align-content: center !important;
+    gap: 4px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    padding: 4px 6px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: var(--tg-panel) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font-family: var(--tg-font-ui) !important;
+    font-size: 14px !important;
+    text-shadow: none !important;
+    scrollbar-width: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] #sheld > #extensionConnectionProfiles:not(.visible) {
+    display: none !important;
+}
+
+html[data-tg-enabled='on'] #sheld > :is(#extensionTopBar, #extensionConnectionProfiles)::-webkit-scrollbar {
+    display: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button {
+    flex: 0 0 36px !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    outline: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text-secondary) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+    text-decoration: none !important;
+    text-shadow: none !important;
+    cursor: pointer !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button:hover,
+html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button.active {
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button.not-in-chat {
+    color: var(--tg-text-hint) !important;
+    opacity: .55 !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBarChatName,
+html[data-tg-enabled='on'] #extensionConnectionProfilesSelect,
+html[data-tg-enabled='on'] #extensionTopBarSearchInput {
+    flex: 0 0 auto !important;
+    width: auto !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 17px !important;
+    outline: 0 !important;
+    background: var(--tg-panel-sunken) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    font: 14px/32px var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBarChatName {
+    width: clamp(130px, 24vw, 260px) !important;
+    padding-right: 26px !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBarSearchInput {
+    width: clamp(120px, 20vw, 220px) !important;
+    max-width: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionConnectionProfilesSelect {
+    width: clamp(150px, 30vw, 300px) !important;
+    padding-right: 26px !important;
+}
+
+html[data-tg-enabled='on'] :is(#extensionTopBarChatName, #extensionConnectionProfilesSelect) option {
+    background: var(--tg-panel) !important;
+    color: var(--tg-text) !important;
+    font-family: var(--tg-font-ui) !important;
+}
+
+html[data-tg-enabled='on'] #extensionTopBarSearchInput::placeholder {
+    color: var(--tg-text-hint) !important;
+    opacity: 1 !important;
+    font-style: normal !important;
+}
+
+html[data-tg-enabled='on'] :is(
+    #extensionTopBarChatName,
+    #extensionConnectionProfilesSelect,
+    #extensionTopBarSearchInput
+):focus-visible {
+    border-color: var(--tg-accent) !important;
+    box-shadow: 0 0 0 1px var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #extensionConnectionProfilesStatus {
+    flex: 0 0 auto !important;
+    max-width: min(50vw, 360px) !important;
+    color: var(--tg-text-secondary) !important;
+    opacity: 1 !important;
+    font: 13px/1.25 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionConnectionProfiles > :is(i, svg, .icon-svg) {
+    flex: 0 0 auto !important;
+    color: var(--tg-text-secondary) !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #extensionConnectionProfiles svg :is(path, circle, rect) {
+    fill: currentColor !important;
+    stroke: currentColor !important;
+}
+
+/* Its optional chat-file sidebar lives outside #sheld in #movingDivs. Keep
+   positioning under the extension's control, but replace Tavern paint. */
+html[data-tg-enabled='on'] #extensionSideBar {
+    background: var(--tg-panel) !important;
+    background-image: none !important;
+    color: var(--tg-text) !important;
+    border-color: var(--tg-divider) !important;
+    box-shadow: var(--tg-shadow-menu) !important;
+    filter: none !important;
+    font-family: var(--tg-font-ui) !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionSideBar #extensionSideBarContainer {
+    background: transparent !important;
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #extensionSideBar .sideBarItem {
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionSideBar .sideBarItem:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #extensionSideBar .sideBarItem.selected {
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #extensionSideBar :is(.chatDate, .chatMessage, .chatStats) {
+    color: var(--tg-text-secondary) !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #extensionSideBar .counterBlock::after {
+    color: var(--tg-divider-strong) !important;
+}
+
+html[data-tg-enabled='on'] #chat mark.highlight {
+    border-radius: 3px !important;
+    background: var(--tg-accent-soft) !important;
+    color: inherit !important;
+}
+
 /* ── Overflow menu ──────────────────────────────────────────────────────── */
 
 /* Telegram's ⋮ opens a Material popup anchored to the top-right. We reuse
