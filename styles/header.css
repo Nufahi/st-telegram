@@ -352,6 +352,85 @@ html[data-tg-enabled='on'] #extensionConnectionProfiles svg :is(path, circle, re
     stroke: currentColor !important;
 }
 
+/* A phone cannot hold two fields and seven actions in one row. Use a fixed
+   two-row grid that grows in normal flow so it never overlays the chat.
+   Desktop keeps the single full-width toolbar above. */
+@media (max-width: 700px) {
+    html[data-tg-enabled='on'] #sheld > #extensionTopBar {
+        flex: 0 0 auto !important;
+        display: grid !important;
+        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+        grid-template-rows: 32px 32px !important;
+        align-items: center !important;
+        gap: 4px 2px !important;
+        height: auto !important;
+        min-height: 72px !important;
+        padding: 4px !important;
+        overflow: hidden !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button {
+        justify-self: center !important;
+        width: 32px !important;
+        min-width: 32px !important;
+        height: 32px !important;
+        min-height: 32px !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionTopBarChatName,
+    html[data-tg-enabled='on'] #extensionTopBarSearchInput {
+        align-self: stretch !important;
+        justify-self: stretch !important;
+        width: 100% !important;
+        min-width: 90px !important;
+        max-width: none !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        font-size: 13px !important;
+        line-height: 30px !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionTopBarChatName {
+        grid-area: 1 / 1 / 2 / 4 !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionTopBarSearchInput {
+        grid-area: 1 / 4 / 2 / 8 !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionTopBarToggleSidebar { grid-area: 2 / 1 !important; }
+    html[data-tg-enabled='on'] #extensionTopBarToggleConnectionProfiles { grid-area: 2 / 2 !important; }
+    html[data-tg-enabled='on'] #extensionTopBarChatManager { grid-area: 2 / 3 !important; }
+    html[data-tg-enabled='on'] #extensionTopBarNewChat { grid-area: 2 / 4 !important; }
+    html[data-tg-enabled='on'] #extensionTopBarRenameChat { grid-area: 2 / 5 !important; }
+    html[data-tg-enabled='on'] #extensionTopBarDeleteChat { grid-area: 2 / 6 !important; }
+    html[data-tg-enabled='on'] #extensionTopBarCloseChat { grid-area: 2 / 7 !important; }
+
+    html[data-tg-enabled='on'] #sheld > #extensionConnectionProfiles.visible {
+        flex: 0 0 auto !important;
+        flex-wrap: nowrap !important;
+        height: auto !important;
+        min-height: 44px !important;
+        overflow: hidden !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionConnectionProfilesSelect {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+    html[data-tg-enabled='on'] #extensionConnectionProfilesStatus {
+        flex: 0 1 auto !important;
+        min-width: 0 !important;
+        max-width: 32vw !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+}
+
 /* Its optional chat-file sidebar lives outside #sheld in #movingDivs. Keep
    positioning under the extension's control, but replace Tavern paint. */
 html[data-tg-enabled='on'] #extensionSideBar {

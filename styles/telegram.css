@@ -15,9 +15,9 @@
 
 @import url('./tokens.css?v=0.1.2-slim-composer');
 @import url('./icons.css?v=0.1.2-message-action-sheet');
-@import url('./base.css?v=0.1.2-welcome-panel');
+@import url('./base.css?v=0.1.2-welcome-height');
 @import url('./chat.css?v=0.1.2-native-action-icons');
-@import url('./header.css?v=0.1.2-empty-header');
-@import url('./composer.css?v=0.1.2-hidden-placeholder');
+@import url('./header.css?v=0.1.2-mobile-top-bar');
+@import url('./composer.css?v=0.1.2-centered-quick-inserts');
 @import url('./drawer.css?v=0.1.2-panel-isolation');
 @import url('./frame.css?v=0.1.2-desktop-layout');

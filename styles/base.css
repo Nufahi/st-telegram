@@ -34,6 +34,109 @@ body {
     -webkit-backdrop-filter: none !important;
 }
 
+/* ── Loading screen ─────────────────────────────────────────────────────── */
+
+/* SillyTavern creates #loader inside a transparent blocking popup. Replace
+   its spinner or branded splash with a self-contained Telegram mark. */
+html[data-tg-enabled='on'] body #loader {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 18px !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: var(--tg-panel) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    text-align: center !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] body #loader > * {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+html[data-tg-enabled='on'] body #loader::before {
+    content: '' !important;
+    display: block !important;
+    flex: 0 0 82px !important;
+    width: 82px !important;
+    height: 82px !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background-color: #3390ec !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23fff'%3E%3Cpath d='m9.78 18.65.28-4.23 7.68-6.92c.34-.3-.07-.45-.52-.18L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-2 1.93c-.23.23-.42.42-.82.42z'/%3E%3C/svg%3E") !important;
+    background-position: 52% 50% !important;
+    background-repeat: no-repeat !important;
+    background-size: 44px 44px !important;
+    box-shadow: 0 5px 16px rgba(51, 144, 236, .30) !important;
+    filter: none !important;
+    opacity: 1 !important;
+    animation: tg-loader-breathe 1.8s ease-in-out infinite !important;
+}
+
+html[data-tg-enabled='on'] body #loader::after {
+    content: 'СиллиТелеграм\A by Kamoi' !important;
+    display: block !important;
+    visibility: visible !important;
+    color: var(--tg-text) !important;
+    font: 500 20px/1.55 var(--tg-font-ui) !important;
+    letter-spacing: .01em !important;
+    white-space: pre !important;
+    text-align: center !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
+
+@keyframes tg-loader-breathe {
+    0%, 100% {
+        transform: scale(.96);
+        opacity: .78;
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-tg-enabled='on'] body #loader::before {
+        animation: none !important;
+    }
+}
+
+@media (max-width: 500px) {
+    html[data-tg-enabled='on'] body #loader::before {
+        flex-basis: 72px !important;
+        width: 72px !important;
+        height: 72px !important;
+        background-size: 38px 38px !important;
+    }
+
+    html[data-tg-enabled='on'] body #loader::after {
+        font-size: 18px !important;
+    }
+}
+
 /* Establish a Telegram-owned colour/font boundary around the surfaces this
    extension controls. Component files can still override these deliberately,
    but the active SillyTavern theme no longer supplies their inherited base. */
@@ -518,6 +621,9 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .welcomeShortcutsSeparator {
 
 html[data-tg-enabled='on'] #chat > .welcomePanel .welcomeRecent {
     position: relative !important;
+    flex: 0 0 auto !important;
+    align-self: stretch !important;
+    height: auto !important;
     min-height: 0 !important;
     max-height: min(52vh, 480px) !important;
     overflow-x: hidden !important;
@@ -528,7 +634,11 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .welcomeRecent {
 }
 
 html[data-tg-enabled='on'] #chat > .welcomePanel .recentChatList {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
     gap: 0 !important;
+    margin: 0 !important;
     padding-top: 4px !important;
     background: transparent !important;
 }
@@ -539,6 +649,10 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .recentChat {
     padding: 7px 8px !important;
     border-bottom: 1px solid var(--tg-divider) !important;
     cursor: pointer !important;
+}
+
+html[data-tg-enabled='on'] #chat > .welcomePanel .recentChat.hidden {
+    display: none !important;
 }
 
 html[data-tg-enabled='on'] #chat > .welcomePanel .recentChat:last-of-type {
@@ -575,6 +689,7 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .chatMessageContainer {
 
 html[data-tg-enabled='on'] #chat > .welcomePanel .chatActions .menu_button,
 html[data-tg-enabled='on'] #chat > .welcomePanel .showMoreChats.menu_button {
+    flex: 0 0 30px !important;
     width: 30px !important;
     min-width: 30px !important;
     height: 30px !important;
@@ -592,6 +707,11 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .showMoreChats.menu_button {
     opacity: 1 !important;
     text-decoration: none !important;
     text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #chat > .welcomePanel .showMoreChats.menu_button {
+    align-self: center !important;
+    margin: 4px auto 0 !important;
 }
 
 html[data-tg-enabled='on'] #chat > .welcomePanel .chatActions .menu_button:hover,

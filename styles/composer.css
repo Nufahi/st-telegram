@@ -503,6 +503,15 @@ html[data-tg-enabled='on'] #send_form > #sf-qi-bar.sf-qi-bar {
     -webkit-backdrop-filter: none !important;
 }
 
+@media (min-width: 701px) {
+    html[data-tg-enabled='on'] #send_form > #sf-qi-bar.sf-qi-bar {
+        width: min(100%, 960px) !important;
+        margin-right: auto !important;
+        margin-left: auto !important;
+        justify-content: center !important;
+    }
+}
+
 html[data-tg-enabled='on'] #send_form > #sf-qi-bar.sf-qi-bar::-webkit-scrollbar {
     display: none !important;
 }
