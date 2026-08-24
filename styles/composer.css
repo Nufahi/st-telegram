@@ -210,6 +210,53 @@ div#send_form.compact {
     background: var(--tg-panel-hover) !important;
 }
 
+/* BB Enhance inserts a compact wrapper after #options_button and keeps its
+   toolbar inside that wrapper. The wrapper belongs in the normal composer
+   flow, while the toolbar must escape the pill and stack over the chat only
+   after the extension adds .expanded. */
+#leftSendForm > #bb-enhance-wrapper {
+    position: relative !important;
+    z-index: 30 !important;
+    overflow: visible !important;
+    transform: none !important;
+}
+
+#bb-enhance-wrapper #bb-eg-toggle-btn {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    transform: none !important;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#bb-enhance-wrapper #bb-enhance-toolbar {
+    position: absolute !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: calc(100% + 8px) !important;
+    left: 0 !important;
+    z-index: 1000 !important;
+    max-width: calc(100vw - 16px) !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+#bb-enhance-wrapper #bb-enhance-toolbar.expanded {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+@media (max-width: 700px) {
+    #bb-enhance-wrapper #bb-enhance-toolbar {
+        max-height: min(62dvh, 480px) !important;
+    }
+}
+
 /* Replace the Font Awesome glyph rather than removing its class: the class
    carries SillyTavern's own click binding. We override the ::before that
    Font Awesome draws into, which kills the glyph and paints ours in one go. */
