@@ -342,6 +342,14 @@ function currentPeer() {
 
 let typingActive = false;
 
+function typingLabel() {
+    const locale = getContext()?.getCurrentLocale?.()
+        || document.documentElement.lang
+        || navigator.language
+        || '';
+    return String(locale).toLowerCase().startsWith('ru') ? 'печатает…' : 'typing…';
+}
+
 function refreshHeader() {
     const node = ensureHeader();
     if (!node) return;
@@ -360,7 +368,7 @@ function refreshHeader() {
     const name = peer?.name ?? 'SillyTelegram';
     if (nameEl && nameEl.textContent !== name) nameEl.textContent = name;
 
-    const status = empty ? '' : (typingActive ? 'typing…' : peer.status);
+    const status = empty ? '' : (typingActive ? typingLabel() : peer.status);
     if (statusEl && statusEl.textContent !== status) statusEl.textContent = status;
     statusEl?.setAttribute('data-tg-typing', !empty && typingActive ? 'on' : 'off');
 
@@ -511,8 +519,11 @@ function refreshFab() {
     const textarea = document.getElementById('send_textarea');
     const stop = document.getElementById('mes_stop');
 
+    /* ST exposes generation by writing display:flex/none directly on the stop
+       button. Do not inspect computed display here: our own FAB CSS makes the
+       selected control visible and would keep Stop selected forever. */
     const generating = typingActive
-        || (stop && !stop.classList.contains('displayNone') && getComputedStyle(stop).display !== 'none');
+        || Boolean(stop?.style.display && stop.style.display !== 'none');
 
     const mode = generating ? 'stop' : ((textarea?.value ?? '').trim() ? 'send' : 'mic');
     if (tgRoot.dataset.tgFab !== mode) tgRoot.dataset.tgFab = mode;
@@ -546,9 +557,13 @@ function actionKind(button) {
 }
 
 function nativeActionAvailable(button) {
-    return button instanceof HTMLElement
-        && button.isConnected
-        && !button.matches('[disabled], [aria-disabled="true"], .disabled');
+    if (!(button instanceof HTMLElement)
+        || !button.isConnected
+        || button.matches('[disabled], [aria-disabled="true"], .disabled')) return false;
+
+    const style = getComputedStyle(button);
+    return style.display !== 'none'
+        && style.visibility !== 'hidden';
 }
 
 function runNativeAction(button) {

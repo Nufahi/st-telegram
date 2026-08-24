@@ -34,6 +34,28 @@ body {
     -webkit-backdrop-filter: none !important;
 }
 
+/* Thin translucent scrollbar for every Telegram-owned scroll surface.
+   Component rules may still hide gesture-only bars such as quick replies. */
+html[data-tg-enabled='on'] * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--tg-scrollbar) transparent;
+}
+
+html[data-tg-enabled='on'] *::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+}
+
+html[data-tg-enabled='on'] *::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+html[data-tg-enabled='on'] *::-webkit-scrollbar-thumb {
+    border: 0;
+    border-radius: 3px;
+    background: var(--tg-scrollbar);
+}
+
 /* ── Loading screen ─────────────────────────────────────────────────────── */
 
 /* SillyTavern translates the root element for desktop rendering. On mobile

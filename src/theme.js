@@ -94,13 +94,40 @@ const CSS_VARIABLES = {
     border_color: '--SmartThemeBorderColor',
 };
 
+const COLOR_PICKERS = {
+    main_text_color: '#main-text-color-picker',
+    italics_text_color: '#italics-color-picker',
+    underline_text_color: '#underline-color-picker',
+    quote_text_color: '#quote-color-picker',
+    blur_tint_color: '#blur-tint-color-picker',
+    chat_tint_color: '#chat-tint-color-picker',
+    user_mes_blur_tint_color: '#user-mes-blur-tint-color-picker',
+    bot_mes_blur_tint_color: '#bot-mes-blur-tint-color-picker',
+    shadow_color: '#shadow-color-picker',
+    border_color: '#border-color-picker',
+};
+
+function colorChannels(value) {
+    const hex = /^#([\da-f]{2})([\da-f]{2})([\da-f]{2})/i.exec(value || '');
+    if (hex) return hex.slice(1).map((channel) => Number.parseInt(channel, 16));
+
+    const rgb = /rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i.exec(value || '');
+    return rgb ? rgb.slice(1).map(Number) : null;
+}
+
 function applyCssVariables(settings) {
     const style = tgRoot.style;
     for (const [key, variable] of Object.entries(CSS_VARIABLES)) {
         if (settings[key] !== undefined) style.setProperty(variable, settings[key]);
     }
-    style.setProperty('--blurStrength', `${Number(settings.blur_strength) || 0}px`);
-    style.setProperty('--shadowWidth', `${Number(settings.shadow_width) || 0}px`);
+    const checkboxChannels = colorChannels(settings.main_text_color);
+    if (checkboxChannels) {
+        style.setProperty('--SmartThemeCheckboxBgColorR', String(checkboxChannels[0]));
+        style.setProperty('--SmartThemeCheckboxBgColorG', String(checkboxChannels[1]));
+        style.setProperty('--SmartThemeCheckboxBgColorB', String(checkboxChannels[2]));
+    }
+    style.setProperty('--blurStrength', String(Number(settings.blur_strength) || 0));
+    style.setProperty('--shadowWidth', String(Number(settings.shadow_width) || 0));
     style.setProperty('--fontScale', String(Number(settings.font_scale) || 1));
     const width = `${Number(settings.chat_width) || 100}vw`;
     style.setProperty('--chatWidth', width);
@@ -171,6 +198,17 @@ function syncControls(settings) {
     setChecked('#expandMessageActions', settings.expand_message_actions);
     setChecked('#hotswapEnabled', settings.hotswap_enabled);
     setChecked('#reduced_motion', settings.reduced_motion);
+
+    /* toolcool-color-picker paints its swatch from the host's color attribute
+       inside Shadow DOM. Updating only --SmartTheme* leaves the old Tavern
+       preset visible there and lets later adaptive UI copy stale colours. */
+    for (const [key, selector] of Object.entries(COLOR_PICKERS)) {
+        const picker = document.querySelector(selector);
+        const value = settings[key];
+        if (picker && value && picker.getAttribute('color') !== value) {
+            picker.setAttribute('color', value);
+        }
+    }
 }
 
 /* ── Restore point ──────────────────────────────────────────────────────── */

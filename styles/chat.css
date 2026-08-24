@@ -615,9 +615,7 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
 
 /* Once the replacement menu is wired, remove the old hover icon cluster.
    Native controls stay connected and are activated by the action sheet. */
-html[data-tg-message-actions='on'] #chat > .mes .mes_buttons,
-html[data-tg-message-actions='on'] #chat > .mes .swipe_left,
-html[data-tg-message-actions='on'] #chat > .mes .swipeRightBlock {
+html[data-tg-message-actions='on'] #chat > .mes .mes_buttons {
     opacity: 0 !important;
     pointer-events: none !important;
 }
@@ -772,16 +770,32 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     }
 }
 
-/* The edit toolbar must only appear during an actual edit. SillyTavern
-   otherwise leaves it in the flow on some message types. */
-#chat > .mes .mes_edit_buttons {
-    display: none !important;
+/* SillyTavern alone controls display for edit actions. The theme only places
+   and paints them, so inactive toolbars cannot be forced open. */
+#chat > .mes :is(.mes_edit_buttons, .mes_reasoning_actions) {
+    gap: 4px !important;
+    margin-top: 6px !important;
+    justify-content: flex-end !important;
+    filter: none !important;
 }
 
-#chat > .mes:has(.edit_textarea) .mes_edit_buttons {
-    display: flex !important;
-    gap: 6px !important;
-    margin-top: 6px !important;
+#chat > .mes :is(.mes_edit_buttons .menu_button, .mes_reasoning_actions .edit_button) {
+    opacity: 1 !important;
+    color: var(--tg-text-secondary) !important;
+    background-color: transparent !important;
+    border: 1px solid transparent !important;
+    border-radius: 50% !important;
+    padding: 6px !important;
+    font-size: 13px !important;
+    box-shadow: none !important;
+    filter: none !important;
+    transition: color .2s ease, border-color .2s ease, transform .2s ease !important;
+}
+
+#chat > .mes :is(.mes_edit_buttons .menu_button, .mes_reasoning_actions .edit_button):hover {
+    color: var(--tg-danger) !important;
+    border-color: var(--tg-danger) !important;
+    transform: scale(1.06) !important;
 }
 
 #chat > .mes .edit_textarea {
@@ -815,6 +829,12 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
 #chat > .mes.last_mes .swipe_left,
 #chat > .mes.last_mes .swipeRightBlock {
     opacity: 1;
+}
+
+/* Preserve the native swipe hit areas without drawing their arrows. */
+#chat > .mes :is(.swipe_left, .swipe_right) {
+    opacity: 0 !important;
+    pointer-events: auto !important;
 }
 
 #chat > .mes .swipe_left {
@@ -874,10 +894,6 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     box-shadow: none !important;
     color: inherit !important;
     font: inherit !important;
-}
-
-#chat > .mes .mes_reasoning_actions {
-    display: none !important;
 }
 
 #chat > .mes .mes_reasoning_arrow {

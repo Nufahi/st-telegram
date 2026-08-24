@@ -496,6 +496,12 @@ div#send_form.compact {
     height: 16px !important;
 }
 
+/* The native button contains a Font Awesome icon. Hide it after replacing the
+   glyph above, otherwise a second off-centre stop mark remains visible. */
+#rightSendForm > #mes_stop > * {
+    display: none !important;
+}
+
 /* Empty-field mic placeholder. Keep the FAB visually consistent with Send:
    only the glyph changes when the textarea gains content. */
 .tg-mic {
