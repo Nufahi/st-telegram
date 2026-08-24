@@ -163,13 +163,13 @@ html[data-tg-variant='night'] {
     --tg-text-hint: #6d7883;
     --tg-text-on-accent: #ffffff;
 
-    --tg-accent: #8774e1;
-    --tg-accent-pressed: #7561d4;
-    --tg-accent-soft: rgba(135, 116, 225, .18);
+    --tg-accent: #3390ec;
+    --tg-accent-pressed: #2b7ccc;
+    --tg-accent-soft: rgba(51, 144, 236, .18);
     --tg-check: #72d5fd;
     --tg-online: #4dcd5e;
     --tg-danger: #ec6657;
-    --tg-unread-badge: #8774e1;
+    --tg-unread-badge: #3390ec;
 
     /* Night's action bar is the panel colour, not the accent. */
     --tg-header-bg: #17212b;
@@ -183,7 +183,7 @@ html[data-tg-variant='night'] {
 
     --tg-ripple: rgba(255, 255, 255, .10);
     --tg-scrim: rgba(0, 0, 0, .55);
-    --tg-selection: rgba(135, 116, 225, .35);
+    --tg-selection: rgba(51, 144, 236, .35);
     --tg-scrollbar: rgba(255, 255, 255, .20);
 
     --tg-code-bg: rgba(0, 0, 0, .28);

@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.2';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.2-drawer-wallpaper';
+const TG_STYLE_BUILD = '0.1.2-night-blue-accent';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the
@@ -121,7 +121,7 @@ const TG_VARIANT = tgResolveVariant();
 /* Accent colour. Telegram ships a set of named accents; the user picks one
    and every bubble/button/link follows it. */
 const TG_ACCENTS = {
-    blue: { day: '#3390ec', night: '#8774e1' },
+    blue: { day: '#3390ec', night: '#3390ec' },
     green: { day: '#4fae4e', night: '#4fae4e' },
     teal: { day: '#3aa2a0', night: '#3aa2a0' },
     orange: { day: '#e8734a', night: '#e8734a' },
