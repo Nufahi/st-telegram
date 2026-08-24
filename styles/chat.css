@@ -251,6 +251,12 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     background: var(--tg-out-bubble) !important;
 }
 
+/* Incoming messages use nearly the full phone width, leaving only the
+   Telegram edge and avatar spacing. Outgoing bubbles keep their compact cap. */
+#chat > .mes[is_user='false']:not([is_system='true']) .mes_block {
+    max-width: calc(100% - 12px) !important;
+}
+
 /* The tail. Only the last bubble of a group has one -- that is the single
    detail that makes grouped messages read as Telegram rather than as a
    generic bubble theme. Drawn with a clip-path triangle so it inherits the

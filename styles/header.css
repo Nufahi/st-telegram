@@ -189,160 +189,47 @@ html[data-tg-variant='night'] .tg-header-btn:active {
 }
 
 /* ── Top Info Bar extension ────────────────────────────────────────────────
-   The extension inserts these nodes as flex siblings immediately before
-   #chat. Its stock fixed-height/wrapping combination lets wrapped controls
-   overflow into the conversation, so keep each strip to one scrollable row. */
+   Leave all sizing and flow to the extension. The theme only supplies fixed
+   Telegram colours so its phone layout cannot be changed accidentally. */
 
-html[data-tg-enabled='on'] #sheld > #extensionTopBar,
-html[data-tg-enabled='on'] #sheld > #extensionConnectionProfiles {
-    position: relative !important;
-    z-index: 20 !important;
-    flex: 0 0 auto !important;
-    display: flex !important;
-    flex-flow: row wrap !important;
-    align-items: center !important;
-    align-content: center !important;
-    gap: 4px !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    height: auto !important;
-    min-height: 44px !important;
-    margin: 0 !important;
-    padding: 4px 6px !important;
-    overflow: visible !important;
-    border: 0 !important;
-    border-bottom: 1px solid var(--tg-divider) !important;
-    border-radius: 0 !important;
-    outline: 0 !important;
-    background: var(--tg-panel) !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    color: var(--tg-text) !important;
-    filter: none !important;
-    opacity: 1 !important;
-    font-family: var(--tg-font-ui) !important;
-    font-size: 14px !important;
-    text-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+html[data-tg-enabled='on'][data-tg-variant='day'] :is(#extensionTopBar, #extensionConnectionProfiles) {
+    background-color: #ffffff !important;
+    border-color: rgba(0, 0, 0, .16) !important;
+    color: #000000 !important;
 }
 
-html[data-tg-enabled='on'] #sheld > #extensionConnectionProfiles:not(.visible) {
-    display: none !important;
+html[data-tg-enabled='on'][data-tg-variant='night'] :is(#extensionTopBar, #extensionConnectionProfiles) {
+    background-color: #17212b !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+    color: #ffffff !important;
 }
 
-html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button {
-    flex: 0 0 36px !important;
-    display: grid !important;
-    place-items: center !important;
-    width: 36px !important;
-    min-width: 36px !important;
-    height: 36px !important;
-    min-height: 36px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    outline: 0 !important;
-    background: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    color: var(--tg-text-secondary) !important;
-    filter: none !important;
-    opacity: 1 !important;
-    font-size: 16px !important;
-    text-decoration: none !important;
-    text-shadow: none !important;
-    cursor: pointer !important;
-}
-
-html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button:hover,
-html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button.active {
-    background: var(--tg-accent-soft) !important;
-    color: var(--tg-accent) !important;
-}
-
-html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button.not-in-chat {
-    color: var(--tg-text-hint) !important;
-    opacity: .55 !important;
-}
-
-html[data-tg-enabled='on'] #extensionTopBarChatName,
-html[data-tg-enabled='on'] #extensionConnectionProfilesSelect,
-html[data-tg-enabled='on'] #extensionTopBarSearchInput {
-    flex: 1 1 140px !important;
-    width: auto !important;
-    min-width: 100px !important;
-    max-width: 100% !important;
-    height: 34px !important;
-    min-height: 34px !important;
-    margin: 0 !important;
-    padding: 0 10px !important;
-    border: 1px solid var(--tg-divider-strong) !important;
-    border-radius: 17px !important;
-    outline: 0 !important;
-    background: var(--tg-panel-sunken) !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    color: var(--tg-text) !important;
-    filter: none !important;
-    opacity: 1 !important;
-    font: 14px/32px var(--tg-font-ui) !important;
-    text-shadow: none !important;
-}
-
-html[data-tg-enabled='on'] #extensionTopBarChatName {
-    padding-right: 26px !important;
-}
-
-html[data-tg-enabled='on'] #extensionTopBarSearchInput {
-    flex-basis: 120px !important;
-}
-
-html[data-tg-enabled='on'] #extensionConnectionProfilesSelect {
-    padding-right: 26px !important;
-}
-
-html[data-tg-enabled='on'] :is(#extensionTopBarChatName, #extensionConnectionProfilesSelect) option {
-    background: var(--tg-panel) !important;
-    color: var(--tg-text) !important;
-    font-family: var(--tg-font-ui) !important;
-}
-
-html[data-tg-enabled='on'] #extensionTopBarSearchInput::placeholder {
-    color: var(--tg-text-hint) !important;
-    opacity: 1 !important;
-    font-style: normal !important;
-}
-
-html[data-tg-enabled='on'] :is(
+html[data-tg-enabled='on'][data-tg-variant='day'] :is(
     #extensionTopBarChatName,
-    #extensionConnectionProfilesSelect,
-    #extensionTopBarSearchInput
-):focus-visible {
-    border-color: var(--tg-accent) !important;
-    box-shadow: 0 0 0 1px var(--tg-accent) !important;
+    #extensionTopBarSearchInput,
+    #extensionConnectionProfilesSelect
+) {
+    background-color: #f1f1f1 !important;
+    border-color: rgba(0, 0, 0, .16) !important;
+    color: #000000 !important;
 }
 
-html[data-tg-enabled='on'] #extensionConnectionProfilesStatus {
-    flex: 0 0 auto !important;
-    max-width: min(50vw, 360px) !important;
-    color: var(--tg-text-secondary) !important;
-    opacity: 1 !important;
-    font: 13px/1.25 var(--tg-font-ui) !important;
-    text-shadow: none !important;
+html[data-tg-enabled='on'][data-tg-variant='night'] :is(
+    #extensionTopBarChatName,
+    #extensionTopBarSearchInput,
+    #extensionConnectionProfilesSelect
+) {
+    background-color: #131c26 !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+    color: #ffffff !important;
 }
 
-html[data-tg-enabled='on'] #extensionConnectionProfiles > :is(i, svg, .icon-svg) {
-    flex: 0 0 auto !important;
-    color: var(--tg-text-secondary) !important;
-    filter: none !important;
-    opacity: 1 !important;
+html[data-tg-enabled='on'][data-tg-variant='day'] #extensionTopBar > .right_menu_button {
+    color: #707579 !important;
 }
 
-html[data-tg-enabled='on'] #extensionConnectionProfiles svg :is(path, circle, rect) {
-    fill: currentColor !important;
-    stroke: currentColor !important;
+html[data-tg-enabled='on'][data-tg-variant='night'] #extensionTopBar > .right_menu_button {
+    color: #aaaaaa !important;
 }
 
 /* Its optional chat-file sidebar lives outside #sheld in #movingDivs. Keep

@@ -493,93 +493,19 @@ html[data-tg-fab='stop'] #rightSendForm > #send_but { display: none !important; 
 
 /* ── Quick replies bar ──────────────────────────────────────────────────── */
 
-/* StoryForge Quick Inserts lives directly inside #send_form. Keep it visually
-   separate from Tavern's generic .menu_button rules and let long collections
-   scroll horizontally instead of making the composer several rows tall. */
-html[data-tg-enabled='on'] #send_form > #sf-qi-bar.sf-qi-bar {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 6px !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    padding: 6px var(--tg-composer-gutter) !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    border: 0 !important;
-    border-top: 0 !important;
-    outline: 0 !important;
-    background: transparent !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    color: var(--tg-text) !important;
-    cursor: default !important;
-    scrollbar-width: none !important;
-    text-decoration: none !important;
-    text-shadow: none !important;
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
+/* StoryForge owns the Quick Inserts geometry, including its centred phone
+   layout. Only pin its colours for the two Telegram variants. */
+
+html[data-tg-enabled='on'][data-tg-variant='day'] #sf-qi-bar .sf-qi-btn.menu_button {
+    background-color: #f1f1f1 !important;
+    border-color: rgba(0, 0, 0, .16) !important;
+    color: #707579 !important;
 }
 
-@media (min-width: 701px) {
-    html[data-tg-enabled='on'] #send_form > #sf-qi-bar.sf-qi-bar {
-        width: min(100%, 960px) !important;
-        margin-right: auto !important;
-        margin-left: auto !important;
-        justify-content: center !important;
-    }
-}
-
-html[data-tg-enabled='on'] #send_form > #sf-qi-bar.sf-qi-bar::-webkit-scrollbar {
-    display: none !important;
-}
-
-html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button {
-    flex: 0 0 auto !important;
-    width: auto !important;
-    min-width: 32px !important;
-    min-height: 30px !important;
-    height: 30px !important;
-    margin: 0 !important;
-    padding: 0 12px !important;
-    border: 1px solid var(--tg-divider-strong) !important;
-    border-radius: 15px !important;
-    outline: 0 !important;
-    background: var(--tg-panel-sunken) !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    color: var(--tg-text-secondary) !important;
-    filter: none !important;
-    opacity: 1 !important;
-    font: 500 13px/28px var(--tg-font-ui) !important;
-    letter-spacing: normal !important;
-    text-align: center !important;
-    text-decoration: none !important;
-    text-shadow: none !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-    cursor: pointer !important;
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    transition: background-color var(--tg-dur-short), border-color var(--tg-dur-short), color var(--tg-dur-short) !important;
-}
-
-html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button:hover {
-    border-color: var(--tg-accent) !important;
-    background: var(--tg-accent-soft) !important;
-    color: var(--tg-accent) !important;
-}
-
-html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button:active {
-    background: var(--tg-panel-pressed) !important;
-}
-
-html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button:focus-visible {
-    outline: 2px solid var(--tg-accent) !important;
-    outline-offset: -2px !important;
+html[data-tg-enabled='on'][data-tg-variant='night'] #sf-qi-bar .sf-qi-btn.menu_button {
+    background-color: #131c26 !important;
+    border-color: rgba(255, 255, 255, .14) !important;
+    color: #aaaaaa !important;
 }
 
 /* Rendered as Telegram's horizontally scrolling suggestion chips. */
@@ -599,12 +525,6 @@ html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button:focus-visible {
 
 #qr--bar::-webkit-scrollbar {
     display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button {
-        transition: none !important;
-    }
 }
 
 #qr--bar .qr--button {

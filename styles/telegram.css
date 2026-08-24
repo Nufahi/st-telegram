@@ -16,8 +16,8 @@
 @import url('./tokens.css?v=0.1.2-slim-composer');
 @import url('./icons.css?v=0.1.2-message-action-sheet');
 @import url('./base.css?v=0.1.2-themed-loader');
-@import url('./chat.css?v=0.1.2-top-info-bar-scroll');
-@import url('./header.css?v=0.1.2-options-visibility');
-@import url('./composer.css?v=0.1.2-flex-extension-controls');
+@import url('./chat.css?v=0.1.2-wide-incoming-bubbles');
+@import url('./header.css?v=0.1.2-extension-colours-only');
+@import url('./composer.css?v=0.1.2-storyforge-native-layout');
 @import url('./drawer.css?v=0.1.2-hotswap-list-button');
 @import url('./frame.css?v=0.1.2-desktop-layout');
