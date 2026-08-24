@@ -36,20 +36,38 @@ body {
 
 /* ── Loading screen ─────────────────────────────────────────────────────── */
 
-/* SillyTavern creates #loader inside a transparent blocking popup. Replace
-   its spinner or branded splash with a self-contained Telegram mark. */
-html[data-tg-enabled='on'] body #loader {
+/* #preloader owns the viewport in current SillyTavern. Pin both layers so
+   mobile viewport sizing or inherited splash positioning cannot offset the
+   branded loader or leave part of the screen uncovered. */
+html[data-tg-enabled='on'] body #preloader {
     position: fixed !important;
     inset: 0 !important;
     z-index: 999999 !important;
+    width: 100vw !important;
+    width: 100dvw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: var(--tg-panel) !important;
+    transform: none !important;
+}
+
+html[data-tg-enabled='on'] body #loader {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     gap: 18px !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    height: 100dvh !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
     margin: 0 !important;
     padding: 24px !important;
     overflow: hidden !important;
@@ -64,6 +82,7 @@ html[data-tg-enabled='on'] body #loader {
     opacity: 1 !important;
     text-align: center !important;
     text-shadow: none !important;
+    transform: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
 }
