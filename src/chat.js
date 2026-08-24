@@ -1049,6 +1049,15 @@ function refreshDrawerIdentity() {
     const head = holder?.querySelector(':scope > .tg-drawer-head');
     if (!head) return;
 
+    /* #bg1 is SillyTavern's authoritative live wallpaper layer. Copy the
+       complete computed CSS value so chat-specific and generated backgrounds
+       work without parsing URLs. The main observer already refreshes us when
+       SillyTavern changes #bg1's inline style. */
+    const wallpaper = document.getElementById('bg1');
+    const wallpaperImage = wallpaper ? getComputedStyle(wallpaper).backgroundImage : 'none';
+    head.style.setProperty('--tg-drawer-wallpaper', wallpaperImage || 'none');
+    head.classList.toggle('tg-has-wallpaper', Boolean(wallpaperImage && wallpaperImage !== 'none'));
+
     const context = getContext();
     const personaAvatar = currentPersonaAvatar();
     const personas = context?.powerUserSettings?.personas

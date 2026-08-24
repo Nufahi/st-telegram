@@ -132,6 +132,18 @@ body.tg-drawer-open #top-settings-holder {
     user-select: none;
 }
 
+/* Mirror a cropped fragment of SillyTavern's current chat background in the
+   account header. The dark tint keeps identity text readable; disabling the
+   theme's wallpaper option restores the normal Telegram header colour. */
+html[data-tg-wallpaper='on'] .tg-drawer-head.tg-has-wallpaper {
+    background-image:
+        linear-gradient(rgba(0, 0, 0, .30), rgba(0, 0, 0, .30)),
+        var(--tg-drawer-wallpaper, none);
+    background-position: center, center;
+    background-size: auto, cover;
+    background-repeat: no-repeat;
+}
+
 .tg-drawer-head-top {
     display: flex;
     align-items: flex-start;
