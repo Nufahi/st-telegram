@@ -177,6 +177,7 @@ div#send_form.compact {
     text-transform: none !important;
     letter-spacing: normal !important;
     cursor: pointer;
+    touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -317,6 +318,21 @@ div#send_form.compact {
 
 #nonQRFormItems #extensionsMenuButton:hover::before {
     background-color: var(--tg-text-secondary) !important;
+}
+
+/* Touch browsers emulate :hover after a tap. On adjacent composer controls
+   that looks like a false press on the other button, so keep hover feedback
+   exclusive to devices with an actual hover-capable pointer. */
+@media (hover: none) and (pointer: coarse) {
+    #nonQRFormItems #options_button:hover,
+    #nonQRFormItems #extensionsMenuButton:hover {
+        background: transparent !important;
+    }
+
+    #nonQRFormItems #options_button:hover::before,
+    #nonQRFormItems #extensionsMenuButton:hover::before {
+        background-color: var(--tg-text-hint) !important;
+    }
 }
 
 /* ST ships the wand with inline style="display: none" and only reveals it

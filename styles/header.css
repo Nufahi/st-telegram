@@ -195,12 +195,14 @@ html[data-tg-variant='night'] .tg-header-btn:active {
 html[data-tg-enabled='on'][data-tg-variant='day'] :is(#extensionTopBar, #extensionConnectionProfiles) {
     background-color: #ffffff !important;
     border-color: rgba(0, 0, 0, .16) !important;
+    border-radius: 0 !important;
     color: #000000 !important;
 }
 
 html[data-tg-enabled='on'][data-tg-variant='night'] :is(#extensionTopBar, #extensionConnectionProfiles) {
     background-color: #17212b !important;
     border-color: rgba(255, 255, 255, .14) !important;
+    border-radius: 0 !important;
     color: #ffffff !important;
 }
 
