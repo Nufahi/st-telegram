@@ -254,6 +254,7 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
 /* Incoming messages use nearly the full phone width, leaving only the
    Telegram edge and avatar spacing. Outgoing bubbles keep their compact cap. */
 #chat > .mes[is_user='false']:not([is_system='true']) .mes_block {
+    width: calc(100% - 12px) !important;
     max-width: calc(100% - 12px) !important;
 }
 
