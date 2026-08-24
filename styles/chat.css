@@ -1003,3 +1003,18 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     width: fit-content !important;
     border: 0 !important;
 }
+
+/* Performance mode for the conversation surface. Shadows and compositor
+   filters become expensive across long chats, especially while streaming on
+   mobile. Keep every chat descendant flat, including native ST content and
+   pseudo-elements that extensions may add later. */
+#chat,
+#chat *,
+#chat *::before,
+#chat *::after {
+    box-shadow: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
