@@ -28,7 +28,8 @@
 
 #form_sheld {
     position: relative !important;
-    z-index: 20;
+    z-index: 100 !important;
+    isolation: isolate;
     flex: 0 0 auto !important;
     width: 100% !important;
     max-width: none !important;
@@ -37,6 +38,7 @@
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    overflow: visible !important;
 }
 
 #send_form {
@@ -46,6 +48,7 @@
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    overflow: visible !important;
     /* SillyTavern adds .no-connection when no API is reachable and dims the
        whole form. Telegram would just show a disabled state; keep it legible. */
     opacity: 1 !important;
@@ -90,6 +93,7 @@ div#send_form.compact {
     margin: 0 !important;
     background: none !important;
     border: 0 !important;
+    overflow: visible !important;
 }
 
 @media (min-width: 701px) {
@@ -236,9 +240,9 @@ div#send_form.compact {
     position: absolute !important;
     top: auto !important;
     right: auto !important;
-    bottom: calc(100% + 8px) !important;
+    bottom: calc(100% + 14px) !important;
     left: 0 !important;
-    z-index: 1000 !important;
+    z-index: 10000 !important;
     max-width: calc(100vw - 16px) !important;
     visibility: hidden !important;
     opacity: 0 !important;
