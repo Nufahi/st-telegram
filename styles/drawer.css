@@ -1169,7 +1169,11 @@ html[data-tg-enabled='on'] #left-nav-panel .standoutHeader {
 }
 
 html[data-tg-enabled='on'] #left-nav-panel .range-block {
-    border-color: var(--tg-divider) !important;
+    gap: 4px !important;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
     background: transparent !important;
     background-image: none !important;
     box-shadow: none !important;
@@ -1177,13 +1181,287 @@ html[data-tg-enabled='on'] #left-nav-panel .range-block {
 }
 
 html[data-tg-enabled='on'] #left-nav-panel .range-block-title {
-    padding: 5px 10px 2px !important;
+    padding: 2px 0 !important;
 }
 
 html[data-tg-enabled='on'] #left-nav-panel .toggle-description {
-    padding-inline: 10px !important;
+    padding-inline: 0 !important;
     color: var(--tg-text-secondary) !important;
     font: 400 12px/1.4 var(--tg-font-ui) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .range-block-range-and-counter {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .range-block-range {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .range-block-counter {
+    flex: 0 0 72px !important;
+    width: 72px !important;
+    margin: 0 !important;
+}
+
+/* Generation actions use Telegram's quiet hierarchy instead of presenting
+   every utility action as a primary filled button. */
+html[data-tg-enabled='on'] #left-nav-panel .menu_button {
+    min-height: 38px !important;
+    margin: 2px !important;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-accent) !important;
+    filter: none !important;
+    font: 500 14px/1.25 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .menu_button:hover {
+    border-color: var(--tg-accent) !important;
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .menu_button:active {
+    background: var(--tg-panel-pressed) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .menu_button:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .menu_button:is(.disabled, [disabled]) {
+    opacity: .45 !important;
+    cursor: not-allowed !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel [data-preset-manager-for] {
+    flex: 1 1 150px !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel select {
+    min-width: 0 !important;
+    min-height: 40px !important;
+    padding-inline: 12px 32px !important;
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: url('/img/down-arrow.svg') !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 8px 5px !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel select {
+    background-position: left 12px center !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    [data-preset-manager-import],
+    [data-preset-manager-export],
+    [data-preset-manager-delete],
+    [data-preset-manager-update],
+    [data-preset-manager-rename],
+    [data-preset-manager-new],
+    [data-preset-manager-restore],
+    #import_oai_preset,
+    #export_oai_preset,
+    #delete_oai_preset,
+    #update_oai_preset,
+    #new_oai_preset,
+    label[for='bind_preset_to_connection'],
+    .openai_logit_bias_preset_form > i.menu_button,
+    .logit_bias_remove,
+    .openai_logit_bias_remove
+) {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    color: var(--tg-text-secondary) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    [data-preset-manager-import],
+    [data-preset-manager-export],
+    [data-preset-manager-delete],
+    [data-preset-manager-update],
+    [data-preset-manager-rename],
+    [data-preset-manager-new],
+    [data-preset-manager-restore],
+    #import_oai_preset,
+    #export_oai_preset,
+    #delete_oai_preset,
+    #update_oai_preset,
+    #new_oai_preset,
+    label[for='bind_preset_to_connection'],
+    .openai_logit_bias_preset_form > i.menu_button,
+    .logit_bias_remove,
+    .openai_logit_bias_remove
+):hover {
+    background: var(--tg-panel-hover) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    [data-preset-manager-delete],
+    #delete_oai_preset,
+    #openai_logit_bias_delete_preset,
+    .logit_bias_remove,
+    .openai_logit_bias_remove
+) {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    [data-preset-manager-delete],
+    #delete_oai_preset,
+    #openai_logit_bias_delete_preset,
+    .logit_bias_remove,
+    .openai_logit_bias_remove
+):hover {
+    background: var(--tg-danger-soft) !important;
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel label[for='bind_preset_to_connection']:has(#bind_preset_to_connection:checked) {
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    #novelai_logit_bias_new_entry,
+    #textgen_logit_bias_new_entry,
+    #openai_logit_bias_new_entry
+) {
+    border-color: transparent !important;
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    #samplerResetButton,
+    #samplerSelectButton,
+    #samplers_order_recommended,
+    #koboldcpp_default_order,
+    #llamacpp_samplers_default_order,
+    #textgenerationwebui_default_order,
+    #aphrodite_default_order
+) {
+    width: auto !important;
+    min-height: 38px !important;
+    white-space: normal !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .inline-drawer {
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .inline-drawer-header {
+    min-height: 48px !important;
+    padding: 10px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .inline-drawer-header:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .inline-drawer-icon {
+    color: var(--tg-text-secondary) !important;
+    font-size: 18px !important;
+    filter: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .inline-drawer-content {
+    padding: 4px 10px 12px !important;
+    border: 0 !important;
+    background: transparent !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel textarea {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    line-height: 1.4 !important;
+    resize: vertical;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel textarea:not(.textarea_compact):not(.autoSetHeight) {
+    min-height: 72px;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel textarea.monospace {
+    font-family: var(--tg-font-mono) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden]) {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    display: inline-grid !important;
+    place-content: center !important;
+    flex: 0 0 20px !important;
+    width: 20px !important;
+    min-width: 20px !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    margin: 2px 8px 2px 2px !important;
+    padding: 0 !important;
+    border: 2px solid var(--tg-switch-off) !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden])::before {
+    content: '' !important;
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important;
+    background: var(--tg-accent) !important;
+    clip-path: none !important;
+    box-shadow: none !important;
+    transform: scale(0) !important;
+    transition: transform var(--tg-dur-short) var(--tg-ease) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden]):checked {
+    border-color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden]):checked::before {
+    transform: scale(1) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden]):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 3px !important;
 }
 
 /* Only ordinary boolean setting labels become Telegram rows. Hidden
@@ -1393,9 +1671,20 @@ html[data-tg-enabled='on'] #left-nav-panel :is(.range-block-counter input[type='
     text-align: center !important;
 }
 
+html[data-tg-enabled='on'] #left-nav-panel .range-block-counter > input[type='number'] {
+    width: 72px !important;
+    min-width: 72px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input.neo-range-input[type='number'] {
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html[data-tg-enabled='on'] #left-nav-panel input[type='checkbox'],
     html[data-tg-enabled='on'] #left-nav-panel input[type='checkbox']::before,
+    html[data-tg-enabled='on'] #left-nav-panel input[type='radio']::before,
     html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
         transition: none !important;
     }
@@ -1404,6 +1693,7 @@ html[data-tg-enabled='on'] #left-nav-panel :is(.range-block-counter input[type='
 @media (forced-colors: active) {
     html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
     > input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui),
+    html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden]),
     html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
         appearance: auto !important;
         -webkit-appearance: auto !important;
@@ -1411,52 +1701,86 @@ html[data-tg-enabled='on'] #left-nav-panel :is(.range-block-counter input[type='
     }
 }
 
-/* Chat Completion tabs use a plain wrapper whose children otherwise retain
-   the active Tavern theme. Render it as a Telegram segmented control. */
-html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons {
+/* Sortable sampler orders keep their native drag behavior, but use Telegram
+   rows instead of Tavern's translucent cards. */
+html[data-tg-enabled='on'] #left-nav-panel .prompt_order {
     display: flex !important;
-    flex-wrap: wrap !important;
-    align-items: stretch !important;
+    flex-direction: column !important;
     gap: 4px !important;
-    margin: 8px 0 !important;
-    padding: 4px !important;
-    border: 1px solid var(--tg-divider) !important;
-    border-radius: 12px !important;
-    background: var(--tg-panel-sunken) !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    filter: none !important;
+    padding: 4px 0 !important;
+    border: 0 !important;
+    background: transparent !important;
 }
 
-html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(button, a, .menu_button) {
-    flex: 1 1 120px !important;
-    min-height: 36px !important;
+html[data-tg-enabled='on'] #left-nav-panel .prompt_order > div {
+    min-height: 44px !important;
     margin: 0 !important;
-    padding: 7px 10px !important;
-    border: 0 !important;
-    border-radius: 8px !important;
-    background: transparent !important;
-    background-image: none !important;
+    padding: 9px 38px 9px 12px !important;
+    border: 1px solid var(--tg-divider) !important;
+    border-radius: 10px !important;
+    background: var(--tg-panel-sunken) !important;
     box-shadow: none !important;
-    color: var(--tg-text-secondary) !important;
+    color: var(--tg-text) !important;
     filter: none !important;
-    font: 500 14px/1.25 var(--tg-font-ui) !important;
     text-shadow: none !important;
 }
 
-html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(button, a, .menu_button):hover {
+html[data-tg-enabled='on'] #left-nav-panel .prompt_order > div::after {
+    right: 12px !important;
+    left: auto !important;
+    color: var(--tg-text-hint) !important;
+    text-shadow: none !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel .prompt_order > div {
+    padding: 9px 12px 9px 38px !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel .prompt_order > div::after {
+    right: auto !important;
+    left: 12px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .prompt_order:not(.ui-sortable-disabled) > div:hover {
+    border-color: var(--tg-divider-strong) !important;
     background: var(--tg-panel-hover) !important;
-    color: var(--tg-text) !important;
 }
 
-html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(.active, .selected, [aria-selected='true']) {
-    background: var(--tg-panel) !important;
+html[data-tg-enabled='on'] #left-nav-panel .prompt_order .disabled {
+    opacity: .48 !important;
+    filter: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .prompt_order .toggle_button {
     color: var(--tg-accent) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .12) !important;
+    filter: none !important;
 }
 
-html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons > :is(button, a, .menu_button):focus-visible {
-    box-shadow: inset 0 0 0 2px var(--tg-accent) !important;
+/* Logit bias editors are compact field/value/action rows. */
+html[data-tg-enabled='on'] #left-nav-panel :is(.logit_bias_list, .openai_logit_bias_list) {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.logit_bias_form, .openai_logit_bias_form) {
+    display: grid !important;
+    grid-template-columns: 18px minmax(0, 1fr) 80px 36px !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.logit_bias_form, .openai_logit_bias_form) > .drag-handle {
+    color: var(--tg-text-hint) !important;
+    text-align: center !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.logit_bias_form, .openai_logit_bias_form) > input {
+    min-width: 0 !important;
+    width: 100% !important;
 }
 
 /* Prompt Manager list: retain native grid, sorting and visibility classes,
@@ -1504,6 +1828,7 @@ html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager
 }
 
 html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt {
+    grid-template-columns: minmax(0, 1fr) 112px 42px !important;
     min-height: 46px !important;
     padding: 8px 10px !important;
 }
@@ -1524,6 +1849,56 @@ html[data-tg-enabled='on'] #completion_prompt_manager :is(
     box-shadow: none !important;
     filter: none !important;
     text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_footer {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 8px 0 !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_footer_append_prompt {
+    flex: 1 1 180px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_footer > .menu_button {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    color: var(--tg-text-secondary) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_footer > .menu_button:hover {
+    background: var(--tg-panel-hover) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_footer > .caution {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_footer > .caution:hover {
+    background: var(--tg-danger-soft) !important;
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #completion_prompt_manager #prompt-manager-reset-character {
+    color: var(--tg-warning) !important;
 }
 
 html[data-tg-enabled='on'] #completion_prompt_manager :is(
@@ -1580,15 +1955,20 @@ html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager
 }
 
 html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt_manager_prompt_controls {
+    display: grid !important;
+    grid-template-columns: repeat(3, 36px) !important;
     align-items: center !important;
     gap: 2px !important;
 }
 
 html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt_manager_prompt_controls > span {
+    display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 24px !important;
-    height: 24px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
     margin: 0 !important;
     border-radius: 50% !important;
 }
@@ -1606,6 +1986,10 @@ html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager
     color: var(--tg-danger) !important;
 }
 
+html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt-manager-edit-action {
+    color: var(--tg-text-secondary) !important;
+}
+
 html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .drag-handle {
     color: var(--tg-text-hint) !important;
     filter: none !important;
@@ -1615,6 +1999,35 @@ html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager
 html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager_list_separator hr {
     background: var(--tg-divider) !important;
     background-image: none !important;
+}
+
+@media (max-width: 600px) {
+    html[data-tg-enabled='on'] #left-nav-panel .scrollableInner {
+        padding-inline: 0 !important;
+    }
+
+    html[data-tg-enabled='on'] #left-nav-panel :is(.standoutHeader, .range-block) {
+        padding-inline: 8px !important;
+    }
+
+    html[data-tg-enabled='on'] #left-nav-panel :is(.logit_bias_form, .openai_logit_bias_form) {
+        grid-template-columns: 16px minmax(0, 1fr) 68px 36px !important;
+        gap: 6px !important;
+    }
+
+    html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt {
+        grid-template-columns: minmax(0, 1fr) 112px !important;
+        row-gap: 4px !important;
+    }
+
+    html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .prompt_manager_prompt_tokens {
+        grid-column: 1 / -1 !important;
+        text-align: end !important;
+    }
+
+    html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt {
+        padding-inline: 8px !important;
+    }
 }
 
 /* The extension's own panel must look identical no matter which ST preset is

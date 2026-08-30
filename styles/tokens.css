@@ -116,6 +116,8 @@ html[data-tg-variant='day'] {
     --tg-check: #4fae4e;
     --tg-online: #4dcd5e;
     --tg-danger: #e53935;
+    --tg-danger-soft: rgba(229, 57, 53, .11);
+    --tg-warning: #d18b00;
     --tg-unread-badge: #3390ec;
 
     /* Current Telegram Android uses a light surface for the chat app bar. */
@@ -173,6 +175,8 @@ html[data-tg-variant='night'] {
     --tg-check: #72d5fd;
     --tg-online: #4dcd5e;
     --tg-danger: #ec6657;
+    --tg-danger-soft: rgba(236, 102, 87, .16);
+    --tg-warning: #f2b84b;
     --tg-unread-badge: #3390ec;
 
     /* Night's action bar is the panel colour, not the accent. */
