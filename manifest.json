@@ -3,9 +3,9 @@
     "loading_order": 100,
     "requires": [],
     "optional": [],
-    "js": "loader-0.1.14.js",
+    "js": "loader-0.1.15.js",
     "author": "kamoimi",
-    "version": "0.1.14",
+    "version": "0.1.15",
     "homePage": "",
     "auto_update": true
 }

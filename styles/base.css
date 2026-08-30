@@ -445,116 +445,69 @@ html[data-tg-enabled='on'] .popup .extensions_info .extension_toggle > input[typ
     margin: 0 !important;
 }
 
-/* The extension manager uses real checkboxes without labels. Keep the input
-   as the complete touch target and paint an iOS-style Liquid Glass switch
-   inside it, so native checked/disabled state and SillyTavern handlers remain
-   authoritative. `.checkbox_disabled` means "currently off", not inert. */
-html[data-tg-enabled='on'][data-tg-variant='day'] .popup .extensions_info {
-    --tg-ext-switch-off: #c7cdd2;
-    --tg-ext-switch-off-glass: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(202, 211, 219, .72));
-    --tg-ext-switch-border: rgba(50, 62, 72, .18);
-    --tg-ext-switch-highlight: rgba(255, 255, 255, .92);
-    --tg-ext-thumb-top: #ffffff;
-    --tg-ext-thumb-bottom: #f2f5f8;
-    --tg-ext-thumb-border: rgba(255, 255, 255, .96);
-    --tg-ext-thumb-shadow: 0 2px 5px rgba(25, 37, 48, .22), 0 1px 1px rgba(25, 37, 48, .14), inset 0 1px 0 #fff;
-}
-
-html[data-tg-enabled='on'][data-tg-variant='night'] .popup .extensions_info {
-    --tg-ext-switch-off: #4d5a67;
-    --tg-ext-switch-off-glass: linear-gradient(180deg, rgba(137, 153, 168, .48), rgba(61, 74, 87, .64));
-    --tg-ext-switch-border: rgba(255, 255, 255, .16);
-    --tg-ext-switch-highlight: rgba(255, 255, 255, .22);
-    --tg-ext-thumb-top: #ffffff;
-    --tg-ext-thumb-bottom: #e5ebf0;
-    --tg-ext-thumb-border: rgba(255, 255, 255, .88);
-    --tg-ext-thumb-shadow: 0 2px 5px rgba(0, 0, 0, .34), 0 1px 1px rgba(0, 0, 0, .24), inset 0 1px 0 #fff;
-}
-
+/* Same 42x24 Telegram switch used in the generation settings, with only a
+   translucent glass surface added for the extension manager. */
 html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle {
-    min-width: 46px !important;
-    min-height: 36px !important;
+    min-width: 42px !important;
+    min-height: 24px !important;
 }
 
 html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing) {
-    -webkit-appearance: none !important;
     appearance: none !important;
+    -webkit-appearance: none !important;
     position: relative !important;
-    isolation: isolate;
-    display: block !important;
-    flex: 0 0 46px !important;
-    width: 46px !important;
-    min-width: 46px !important;
-    max-width: 46px !important;
-    height: 36px !important;
-    min-height: 36px !important;
-    max-height: 36px !important;
+    display: inline-block !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
-    border: 0 !important;
+    border: 1px solid rgba(255, 255, 255, .30) !important;
     border-radius: 999px !important;
     outline: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
+    background-color: var(--tg-switch-off) !important;
+    background-color: color-mix(in srgb, var(--tg-switch-off) 72%, transparent) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .20), rgba(255, 255, 255, .02)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 -1px 1px rgba(0, 0, 0, .12) !important;
     filter: none !important;
     opacity: 1 !important;
     transform: none !important;
     cursor: pointer !important;
     -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    transition: background-color var(--tg-dur-short) var(--tg-ease), border-color var(--tg-dur-short) var(--tg-ease), box-shadow var(--tg-dur-short) var(--tg-ease) !important;
 }
 
-/* Glass track. Solid color remains a complete fallback when gradients or
-   backdrop filtering are unavailable. */
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::after {
-    content: '' !important;
-    position: absolute !important;
-    z-index: 0 !important;
-    inset-block-start: 5px !important;
-    inset-inline-start: 1px !important;
-    display: block !important;
-    width: 44px !important;
-    height: 26px !important;
-    border: 1px solid var(--tg-ext-switch-border) !important;
-    border-radius: 999px !important;
-    background-color: var(--tg-ext-switch-off) !important;
-    background-image: var(--tg-ext-switch-off-glass) !important;
-    box-shadow: inset 0 1px 0 var(--tg-ext-switch-highlight), inset 0 -1px 1px rgba(0, 0, 0, .12), 0 1px 3px rgba(0, 0, 0, .10) !important;
-    clip-path: none !important;
-    opacity: 1 !important;
-    pointer-events: none !important;
-    transition: background-color 180ms cubic-bezier(.2, .8, .2, 1), border-color 180ms cubic-bezier(.2, .8, .2, 1), box-shadow 180ms cubic-bezier(.2, .8, .2, 1) !important;
-}
-
-/* Glass thumb replaces SillyTavern's square-checkbox tick. */
 html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before {
     content: '' !important;
     position: absolute !important;
-    z-index: 1 !important;
-    inset-block-start: 7px !important;
-    inset-inline-start: 3px !important;
+    top: 1px !important;
+    left: 1px !important;
     display: block !important;
-    width: 22px !important;
-    height: 22px !important;
-    border: 1px solid var(--tg-ext-thumb-border) !important;
+    width: 20px !important;
+    height: 20px !important;
+    border: 0 !important;
     border-radius: 50% !important;
-    background-color: #ffffff !important;
-    background-image: radial-gradient(circle at 34% 22%, rgba(255, 255, 255, 1) 0 16%, rgba(255, 255, 255, 0) 48%), linear-gradient(180deg, var(--tg-ext-thumb-top), var(--tg-ext-thumb-bottom)) !important;
-    box-shadow: var(--tg-ext-thumb-shadow) !important;
+    background: rgba(255, 255, 255, .94) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .28), inset 0 1px 0 rgba(255, 255, 255, .92) !important;
     clip-path: none !important;
     opacity: 1 !important;
-    pointer-events: none !important;
     transform: translateX(0) !important;
     transform-origin: center !important;
-    transition: transform 220ms cubic-bezier(.2, .85, .25, 1), box-shadow 160ms ease !important;
+    pointer-events: none !important;
+    transition: transform var(--tg-dur-short) var(--tg-ease) !important;
 }
 
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):checked::after {
+html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):checked {
+    border-color: rgba(255, 255, 255, .38) !important;
     background-color: var(--tg-accent) !important;
-    background-image: linear-gradient(180deg, rgba(255, 255, 255, .22), rgba(0, 0, 0, .05)) !important;
-    border-color: var(--tg-accent) !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .48), inset 0 -1px 1px rgba(0, 0, 0, .10), 0 2px 9px var(--tg-accent-soft) !important;
+    background-color: color-mix(in srgb, var(--tg-accent) 82%, transparent) !important;
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(255, 255, 255, .02)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), 0 2px 8px var(--tg-accent-soft) !important;
 }
 
 html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):checked::before {
@@ -563,94 +516,60 @@ html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension
 
 html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing):focus-visible {
     outline: 2px solid var(--tg-accent) !important;
-    outline-offset: 1px !important;
+    outline-offset: 3px !important;
     box-shadow: 0 0 0 4px var(--tg-accent-soft) !important;
 }
 
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing):focus:not(:focus-visible) {
-    outline: 0 !important;
-    box-shadow: none !important;
-}
-
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox'].checkbox_disabled:not(:disabled) {
-    cursor: pointer !important;
-    opacity: 1 !important;
-}
-
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox'].extension_missing:disabled {
+html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing):disabled {
     cursor: not-allowed !important;
-    opacity: .46 !important;
+    opacity: .48 !important;
 }
 
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):not(:disabled):active::before {
-    transform: translateX(0) scale(.92) !important;
-}
-
-html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):checked:not(:disabled):active::before {
-    transform: translateX(18px) scale(.92) !important;
+html[dir='rtl'][data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before {
+    right: 1px !important;
+    left: auto !important;
 }
 
 html[dir='rtl'][data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):checked::before {
     transform: translateX(-18px) !important;
 }
 
-html[dir='rtl'][data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):checked:not(:disabled):active::before {
-    transform: translateX(-18px) scale(.92) !important;
-}
-
-@media (hover: hover) and (pointer: fine) {
-    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable):not(:disabled):hover::after {
-        border-color: var(--tg-accent) !important;
-        box-shadow: inset 0 1px 0 var(--tg-ext-switch-highlight), inset 0 -1px 1px rgba(0, 0, 0, .10), 0 3px 10px rgba(0, 0, 0, .14) !important;
-    }
-}
-
 @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    html[data-tg-enabled='on'] body:not(.no-blur) .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::after {
-        -webkit-backdrop-filter: blur(6px) saturate(130%);
-        backdrop-filter: blur(6px) saturate(130%);
+    html[data-tg-enabled='on'] body:not(.no-blur) .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing) {
+        -webkit-backdrop-filter: blur(8px) saturate(140%);
+        backdrop-filter: blur(8px) saturate(140%);
     }
 }
 
 html[data-tg-motion='off'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing),
-html[data-tg-motion='off'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before,
-html[data-tg-motion='off'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::after {
+html[data-tg-motion='off'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before {
     transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
     html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing),
-    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before,
-    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::after {
+    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before {
         transition: none !important;
     }
 }
 
 @media (forced-colors: active) {
-    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle {
-        min-width: 44px !important;
-        min-height: 44px !important;
-    }
-
     html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing) {
-        -webkit-appearance: auto !important;
         appearance: auto !important;
+        -webkit-appearance: auto !important;
+        flex: 0 0 24px !important;
         width: 24px !important;
         min-width: 24px !important;
         max-width: 24px !important;
         height: 24px !important;
         min-height: 24px !important;
         max-height: 24px !important;
-        overflow: visible !important;
         border: 1px solid CanvasText !important;
         background: Canvas !important;
-        color: CanvasText !important;
         accent-color: Highlight !important;
-        forced-color-adjust: auto !important;
     }
 
-    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before,
-    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::after {
+    html[data-tg-enabled='on'] .popup .extensions_info .extension_block > .extension_toggle > input[type='checkbox']:is(.toggle_enable, .toggle_disable, .extension_missing)::before {
         content: none !important;
         display: none !important;
     }
