@@ -14,9 +14,9 @@
  */
 
 @import url('./tokens.css?v=0.1.2-night-blue-accent');
-@import url('./icons.css?v=0.1.2-message-action-sheet');
+@import url('./icons.css?v=0.1.3-share-swipe');
 @import url('./base.css?v=0.1.2-thin-scrollbars');
-@import url('./chat.css?v=0.1.2-native-message-controls');
+@import url('./chat.css?v=0.1.3-history-capsule');
 @import url('./header.css?v=0.1.2-square-top-info-bar');
 @import url('./composer.css?v=0.1.2-stable-fab');
 @import url('./drawer.css?v=0.1.2-adaptive-theme-colours');

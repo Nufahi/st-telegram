@@ -434,6 +434,8 @@ function refreshMessages() {
         const { row, isUser, isSystem, name, date } = entry;
         row.classList.toggle('tg-group-start', !messagesShareGroup(entry, entries[index - 1]));
         row.classList.toggle('tg-group-end', !messagesShareGroup(entry, entries[index + 1]));
+        row.classList.toggle('tg-has-swipes', !isUser && !isSystem
+            && Boolean(row.querySelector('.swipes-counter.swipe-picker-enabled.interactable')));
 
         if (!isUser && !isSystem && name) {
             const idx = String(nameColorIndex(name));
@@ -1205,7 +1207,7 @@ const OWNED = '.tg-header, .tg-date-pill, .tg-message-meta, .tg-drawer-head, .tg
    never a reason to refresh -- we are the ones who changed it. */
 const OWNED_CLASSES = [
     'tg-group-start', 'tg-group-end', 'tg-drawer-open', 'tg-group-top',
-    'tg-action-target', 'tg-action-pressing',
+    'tg-action-target', 'tg-action-pressing', 'tg-has-swipes',
 ];
 
 /* Is this node one we created? Used to recognise our own writes coming back
