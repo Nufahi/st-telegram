@@ -13,8 +13,8 @@
  *            otherwise there is no way to switch it back on.
  */
 
-import { TG_ENABLED } from './src/boot.js?v=0.1.5';
-import './src/settings.js?v=0.1.5';
+import { TG_ENABLED } from './src/boot.js?v=0.1.6';
+import './src/settings.js?v=0.1.6';
 
 /* No top-level await here. Some WebViews -- TauriTavern among them -- never
    finish initialising a dynamically imported module that awaits at the top
@@ -22,8 +22,8 @@ import './src/settings.js?v=0.1.5';
    the promise has the same effect and loads everywhere. */
 if (TG_ENABLED) {
     Promise.all([
-        import('./src/theme.js?v=0.1.5-companion-preset'),
-        import('./src/chat.js?v=0.1.5'),
+        import('./src/theme.js?v=0.1.6'),
+        import('./src/chat.js?v=0.1.6'),
     ]).catch((error) => {
         console.error('[ST Telegram] failed to load:', error);
     });

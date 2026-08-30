@@ -263,7 +263,6 @@ html[data-tg-variant='night'] #options {
    SillyTavern's desktop affordances without a Telegram equivalent. */
 #top-bar,
 #rm_print_characters_pagination,
-.zoomed_avatar,
 #sheldheader,
 #chat_import_button,
 #loading_mes {
@@ -812,8 +811,8 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .recentChatPinned {
 
 /* These live inside the settings sheets. Give them Telegram's list-row
    geometry so the drawer panels feel part of the same app. */
-.character_select,
-.group_select,
+.character_select.entity_block,
+.group_select.entity_block,
 .select_chat_block,
 .recentChat {
     display: flex !important;
@@ -829,17 +828,17 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .recentChatPinned {
     color: var(--tg-text) !important;
 }
 
-.character_select:hover,
-.group_select:hover,
+.character_select.entity_block:hover,
+.group_select.entity_block:hover,
 .select_chat_block:hover,
 .recentChat:hover {
     background: var(--tg-panel-hover) !important;
 }
 
-.character_select .avatar,
-.group_select .avatar,
-.select_chat_block .avatar,
-.recentChat .avatar {
+.character_select.entity_block > .avatar,
+.group_select.entity_block > .avatar,
+.select_chat_block > .avatar,
+.recentChat > .avatar {
     width: var(--tg-avatar-size) !important;
     height: var(--tg-avatar-size) !important;
     min-width: var(--tg-avatar-size) !important;
@@ -849,10 +848,10 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .recentChatPinned {
     flex: 0 0 auto !important;
 }
 
-.character_select .avatar img,
-.group_select .avatar img,
-.select_chat_block .avatar img,
-.recentChat .avatar img {
+.character_select.entity_block > .avatar:not(.avatar_collage) > img,
+.group_select.entity_block > .avatar:not(.avatar_collage) > img,
+.select_chat_block > .avatar:not(.avatar_collage) > img,
+.recentChat > .avatar:not(.avatar_collage) > img {
     width: 100% !important;
     height: 100% !important;
     aspect-ratio: 1 / 1 !important;
@@ -860,15 +859,41 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .recentChatPinned {
     border-radius: 50% !important;
 }
 
-.character_select .ch_name,
-.group_select .ch_name {
+/* Inline avatar lists reuse .character_select/.group_select on the avatar
+   itself, so row styling above is deliberately limited to .entity_block. */
+#persona_connections_list > .avatar {
+    box-sizing: border-box !important;
+    width: var(--tg-avatar-size) !important;
+    min-width: var(--tg-avatar-size) !important;
+    max-width: var(--tg-avatar-size) !important;
+    height: var(--tg-avatar-size) !important;
+    min-height: var(--tg-avatar-size) !important;
+    max-height: var(--tg-avatar-size) !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    flex: 0 0 var(--tg-avatar-size) !important;
+    aspect-ratio: 1 / 1 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+}
+
+#persona_connections_list > .avatar:not(.avatar_collage) > img {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+    border-radius: inherit !important;
+}
+
+.character_select.entity_block .ch_name,
+.group_select.entity_block .ch_name {
     font-size: 16px !important;
     font-weight: 500 !important;
     color: var(--tg-text) !important;
 }
 
-.character_select .ch_description,
-.group_select .ch_description {
+.character_select.entity_block .ch_description,
+.group_select.entity_block .ch_description {
     font-size: 14px !important;
     color: var(--tg-text-secondary) !important;
     white-space: nowrap !important;

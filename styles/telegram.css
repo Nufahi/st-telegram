@@ -15,9 +15,9 @@
 
 @import url('./tokens.css?v=0.1.2-night-blue-accent');
 @import url('./icons.css?v=0.1.4-hidden-message-actions');
-@import url('./base.css?v=0.1.2-thin-scrollbars');
+@import url('./base.css?v=0.1.6-selector-conflicts');
 @import url('./chat.css?v=0.1.4-bottom-edit-actions');
 @import url('./header.css?v=0.1.2-square-top-info-bar');
 @import url('./composer.css?v=0.1.2-stable-fab');
-@import url('./drawer.css?v=0.1.2-adaptive-theme-colours');
+@import url('./drawer.css?v=0.1.6-selector-conflicts');
 @import url('./frame.css?v=0.1.2-desktop-layout');

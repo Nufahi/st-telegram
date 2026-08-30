@@ -601,7 +601,7 @@ html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .a
     opacity: 1 !important;
 }
 
-html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar img {
+html[data-tg-enabled='on'] #CharListButtonAndHotSwaps .hotswap.avatars_inline .avatar:not(.avatar_collage) > img {
     display: block !important;
     width: 100% !important;
     min-width: 100% !important;
@@ -831,7 +831,6 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content a {
     text-shadow: none !important;
 }
 
-#top-settings-holder .drawer-content .inline-drawer-toggle,
 #top-settings-holder .drawer-content .inline-drawer-header {
     background: none !important;
     border: 0 !important;
@@ -855,6 +854,17 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content a {
 
 #top-settings-holder .drawer-content .menu_button:hover {
     background: var(--tg-accent-pressed) !important;
+}
+
+/* SillyTavern also uses .menu_button for compact Font Awesome toolbar icons. */
+#top-settings-holder .drawer-content :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands).menu_button {
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
 }
 
 /* Inline links that open another native drawer appear in welcome/help copy.
