@@ -21,7 +21,7 @@
  *    Everything ships in a <link> we own and can remove.
  */
 
-const TG_VERSION = '0.1.7';
+const TG_VERSION = '0.1.8';
 
 /* Bump this whenever styles/*.css changes. It is the CSS cache-bust key.
  *
@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.7';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.7-softer-message-text';
+const TG_STYLE_BUILD = '0.1.8-telegram-generation-settings';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the

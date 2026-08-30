@@ -1126,6 +1126,291 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content toolcool-color-p
     filter: none !important;
 }
 
+/* ── Generation settings ──────────────────────────────────────────────────
+   #leftNavDrawerIcon opens #left-nav-panel. Telegram presents settings as
+   quiet grouped rows rather than Tavern's bordered desktop form, so this
+   section gets its own treatment without changing checkboxes in other
+   drawers or popups. */
+html[data-tg-enabled='on'] #left-nav-panel .scrollableInner {
+    padding: 0 4px 24px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel #ai_response_configuration {
+    gap: 0 !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    #respective-presets-block,
+    #common-gen-settings-block,
+    #respective-ranges-and-temps,
+    #advanced-ai-config-block
+) {
+    margin: 0 !important;
+    padding: 8px 0 14px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.standoutHeader, .range-block-title) {
+    color: var(--tg-accent) !important;
+    font: 500 14px/1.35 var(--tg-font-ui) !important;
+    letter-spacing: 0 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .standoutHeader {
+    margin: 8px 0 2px !important;
+    padding: 8px 10px 5px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .range-block {
+    border-color: var(--tg-divider) !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .range-block-title {
+    padding: 5px 10px 2px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .toggle-description {
+    padding-inline: 10px !important;
+    color: var(--tg-text-secondary) !important;
+    font: 400 12px/1.4 var(--tg-font-ui) !important;
+}
+
+/* Only ordinary boolean setting labels become Telegram rows. Hidden
+   checkbox-backed icon buttons (pin, preset binding and banned tokens) are
+   deliberately excluded below and keep SillyTavern's own presentation. */
+html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
+    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
+) {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    margin: 1px 0 !important;
+    padding: 8px 10px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-text) !important;
+    cursor: pointer !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
+    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
+):hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
+    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
+) > input[type='checkbox'] {
+    order: 2;
+    margin-inline-start: auto !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
+    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
+) > :not(input) {
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui) {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    position: relative !important;
+    display: inline-block !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    outline: 0 !important;
+    background: var(--tg-switch-off) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    cursor: pointer !important;
+    transition: background-color var(--tg-dur-short) var(--tg-ease) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui)::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    left: 2px !important;
+    display: block !important;
+    width: 20px !important;
+    height: 20px !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .30) !important;
+    clip-path: none !important;
+    transform: translateX(0) !important;
+    transform-origin: center !important;
+    pointer-events: none !important;
+    transition: transform var(--tg-dur-short) var(--tg-ease) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):checked {
+    background: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):checked::before {
+    transform: translateX(18px) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 4px var(--tg-accent-soft) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):disabled {
+    opacity: .48 !important;
+    cursor: not-allowed !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui)::before {
+    right: 2px !important;
+    left: auto !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):checked::before {
+    transform: translateX(-18px) !important;
+}
+
+/* Telegram-style sliders. Keep a 32px input box for touch and keyboard focus
+   while painting a quiet 4px track inside it. Firefox exposes progress;
+   Chromium and Safari retain a neutral track with an accent thumb. */
+html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 32px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    cursor: pointer !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']::-webkit-slider-runnable-track {
+    height: 4px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--tg-switch-off) !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']::-webkit-slider-thumb {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin-top: -7px !important;
+    border: 2px solid var(--tg-accent) !important;
+    border-radius: 50% !important;
+    background: var(--tg-panel) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .28) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']::-moz-range-track {
+    height: 4px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--tg-switch-off) !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']::-moz-range-progress {
+    height: 4px !important;
+    border-radius: 999px !important;
+    background: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']::-moz-range-thumb {
+    width: 18px !important;
+    height: 18px !important;
+    border: 2px solid var(--tg-accent) !important;
+    border-radius: 50% !important;
+    background: var(--tg-panel) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .28) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel input[type='range']:disabled {
+    opacity: .48 !important;
+    cursor: not-allowed !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.range-block-counter input[type='number'], input.neo-range-input[type='number']) {
+    min-width: 64px !important;
+    height: 34px !important;
+    padding: 5px 8px !important;
+    border: 1px solid var(--tg-divider) !important;
+    border-radius: 8px !important;
+    background: var(--tg-panel-sunken) !important;
+    color: var(--tg-text) !important;
+    font: 400 13px/1.2 var(--tg-font-ui) !important;
+    text-align: center !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-tg-enabled='on'] #left-nav-panel input[type='checkbox'],
+    html[data-tg-enabled='on'] #left-nav-panel input[type='checkbox']::before,
+    html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
+        transition: none !important;
+    }
+}
+
+@media (forced-colors: active) {
+    html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
+    > input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui),
+    html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
+        appearance: auto !important;
+        -webkit-appearance: auto !important;
+        accent-color: Highlight !important;
+    }
+}
+
 /* Chat Completion tabs use a plain wrapper whose children otherwise retain
    the active Tavern theme. Render it as a Telegram segmented control. */
 html[data-tg-enabled='on'] #top-settings-holder .drawer-content .openai-tab-buttons {

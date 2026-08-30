@@ -98,6 +98,7 @@ html[data-tg-variant='day'] {
     --tg-panel-pressed: #e8e8e9;
     --tg-divider: rgba(0, 0, 0, .08);
     --tg-divider-strong: rgba(0, 0, 0, .16);
+    --tg-switch-off: #b0b7bd;
 
     --tg-in-bubble: #ffffff;
     --tg-out-bubble: #effdde;
@@ -154,6 +155,7 @@ html[data-tg-variant='night'] {
     --tg-panel-pressed: #232e3c;
     --tg-divider: rgba(255, 255, 255, .08);
     --tg-divider-strong: rgba(255, 255, 255, .14);
+    --tg-switch-off: #56616d;
 
     --tg-in-bubble: #182533;
     --tg-out-bubble: #2b5278;

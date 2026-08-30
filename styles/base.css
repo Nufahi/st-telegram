@@ -380,6 +380,110 @@ html[data-tg-enabled='on'] .popup :is(code, pre) {
     padding: 4px 8px 8px !important;
 }
 
+/* #extensions_details opens a body-level manager popup. Its action buttons
+   inherit the generous generic popup padding below, leaving almost no room
+   for extension names on a phone. Give each row explicit compact columns and
+   let the name use every remaining pixel, wrapping only when necessary. */
+html[data-tg-enabled='on'] .popup .extensions_info .extension_block {
+    display: grid !important;
+    grid-template-columns: auto auto minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-bottom: 4px !important;
+    padding: 4px 6px !important;
+    border-color: var(--tg-divider) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_text_block {
+    min-width: 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    overflow-wrap: anywhere !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_text_block > :is(a, span) {
+    display: block !important;
+    min-width: 0 !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_name {
+    overflow-wrap: anywhere !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info :is(.extension_toggle, .extension_icon) {
+    display: grid !important;
+    place-items: center !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_toggle > input[type='checkbox'] {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_actions {
+    flex: 0 0 auto !important;
+    flex-wrap: nowrap !important;
+    gap: 2px !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_actions > .menu_button:not(.displayNone):not([hidden]) {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 32px !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 8px !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_actions > :is(.displayNone, [hidden]) {
+    display: none !important;
+}
+
+@media (max-width: 600px) {
+    html[data-tg-enabled='on'] .popup:has(.extensions_info) {
+        width: calc(100dvw - 8px) !important;
+        min-width: 0 !important;
+        max-width: calc(100dvw - 8px) !important;
+    }
+
+    html[data-tg-enabled='on'] .popup:has(.extensions_info) .popup-body {
+        padding: 10px 6px 8px !important;
+    }
+
+    html[data-tg-enabled='on'] .popup .extensions_info .extension_block {
+        grid-template-columns: auto auto minmax(0, 1fr) !important;
+        gap: 3px !important;
+        padding: 4px !important;
+    }
+
+    /* Management actions take their own compact line instead of squeezing the
+       extension name between two toolbars. Scope/type icons remain visible. */
+    html[data-tg-enabled='on'] .popup .extensions_info .extension_actions {
+        grid-column: 2 / -1 !important;
+        justify-self: end !important;
+        flex-wrap: wrap !important;
+        justify-content: flex-end !important;
+    }
+
+    html[data-tg-enabled='on'] .popup .extensions_info .extension_actions > .menu_button:not(.displayNone):not([hidden]) {
+        flex-basis: 32px !important;
+    }
+}
+
 .popup .popup-button-ok,
 .popup .popup-button-cancel,
 .popup .menu_button {

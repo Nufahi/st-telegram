@@ -13,11 +13,11 @@
  * under 60 KB.
  */
 
-@import url('./tokens.css?v=0.1.7-softer-message-text');
+@import url('./tokens.css?v=0.1.8-telegram-generation-settings');
 @import url('./icons.css?v=0.1.4-hidden-message-actions');
-@import url('./base.css?v=0.1.6-selector-conflicts');
+@import url('./base.css?v=0.1.8-compact-extension-manager');
 @import url('./chat.css?v=0.1.7-softer-message-text');
 @import url('./header.css?v=0.1.2-square-top-info-bar');
 @import url('./composer.css?v=0.1.2-stable-fab');
-@import url('./drawer.css?v=0.1.6-selector-conflicts');
+@import url('./drawer.css?v=0.1.8-telegram-generation-settings');
 @import url('./frame.css?v=0.1.2-desktop-layout');
