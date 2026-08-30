@@ -350,9 +350,14 @@ html[data-tg-wallpaper='on'] .tg-drawer-head.tg-has-wallpaper {
     mask: var(--tg-icon-tune) center / contain no-repeat !important;
 }
 
-#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-plug::before {
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-plug::before,
+#top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-plug-circle-exclamation::before {
     -webkit-mask: var(--tg-icon-plug) center / contain no-repeat !important;
     mask: var(--tg-icon-plug) center / contain no-repeat !important;
+}
+
+#top-settings-holder > #sys-settings-button > .drawer-toggle > #API-status-top.fa-plug-circle-exclamation::before {
+    background-color: var(--tg-danger) !important;
 }
 
 #top-settings-holder > .drawer > .drawer-toggle > .drawer-icon.fa-font::before {
@@ -2130,6 +2135,266 @@ html[data-tg-enabled='on'] #completion_prompt_manager .completion_prompt_manager
 
     html[data-tg-enabled='on'] #completion_prompt_manager #completion_prompt_manager_list .completion_prompt_manager_prompt {
         padding-inline: 8px !important;
+    }
+}
+
+/* ── API connections ──────────────────────────────────────────────────────
+   #API-status-top opens #rm_api_block. This panel mixes icon-only key tools
+   with text actions carrying the misleading .menu_button_icon class, so icon
+   geometry is selected by actual FA markup rather than that class name. */
+html[data-tg-enabled='on'] #rm_api_block > .flex-container.flexFlowColumn {
+    gap: 0 !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block #main-API-selector-block {
+    padding: 8px 10px 14px !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(
+    #kobold_horde,
+    #kobold_api,
+    #novel_api,
+    #textgenerationwebui_api,
+    #openai_api
+) {
+    padding: 10px !important;
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(h4, .inline-drawer-header) {
+    color: var(--tg-text) !important;
+    font-family: var(--tg-font-ui) !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(input, select, textarea) {
+    min-width: 0 !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block select:not([multiple]) {
+    min-height: 40px !important;
+    padding-inline: 12px 32px !important;
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: url('/img/down-arrow.svg') !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 8px 5px !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #rm_api_block select:not([multiple]) {
+    background-position: left 12px center !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .menu_button {
+    min-height: 38px !important;
+    margin: 2px !important;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-accent) !important;
+    filter: none !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.25 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .menu_button:hover {
+    border-color: var(--tg-accent) !important;
+    background: var(--tg-accent-soft) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .menu_button:active {
+    background: var(--tg-panel-pressed) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.menu_button, .right_menu_button):is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+),
+html[data-tg-enabled='on'] #rm_api_block #horde_refresh {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.menu_button, .right_menu_button):is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+):hover,
+html[data-tg-enabled='on'] #rm_api_block #horde_refresh:hover {
+    background: var(--tg-panel-hover) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.menu_button, .right_menu_button):is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+):focus-visible,
+html[data-tg-enabled='on'] #rm_api_block #horde_refresh:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block #horde_refresh > :is(.fa, .fas, .far, .fa-solid, .fa-regular) {
+    color: inherit !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.menu_button, .right_menu_button):is(.fa-solid, .fas, .fa) {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 900 !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.menu_button, .right_menu_button):is(.fa-regular, .far) {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 400 !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.menu_button, .right_menu_button):is(.fa-brands, .fab) {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block #delete_proxy {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block #delete_proxy:hover {
+    background: var(--tg-danger-soft) !important;
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block label.checkbox_label {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 44px !important;
+    margin: 1px 0 !important;
+    padding: 7px 10px !important;
+    border-radius: 10px !important;
+    color: var(--tg-text) !important;
+    cursor: pointer !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block label.checkbox_label:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .online_status {
+    min-height: 34px !important;
+    margin: 8px 0 0 !important;
+    padding: 7px 10px !important;
+    border-radius: 10px !important;
+    background: var(--tg-panel-sunken) !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .online_status_indicator {
+    width: 9px !important;
+    min-width: 9px !important;
+    height: 9px !important;
+    border-radius: 50% !important;
+    background: var(--tg-danger) !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .online_status_indicator.success {
+    background: var(--tg-online) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block .online_status_text {
+    margin-inline-start: 8px !important;
+    color: var(--tg-text-secondary) !important;
+    font: 400 13px/1.35 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block :is(.neutral_warning, .reverse_proxy_warning) {
+    margin-block: 8px !important;
+    padding: 9px 10px !important;
+    border: 1px solid color-mix(in srgb, var(--tg-warning) 30%, transparent) !important;
+    border-radius: 10px !important;
+    background: color-mix(in srgb, var(--tg-warning) 10%, transparent) !important;
+    color: var(--tg-warning) !important;
+    font-weight: 400 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block > .flex-container.flexFlowColumn + .flex-container {
+    gap: 8px !important;
+    padding: 10px !important;
+    border-top: 1px solid var(--tg-divider) !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block #viewSecrets {
+    min-height: 36px !important;
+    padding: 8px 10px !important;
+    border-radius: 10px !important;
+    color: var(--tg-accent) !important;
+    text-decoration: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_api_block #viewSecrets:hover {
+    background: var(--tg-accent-soft) !important;
+}
+
+@media (max-width: 600px) {
+    html[data-tg-enabled='on'] #rm_api_block :is(
+        #kobold_horde,
+        #kobold_api,
+        #novel_api,
+        #textgenerationwebui_api,
+        #openai_api
+    ) {
+        padding-inline: 8px !important;
+    }
+
+    html[data-tg-enabled='on'] #rm_api_block .flex-container:has(> :is(.api_button, .api_loading, .openrouter_authorize, #customize_additional_parameters, #test_api_button)) {
+        align-items: stretch !important;
+        flex-wrap: wrap !important;
+    }
+
+    html[data-tg-enabled='on'] #rm_api_block .flex-container > :is(.api_button, .api_loading, .openrouter_authorize, #customize_additional_parameters, #test_api_button) {
+        flex: 1 1 132px !important;
+        width: auto !important;
     }
 }
 
