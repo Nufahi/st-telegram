@@ -1221,7 +1221,9 @@ html[data-tg-enabled='on'] #left-nav-panel .menu_button {
     box-shadow: none !important;
     color: var(--tg-accent) !important;
     filter: none !important;
-    font: 500 14px/1.25 var(--tg-font-ui) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.25 !important;
     text-shadow: none !important;
 }
 
@@ -1243,6 +1245,107 @@ html[data-tg-enabled='on'] #left-nav-panel .menu_button:focus-visible {
 html[data-tg-enabled='on'] #left-nav-panel .menu_button:is(.disabled, [disabled]) {
     opacity: .45 !important;
     cursor: not-allowed !important;
+}
+
+/* SillyTavern has both icon elements carrying .menu_button themselves and
+   .menu_button_icon wrappers containing one or more FA glyphs. Normalize both
+   forms, while leaving wrappers with visible span/small labels as text buttons. */
+html[data-tg-enabled='on'] #left-nav-panel :is(.menu_button, .right_menu_button):is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+),
+html[data-tg-enabled='on'] #left-nav-panel .menu_button_icon:has(
+    > :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands):only-child
+) {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.menu_button, .right_menu_button):is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+):hover,
+html[data-tg-enabled='on'] #left-nav-panel .menu_button_icon:has(
+    > :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands):only-child
+):hover {
+    background: var(--tg-panel-hover) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.menu_button, .right_menu_button):is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+):focus-visible,
+html[data-tg-enabled='on'] #left-nav-panel .menu_button_icon:has(
+    > :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands):only-child
+):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel .menu_button_icon > :is(
+    .fa,
+    .fas,
+    .far,
+    .fab,
+    .fa-solid,
+    .fa-regular,
+    .fa-brands
+) {
+    color: inherit !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+/* Direct icon controls also match the text-button rule above. Restore each
+   Font Awesome face explicitly; a nonstandard inherited weight renders its
+   private-use glyphs as missing squares in several browsers. */
+html[data-tg-enabled='on'] #left-nav-panel :is(.menu_button, .right_menu_button):is(.fa-solid, .fas, .fa) {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 900 !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.menu_button, .right_menu_button):is(.fa-regular, .far) {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 400 !important;
+}
+
+html[data-tg-enabled='on'] #left-nav-panel :is(.menu_button, .right_menu_button):is(.fa-brands, .fab) {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
 }
 
 html[data-tg-enabled='on'] #left-nav-panel [data-preset-manager-for] {
