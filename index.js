@@ -22,8 +22,8 @@ import './src/settings.js';
    the promise has the same effect and loads everywhere. */
 if (TG_ENABLED) {
     Promise.all([
-        import('./src/theme.js?v=0.1.3'),
-        import('./src/chat.js?v=0.1.3-swipe-controls'),
+        import('./src/theme.js?v=0.1.4'),
+        import('./src/chat.js?v=0.1.4-hidden-message-actions'),
     ]).catch((error) => {
         console.error('[ST Telegram] failed to load:', error);
     });

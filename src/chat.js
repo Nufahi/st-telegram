@@ -552,6 +552,7 @@ function actionKind(button) {
     if (button.matches('.mes_copy')) return 'copy';
     if (button.matches('.mes_edit')) return 'edit';
     if (button.matches('.mes_edit_delete')) return 'delete';
+    if (button.matches('.mes_unhide')) return 'unhide';
     if (button.matches('.swipe_left')) return 'previous';
     if (button.matches('.swipe_right')) return 'next';
     if (button.matches('#option_regenerate')) return 'regenerate';
@@ -602,9 +603,16 @@ function collectMessageActions(row) {
         if (!nativeActionAvailable(button) || seen.has(button)) return;
         seen.add(button);
         const action = { button, label: actionLabel(button), kind: actionKind(button) };
-        if (!forceMore && ['copy', 'edit', 'delete', 'previous', 'next', 'regenerate'].includes(action.kind)) primary.push(action);
+        if (!forceMore && ['copy', 'edit', 'delete', 'unhide', 'previous', 'next', 'regenerate'].includes(action.kind)) primary.push(action);
         else more.push(action);
     };
+
+    /* SillyTavern marks excluded messages as system messages. Until the
+       native unhide action restores them, expose only that safe operation. */
+    if (row.getAttribute('is_system') === 'true') {
+        add(row.querySelector('.extraMesButtons > .mes_unhide, .mes_buttons .mes_unhide'));
+        return { primary, more };
+    }
 
     const editButton = row.querySelector('.mes_buttons > .mes_edit');
     add(editButton);
@@ -660,7 +668,7 @@ function makeActionButton(action) {
 }
 
 function openActionSheet(row) {
-    if (!(row instanceof HTMLElement) || row.getAttribute('is_system') === 'true') return false;
+    if (!(row instanceof HTMLElement)) return false;
     const actions = collectMessageActions(row);
     if (!actions.primary.length && !actions.more.length) return false;
 
@@ -796,7 +804,9 @@ function messageActionRow(target) {
     const bubble = target.closest('#chat > .mes .mes_block');
     if (!bubble) return null;
     const row = bubble.closest('#chat > .mes');
-    if (!(row instanceof HTMLElement) || row.getAttribute('is_system') === 'true') return null;
+    if (!(row instanceof HTMLElement)) return null;
+    if (row.getAttribute('is_system') === 'true'
+        && !nativeActionAvailable(row.querySelector('.extraMesButtons > .mes_unhide, .mes_buttons .mes_unhide'))) return null;
     return { row, bubble };
 }
 
