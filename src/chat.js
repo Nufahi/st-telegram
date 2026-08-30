@@ -25,7 +25,7 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.16';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.17';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -966,7 +966,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.16');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.17');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);

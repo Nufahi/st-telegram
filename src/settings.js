@@ -10,7 +10,7 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.16';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.17';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -211,8 +211,17 @@ function buildPanel() {
                     </label>
                 </div>
                 <div class="tg-row">
+                    <label for="tg-flat-messages">Full-width messages
+                        <small>Monochrome Discord-style chat without bubbles.</small>
+                    </label>
+                    <label class="tg-settings-switch" aria-label="Full-width messages">
+                        <input type="checkbox" id="tg-flat-messages">
+                        <span class="tg-settings-switch-track" aria-hidden="true"></span>
+                    </label>
+                </div>
+                <div class="tg-row">
                     <label for="tg-message-font-size">Message text size
-                        <small>Changes only the text inside message bubbles.</small>
+                        <small>Changes only the text inside messages.</small>
                     </label>
                     <div class="tg-range-control">
                         <input type="range" id="tg-message-font-size" min="14" max="22" step="1">
@@ -244,6 +253,7 @@ function wire(panel) {
     const nightStart = $('#tg-night-start');
     const accent = $('#tg-accent');
     const glass = $('#tg-glass');
+    const flatMessages = $('#tg-flat-messages');
     const messageFontSize = $('#tg-message-font-size');
     const messageFontSizeValue = panel.querySelector('.tg-range-value');
     const wallpaper = $('#tg-wallpaper');
@@ -257,6 +267,7 @@ function wire(panel) {
     nightStart.value = tgReadRaw('theme-night-start', '19:00');
     accent.value = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
     glass.checked = tgRead('glass', ['on', 'off'], 'off') === 'on';
+    flatMessages.checked = tgRead('message-layout', ['bubbles', 'flat'], 'bubbles') === 'flat';
     messageFontSize.value = String(Math.min(22, Math.max(14, Number(tgReadRaw('message-font-size', '16')) || 16)));
     wallpaper.checked = tgRead('wallpaper', ['on', 'off'], 'on') === 'on';
     motion.checked = tgRead('motion', ['on', 'off'], 'on') === 'on';
@@ -281,7 +292,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.16');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.17');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);
@@ -328,6 +339,12 @@ function wire(panel) {
     glass.addEventListener('change', () => {
         tgWrite('glass', glass.checked ? 'on' : 'off');
         tgRoot.dataset.tgGlass = glass.checked ? 'on' : 'off';
+    });
+
+    flatMessages.addEventListener('change', () => {
+        const layout = flatMessages.checked ? 'flat' : 'bubbles';
+        tgWrite('message-layout', layout);
+        tgRoot.dataset.tgMessageLayout = layout;
     });
 
     const applyMessageFontSize = () => {
