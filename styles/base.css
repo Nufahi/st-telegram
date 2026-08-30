@@ -56,6 +56,24 @@ html[data-tg-enabled='on'] *::-webkit-scrollbar-thumb {
     background: var(--tg-scrollbar);
 }
 
+/* Touch interfaces scroll by gesture. Hide only scrollbar chrome on phones;
+   every existing overflow container remains fully scrollable. This also
+   removes nested bars that otherwise appear in the middle of the viewport. */
+@media (max-width: 700px), (hover: none) and (pointer: coarse) {
+    html[data-tg-enabled='on'],
+    html[data-tg-enabled='on'] * {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+
+    html[data-tg-enabled='on']::-webkit-scrollbar,
+    html[data-tg-enabled='on'] *::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+}
+
 /* ── Loading screen ─────────────────────────────────────────────────────── */
 
 /* SillyTavern translates the root element for desktop rendering. On mobile

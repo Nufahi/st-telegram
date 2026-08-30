@@ -137,6 +137,7 @@ html[data-tg-variant='day'] {
 
     --tg-code-bg: rgba(0, 0, 0, .05);
     --tg-code-text: #3a3a3a;
+    --tg-quote-text: #287fbd;
     --tg-quote-bar: var(--tg-accent);
     --tg-link: #3390ec;
 
@@ -196,6 +197,7 @@ html[data-tg-variant='night'] {
 
     --tg-code-bg: rgba(0, 0, 0, .28);
     --tg-code-text: #dfe6ec;
+    --tg-quote-text: #82c7f5;
     --tg-quote-bar: var(--tg-accent);
     --tg-link: #62bcf9;
 

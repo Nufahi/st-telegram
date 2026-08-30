@@ -17,7 +17,7 @@
  * restoring the old preset, and Zen/Lab modes whose handlers build extra DOM.
  */
 
-import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.11';
+import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.12';
 
 const THEME_NAME = 'Telegram Mobile (Extension)';
 const RESTORE_KEY = 'st-telegram:restore-point:v1';
@@ -77,7 +77,7 @@ function paletteFor() {
         main_text_color: read('--tg-text', '#000000'),
         italics_text_color: read('--tg-text-secondary', '#707579'),
         underline_text_color: read('--tg-accent', '#3390ec'),
-        quote_text_color: read('--tg-text', '#000000'),
+        quote_text_color: read('--tg-quote-text', '#287fbd'),
         blur_tint_color: read('--tg-panel', '#ffffff'),
         chat_tint_color: read('--tg-chat-bg', '#d5dbdf'),
         user_mes_blur_tint_color: read('--tg-out-bubble', '#effdde'),

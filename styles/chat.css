@@ -380,12 +380,16 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
 
 #chat > .mes .mes_text q,
 #chat > .mes .mes_text .q {
-    color: inherit !important;
+    color: var(--SmartThemeQuoteColor, var(--tg-quote-text)) !important;
 }
 
 #chat > .mes .mes_text em,
 #chat > .mes .mes_text i {
     color: var(--tg-text-secondary) !important;
+}
+
+#chat > .mes .mes_text :is(q, .q, blockquote) :is(em, i) {
+    color: inherit !important;
 }
 
 #chat > .mes .mes_text a {
@@ -426,7 +430,7 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     border-radius: 4px !important;
     margin: 4px 0 !important;
     padding: 4px 8px !important;
-    color: inherit !important;
+    color: var(--SmartThemeQuoteColor, var(--tg-quote-text)) !important;
 }
 
 #chat > .mes .mes_text :is(h1, h2, h3, h4, h5, h6, ul, ol, li, strong, b, s, del) {
