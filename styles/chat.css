@@ -359,8 +359,9 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
 
 #chat > .mes .mes_text {
     font-size: calc(var(--tg-font-body-size) * var(--fontScale, 1)) !important;
+    font-weight: 400 !important;
     line-height: var(--tg-font-body-lead) !important;
-    color: inherit !important;
+    color: var(--tg-message-text) !important;
     padding: 0 !important;
     margin: 0 !important;
     /* Reserve the corner the timestamp floats into, so the last line of text
@@ -379,7 +380,7 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
 
 #chat > .mes .mes_text q,
 #chat > .mes .mes_text .q {
-    color: var(--tg-text) !important;
+    color: inherit !important;
 }
 
 #chat > .mes .mes_text em,
@@ -425,7 +426,7 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     border-radius: 4px !important;
     margin: 4px 0 !important;
     padding: 4px 8px !important;
-    color: var(--tg-text) !important;
+    color: inherit !important;
 }
 
 #chat > .mes .mes_text :is(h1, h2, h3, h4, h5, h6, ul, ol, li, strong, b, s, del) {

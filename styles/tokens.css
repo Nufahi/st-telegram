@@ -104,6 +104,7 @@ html[data-tg-variant='day'] {
     --tg-out-bubble-pressed: #d8f5c0;
 
     --tg-text: #000000;
+    --tg-message-text: #303438;
     --tg-text-secondary: #707579;
     --tg-text-hint: #a2acb4;
     --tg-text-on-accent: #ffffff;
@@ -159,6 +160,7 @@ html[data-tg-variant='night'] {
     --tg-out-bubble-pressed: #35618d;
 
     --tg-text: #ffffff;
+    --tg-message-text: #d7dee5;
     --tg-text-secondary: #aaaaaa;
     --tg-text-hint: #6d7883;
     --tg-text-on-accent: #ffffff;
