@@ -21,7 +21,7 @@
  *    Everything ships in a <link> we own and can remove.
  */
 
-const TG_VERSION = '0.1.4';
+const TG_VERSION = '0.1.5';
 
 /* Bump this whenever styles/*.css changes. It is the CSS cache-bust key.
  *
