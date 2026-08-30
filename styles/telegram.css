@@ -15,9 +15,10 @@
 
 @import url('./tokens.css?v=0.1.12-quote-text-colour');
 @import url('./icons.css?v=0.1.4-hidden-message-actions');
-@import url('./base.css?v=0.1.15-reused-glass-switch');
+@import url('./base.css?v=0.1.16-remove-manager-switch');
 @import url('./chat.css?v=0.1.14-fixed-blue-quotes');
 @import url('./header.css?v=0.1.2-square-top-info-bar');
 @import url('./composer.css?v=0.1.2-stable-fab');
 @import url('./drawer.css?v=0.1.12-lokony-prompt-manager');
+@import url('./glass.css?v=0.1.16-liquid-glass-mode');
 @import url('./frame.css?v=0.1.2-desktop-layout');

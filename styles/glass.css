@@ -1,0 +1,78 @@
+/* Optional Liquid Glass mode, controlled from Telegram Mobile settings. */
+
+html[data-tg-enabled='on'][data-tg-glass='on'] {
+    --tg-glass-panel: rgba(255, 255, 255, .68);
+    --tg-glass-panel-strong: rgba(255, 255, 255, .78);
+    --tg-glass-bubble-in: rgba(255, 255, 255, .68);
+    --tg-glass-bubble-out: rgba(239, 253, 222, .72);
+    --tg-glass-border: rgba(255, 255, 255, .52);
+    --tg-glass-shadow: 0 8px 28px rgba(37, 55, 70, .16), inset 0 1px 0 rgba(255, 255, 255, .56);
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-glass='on'] {
+    --tg-glass-panel: rgba(23, 33, 43, .68);
+    --tg-glass-panel-strong: rgba(23, 33, 43, .80);
+    --tg-glass-bubble-in: rgba(24, 37, 51, .72);
+    --tg-glass-bubble-out: rgba(43, 82, 120, .72);
+    --tg-glass-border: rgba(255, 255, 255, .16);
+    --tg-glass-shadow: 0 10px 30px rgba(0, 0, 0, .30), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+
+html[data-tg-enabled='on'][data-tg-glass='on'] :is(
+    .tg-header,
+    .tg-drawer-head,
+    .popup,
+    #options,
+    #extensionsMenu
+) {
+    background-color: var(--tg-glass-panel-strong) !important;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0)) !important;
+    border-color: var(--tg-glass-border) !important;
+    box-shadow: var(--tg-glass-shadow) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(155%) !important;
+    backdrop-filter: blur(20px) saturate(155%) !important;
+}
+
+html[data-tg-enabled='on'][data-tg-glass='on'] #nonQRFormItems::before {
+    background-color: var(--tg-glass-panel-strong) !important;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .02)) !important;
+    border-color: var(--tg-glass-border) !important;
+    box-shadow: var(--tg-glass-shadow) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
+    backdrop-filter: blur(18px) saturate(150%) !important;
+}
+
+html[data-tg-enabled='on'][data-tg-glass='on'] #chat > .mes[is_user='false']:not([is_system='true']) .mes_block {
+    background-color: var(--tg-glass-bubble-in) !important;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, 0)) !important;
+    border: 1px solid var(--tg-glass-border) !important;
+    box-shadow: var(--tg-glass-shadow) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+    backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+html[data-tg-enabled='on'][data-tg-glass='on'] #chat > .mes[is_user='true'] .mes_block {
+    background-color: var(--tg-glass-bubble-out) !important;
+    background-image: linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, 0)) !important;
+    border: 1px solid var(--tg-glass-border) !important;
+    box-shadow: var(--tg-glass-shadow) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+    backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur :is(
+    .tg-header,
+    .tg-drawer-head,
+    .popup,
+    #options,
+    #extensionsMenu,
+    #chat > .mes .mes_block
+) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur #nonQRFormItems::before {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}

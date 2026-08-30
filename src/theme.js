@@ -17,7 +17,7 @@
  * restoring the old preset, and Zen/Lab modes whose handlers build extra DOM.
  */
 
-import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.15';
+import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.16';
 
 const THEME_NAME = 'Telegram Mobile (Extension)';
 const RESTORE_KEY = 'st-telegram:restore-point:v1';

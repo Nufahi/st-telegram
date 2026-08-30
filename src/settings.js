@@ -10,7 +10,7 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.15';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.16';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -60,6 +60,83 @@ function buildPanel() {
             #${PANEL_ID} .tg-row input[type="checkbox"] {
                 flex: 0 0 auto;
                 margin: 0;
+            }
+            #${PANEL_ID} .tg-row > label.tg-settings-switch {
+                position: relative;
+                display: inline-block;
+                flex: 0 0 42px !important;
+                width: 42px !important;
+                min-width: 42px !important;
+                max-width: 42px !important;
+                height: 24px !important;
+                min-height: 24px !important;
+                max-height: 24px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                cursor: pointer;
+            }
+            #${PANEL_ID} .tg-settings-switch > input {
+                -webkit-appearance: none !important;
+                appearance: none !important;
+                position: absolute !important;
+                z-index: 2 !important;
+                inset: 0 !important;
+                width: 42px !important;
+                min-width: 42px !important;
+                max-width: 42px !important;
+                height: 24px !important;
+                min-height: 24px !important;
+                max-height: 24px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0 !important;
+                outline: 0 !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                filter: none !important;
+                opacity: 0 !important;
+                cursor: pointer !important;
+            }
+            #${PANEL_ID} .tg-settings-switch-track {
+                position: absolute;
+                inset: 0;
+                overflow: hidden;
+                border: 1px solid rgba(255, 255, 255, .34);
+                border-radius: 999px;
+                background: rgba(86, 97, 109, .72);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 -1px 1px rgba(0, 0, 0, .12);
+                pointer-events: none;
+                transition: background-color 150ms cubic-bezier(.4, 0, .2, 1), box-shadow 150ms cubic-bezier(.4, 0, .2, 1);
+                -webkit-backdrop-filter: blur(8px) saturate(140%);
+                backdrop-filter: blur(8px) saturate(140%);
+            }
+            #${PANEL_ID} .tg-settings-switch-track::after {
+                content: '';
+                position: absolute;
+                top: 1px;
+                left: 1px;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, .96);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, .28), inset 0 1px 0 #fff;
+                transition: transform 150ms cubic-bezier(.4, 0, .2, 1);
+            }
+            #${PANEL_ID} .tg-settings-switch > input:checked + .tg-settings-switch-track {
+                background: var(--tg-accent, #3390ec);
+                box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), 0 2px 8px var(--tg-accent-soft, rgba(51, 144, 236, .18));
+            }
+            #${PANEL_ID} .tg-settings-switch > input:checked + .tg-settings-switch-track::after {
+                transform: translateX(18px);
+            }
+            #${PANEL_ID} .tg-settings-switch > input:focus-visible + .tg-settings-switch-track {
+                outline: 2px solid var(--tg-accent, #3390ec);
+                outline-offset: 3px;
+                box-shadow: 0 0 0 4px var(--tg-accent-soft, rgba(51, 144, 236, .18));
+            }
+            @media (prefers-reduced-motion: reduce) {
+                #${PANEL_ID} .tg-settings-switch-track,
+                #${PANEL_ID} .tg-settings-switch-track::after { transition: none; }
             }
             #${PANEL_ID} .tg-range-control {
                 flex: 0 0 auto;
@@ -125,6 +202,15 @@ function buildPanel() {
                     <select id="tg-accent">${accentOptions}</select>
                 </div>
                 <div class="tg-row">
+                    <label for="tg-glass">Liquid Glass
+                        <small>Translucent surfaces with background blur.</small>
+                    </label>
+                    <label class="tg-settings-switch" aria-label="Liquid Glass">
+                        <input type="checkbox" id="tg-glass">
+                        <span class="tg-settings-switch-track" aria-hidden="true"></span>
+                    </label>
+                </div>
+                <div class="tg-row">
                     <label for="tg-message-font-size">Message text size
                         <small>Changes only the text inside message bubbles.</small>
                     </label>
@@ -157,6 +243,7 @@ function wire(panel) {
     const dayStart = $('#tg-day-start');
     const nightStart = $('#tg-night-start');
     const accent = $('#tg-accent');
+    const glass = $('#tg-glass');
     const messageFontSize = $('#tg-message-font-size');
     const messageFontSizeValue = panel.querySelector('.tg-range-value');
     const wallpaper = $('#tg-wallpaper');
@@ -169,6 +256,7 @@ function wire(panel) {
     dayStart.value = tgReadRaw('theme-day-start', '07:00');
     nightStart.value = tgReadRaw('theme-night-start', '19:00');
     accent.value = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
+    glass.checked = tgRead('glass', ['on', 'off'], 'off') === 'on';
     messageFontSize.value = String(Math.min(22, Math.max(14, Number(tgReadRaw('message-font-size', '16')) || 16)));
     wallpaper.checked = tgRead('wallpaper', ['on', 'off'], 'on') === 'on';
     motion.checked = tgRead('motion', ['on', 'off'], 'on') === 'on';
@@ -193,7 +281,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.15');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.16');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);
@@ -235,6 +323,11 @@ function wire(panel) {
     accent.addEventListener('change', () => {
         tgWrite('accent', accent.value);
         tgRoot.dataset.tgAccent = accent.value;
+    });
+
+    glass.addEventListener('change', () => {
+        tgWrite('glass', glass.checked ? 'on' : 'off');
+        tgRoot.dataset.tgGlass = glass.checked ? 'on' : 'off';
     });
 
     const applyMessageFontSize = () => {
