@@ -196,3 +196,17 @@
         display: none !important;
     }
 }
+
+/* Native chat-width setting also sizes the nine desktop settings sheets.
+   Only geometry changes here: the host still owns display and open/close state. */
+@media (min-width: 1001px) {
+    html[data-tg-enabled='on'] #top-settings-holder > .drawer > .drawer-content {
+        --tg-settings-width: min(100vw, var(--sheldWidth, 50vw));
+        left: calc((100vw - var(--tg-settings-width)) / 2) !important;
+        right: auto !important;
+        width: var(--tg-settings-width) !important;
+        min-width: 0 !important;
+        max-width: var(--tg-settings-width) !important;
+        margin-inline: 0 !important;
+    }
+}

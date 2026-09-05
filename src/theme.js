@@ -17,7 +17,7 @@
  * restoring the old preset, and Zen/Lab modes whose handlers build extra DOM.
  */
 
-import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.27';
+import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.28';
 
 const THEME_NAME = 'Telegram Mobile (Extension)';
 const RESTORE_KEY = 'st-telegram:restore-point:v1';
@@ -40,7 +40,6 @@ const THEME_VALUES = {
     /* 0 = flat list. We draw our own bubbles; SillyTavern's bubblechat mode
        would nest a second set inside ours. */
     chat_display: 0,
-    chat_width: 100,
     timestamps_enabled: true,
     timestamp_model_icon: false,
     /* Keep SillyTavern's native message diagnostics populated. chat.js moves
@@ -296,7 +295,8 @@ function syncControls(settings) {
 
     setValue('#blur_strength', settings.blur_strength);
     setValue('#shadow_width', settings.shadow_width);
-    setValue('#chat_width', settings.chat_width);
+    setValue('#chat_width_slider', settings.chat_width);
+    setValue('#chat_width_slider_counter', settings.chat_width);
     setValue('#avatar_style', settings.avatar_style);
     setValue('#chat_display', settings.chat_display);
     setValue('#toastr_position', settings.toastr_position);
@@ -438,12 +438,16 @@ async function start(attempt = 0) {
 
     if (!settings) return;
     rememberRestorePoint(settings);
+    const chatWidth = settings.chat_width;
     try {
         await installAndSelectBundledTheme();
     } catch (error) {
         /* Keep the extension usable if a browser blocks DataTransfer or the
            server cannot persist themes; direct state application still works. */
         console.warn('[ST Telegram] failed to install bundled theme:', error);
+    } finally {
+        /* Selecting the bundled preset must not replace the user's panel width. */
+        settings.chat_width = chatWidth;
     }
 
     applyTheme();
