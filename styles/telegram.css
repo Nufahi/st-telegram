@@ -4,6 +4,7 @@
  *   tokens    must be first; everything below reads its variables
  *   icons     variable definitions only, no rules
  *   base      SillyTavern chrome we neutralise before restyling
+ *   controls  boolean controls, app-wide, before the per-panel files
  *   chat / header / composer / drawer   the app itself
  *   frame     last, because it overrides positions set by the others
  *
@@ -15,11 +16,12 @@
 
 @import url('./tokens.css?v=0.1.12-quote-text-colour');
 @import url('./icons.css?v=0.1.4-hidden-message-actions');
-@import url('./base.css?v=0.1.18-character-pager');
+@import url('./base.css?v=0.1.19-character-pager');
+@import url('./controls.css?v=0.1.19-switches');
 @import url('./chat.css?v=0.1.18-edit-rail');
 @import url('./header.css?v=0.1.2-square-top-info-bar');
 @import url('./composer.css?v=0.1.2-stable-fab');
-@import url('./drawer.css?v=0.1.12-lokony-prompt-manager');
-@import url('./glass.css?v=0.1.18-clear-glass');
+@import url('./drawer.css?v=0.1.19-switches');
+@import url('./glass.css?v=0.1.19-real-glass');
 @import url('./message-layout.css?v=0.1.18-edit-rail');
 @import url('./frame.css?v=0.1.2-desktop-layout');

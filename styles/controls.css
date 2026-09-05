@@ -1,0 +1,222 @@
+/* ST Telegram — boolean controls.
+ *
+ * Every SillyTavern checkbox becomes a Telegram sliding switch. There are 171
+ * of them in index.html alone, plus ~93 in bundled extensions, so this must be
+ * one global rule set rather than per-panel copies.
+ *
+ * ═══ THE ONE RULE THAT MAKES THIS SAFE: NEVER SET `display` ═══
+ *
+ * A large minority of SillyTavern's checkboxes are not checkboxes at all.
+ * They are hidden inputs backing an icon button, and the icon is drawn by a
+ * sibling <i> or a `~` selector:
+ *
+ *   #instruct_enabled, #sysprompt_enabled, #context_derived, #instruct_derived,
+ *   #instruct_bind_to_context, #send_banned_tokens_textgenerationwebui
+ *                                     inline style="display:none", FA icons
+ *   #lm_button_panel_pin, #WI_panel_pin, #rm_button_panel_pin
+ *                                     padlock, `+label .checked/.unchecked`
+ *   #bind_preset_to_connection        link / link-slash, .displayNone
+ *   .disable_regex, .enable_scoped    fa-toggle-on / fa-toggle-off glyphs
+ *   input[name="regex_expand"]        the "…" expander
+ *   .swipe_picker_expand_toggle       chevron
+ *   #regex_bulk_edit, .attachmentsBulkEditCheckbox, .regex_bulk_checkbox
+ *   .del_checkbox                     shown only in delete mode, via inline
+ *                                     display:grid from script.js
+ *   input[name="__invisible"]         a pure height-matching spacer in WI
+ *
+ * Every single one of those is currently hidden by `display: none` -- some
+ * inline, some by a class, some with !important. So the safe move is not a
+ * long and permanently-rotting :not() exclusion list: it is simply to never
+ * declare `display` here at all. Then each of them keeps whatever display
+ * SillyTavern gave it, stays hidden, and keeps working, while every ordinary
+ * visible checkbox gets the switch. Scripts that write inline `display` to
+ * show and hide these keep full control, because we never compete for it.
+ *
+ * The same applies to the LABEL. `.checkbox_label` is already `display: flex`
+ * (style.css:4589), so we can set align-items and gap without ever declaring
+ * display -- which matters because textgen-settings.js calls jQuery .show()
+ * and .hide() on 13 `label.checkbox_label[data-tg-samplers]` rows. A
+ * `display: flex !important` on the label would defeat .hide() and leak
+ * irrelevant sampler settings into view permanently.
+ *
+ * `overflow` and `appearance` are safe to set: neither can reveal a hidden
+ * control.
+ *
+ * ═══ WHY THE INPUT ITSELF IS THE SWITCH ═══
+ *
+ * The switch is painted on the real <input>, not on a pseudo-element of the
+ * label. 18 labels have no `for=` attribute and 4 more have a broken one
+ * (`for=" enable_auto_select_input"` with a leading space; three pointing at
+ * `name` instead of `id`), so on those rows the only thing that toggles the
+ * box is the click landing on the input or inside its wrapping label. Drawing
+ * the switch anywhere else would put the visible affordance somewhere the
+ * click does not work.
+ */
+
+/* ── The switch ───────────────────────────────────────────────────────────
+   Scoped to checkboxes only: 14 radios share .checkbox_label and must keep
+   their own round presentation (drawer.css styles those). */
+html[data-tg-enabled='on'] input[type='checkbox'] {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    position: relative !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    max-height: 24px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    outline: 0 !important;
+    background: var(--tg-switch-off) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    /* Core applies translateY(-0.075em) to nudge a 15px box onto the text
+       baseline. On a 24px pill that reads as a misalignment. */
+    transform: none !important;
+    /* Core clips the box to hide the tick's overflow. The knob fits inside
+       the pill, but its drop shadow does not. */
+    overflow: visible !important;
+    cursor: pointer !important;
+    transition: background-color var(--tg-dur-short) var(--tg-ease) !important;
+}
+
+/* The knob. ::before is where core draws its clip-path tick, so every part of
+   that -- the polygon, the inset box-shadow that colours it, and the scale(0)
+   it animates from -- has to be neutralised, not just covered up. */
+html[data-tg-enabled='on'] input[type='checkbox']::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    left: 2px !important;
+    width: 20px !important;
+    height: 20px !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .30) !important;
+    clip-path: none !important;
+    transform: translateX(0) !important;
+    transform-origin: center !important;
+    /* The knob must not swallow clicks meant for the input underneath. */
+    pointer-events: none !important;
+    transition: transform var(--tg-dur-short) var(--tg-ease) !important;
+}
+
+html[data-tg-enabled='on'] input[type='checkbox']:checked {
+    background: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] input[type='checkbox']:checked::before {
+    transform: translateX(18px) !important;
+}
+
+/* Extensions disable their toggle when the extension cannot be enabled
+   (extensions.js sets `disabled` plus .extension_missing). Core only greys
+   the text colour, which is invisible on a switch. */
+html[data-tg-enabled='on'] input[type='checkbox']:disabled {
+    opacity: .48 !important;
+    cursor: not-allowed !important;
+}
+
+html[data-tg-enabled='on'] input[type='checkbox']:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 3px !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] input[type='checkbox']::before {
+    right: 2px !important;
+    left: auto !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] input[type='checkbox']:checked::before {
+    transform: translateX(-18px) !important;
+}
+
+/* ── The row ──────────────────────────────────────────────────────────────
+   `:has(> input)` is a DIRECT-CHILD test on purpose. World Info nests four
+   `label.checkbox` rows inside `label[for="content "]` (invalid HTML, but it
+   ships), and a descendant `:has` would style that whole Content block as a
+   switch row.
+
+   No `display` here, per the file header. Core already made these flex; we
+   only correct the cross-axis alignment, because core uses
+   `align-items: baseline`, which lines a 24px pill up by the text baseline of
+   its neighbour and leaves it visibly low. */
+html[data-tg-enabled='on'] :is(.checkbox_label, label.checkbox):has(> input[type='checkbox']) {
+    align-items: center !important;
+    column-gap: 10px !important;
+}
+
+/* Telegram puts the switch at the trailing edge with the label filling the
+   row. Restricted to rows whose only control is the checkbox: several labels
+   also wrap a number input or a select (#rm_group_automode has its delay
+   field inline, and the floating-prompt rows have both), and pushing the
+   checkbox past those would reorder the controls. */
+html[data-tg-enabled='on'] :is(.checkbox_label, label.checkbox):has(> input[type='checkbox']):not(:has(> input:not([type='checkbox']))):not(:has(> select)) {
+    width: 100% !important;
+}
+
+html[data-tg-enabled='on'] :is(.checkbox_label, label.checkbox):has(> input[type='checkbox']):not(:has(> input:not([type='checkbox']))):not(:has(> select)) > input[type='checkbox'] {
+    order: 2;
+    margin-inline-start: auto !important;
+}
+
+/* Long setting names must wrap rather than squeeze the switch. */
+html[data-tg-enabled='on'] :is(.checkbox_label, label.checkbox):has(> input[type='checkbox']) > :not(input) {
+    min-width: 0;
+}
+
+/* ── Carve-outs ───────────────────────────────────────────────────────────
+   Labels that are themselves buttons. The input inside them is hidden, so the
+   switch never appears, but the row rules above would still stretch the
+   button to full width and shove its icon to the far edge. */
+html[data-tg-enabled='on'] :is(.checkbox_label, label.checkbox):is(.menu_button, .menu_button_icon) {
+    width: auto !important;
+}
+
+html[data-tg-enabled='on'] :is(.checkbox_label, label.checkbox):is(.menu_button, .menu_button_icon) > input[type='checkbox'] {
+    order: 0;
+    margin-inline-start: 0 !important;
+}
+
+/* The World Info spacer exists purely to occupy one checkbox row's height so
+   the columns either side of it stay aligned. Its label is width:0 and
+   visibility:hidden, so the switch is not visible, but the height has to
+   track the new row height rather than the old 15px box. */
+html[data-tg-enabled='on'] .world_entry label[for='__invisible'] {
+    min-height: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-tg-enabled='on'] input[type='checkbox'],
+    html[data-tg-enabled='on'] input[type='checkbox']::before {
+        transition: none !important;
+    }
+}
+
+/* A repainted switch conveys state through colour alone, which is exactly
+   what forced-colors mode strips. Hand these back to the platform. */
+@media (forced-colors: active) {
+    html[data-tg-enabled='on'] input[type='checkbox'] {
+        appearance: auto !important;
+        -webkit-appearance: auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        flex-basis: auto !important;
+        accent-color: Highlight !important;
+    }
+
+    html[data-tg-enabled='on'] input[type='checkbox']::before {
+        content: none !important;
+    }
+}

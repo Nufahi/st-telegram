@@ -1572,126 +1572,8 @@ html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone)
     outline-offset: 3px !important;
 }
 
-/* Only ordinary boolean setting labels become Telegram rows. Hidden
-   checkbox-backed icon buttons (pin, preset binding and banned tokens) are
-   deliberately excluded below and keep SillyTavern's own presentation. */
-html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
-    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
-) {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    min-height: 48px !important;
-    margin: 1px 0 !important;
-    padding: 8px 10px !important;
-    border: 0 !important;
-    border-radius: 10px !important;
-    background: transparent !important;
-    color: var(--tg-text) !important;
-    cursor: pointer !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
-    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
-):hover {
-    background: var(--tg-panel-hover) !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
-    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
-) > input[type='checkbox'] {
-    order: 2;
-    margin-inline-start: auto !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel label.checkbox_label:has(
-    > input[type='checkbox']:not(.displayNone):not([hidden]):not(#send_banned_tokens_textgenerationwebui)
-) > :not(input) {
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui) {
-    appearance: none !important;
-    -webkit-appearance: none !important;
-    position: relative !important;
-    display: inline-block !important;
-    flex: 0 0 42px !important;
-    width: 42px !important;
-    min-width: 42px !important;
-    max-width: 42px !important;
-    height: 24px !important;
-    min-height: 24px !important;
-    max-height: 24px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 999px !important;
-    outline: 0 !important;
-    background: var(--tg-switch-off) !important;
-    background-image: none !important;
-    box-shadow: none !important;
-    filter: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    cursor: pointer !important;
-    transition: background-color var(--tg-dur-short) var(--tg-ease) !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui)::before {
-    content: '' !important;
-    position: absolute !important;
-    top: 2px !important;
-    left: 2px !important;
-    display: block !important;
-    width: 20px !important;
-    height: 20px !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    background: #fff !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, .30) !important;
-    clip-path: none !important;
-    transform: translateX(0) !important;
-    transform-origin: center !important;
-    pointer-events: none !important;
-    transition: transform var(--tg-dur-short) var(--tg-ease) !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):checked {
-    background: var(--tg-accent) !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):checked::before {
-    transform: translateX(18px) !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):focus-visible {
-    outline: 2px solid var(--tg-accent) !important;
-    outline-offset: 3px !important;
-    box-shadow: 0 0 0 4px var(--tg-accent-soft) !important;
-}
-
-html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):disabled {
-    opacity: .48 !important;
-    cursor: not-allowed !important;
-}
-
-html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui)::before {
-    right: 2px !important;
-    left: auto !important;
-}
-
-html[dir='rtl'][data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-> input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui):checked::before {
-    transform: translateX(-18px) !important;
-}
+/* Boolean setting rows and their switches are global: controls.css owns
+   every checkbox in the app, including these. */
 
 /* Telegram-style sliders. Keep a 32px input box for touch and keyboard focus
    while painting a quiet 4px track inside it. Firefox exposes progress;
@@ -1789,9 +1671,9 @@ html[data-tg-enabled='on'] #left-nav-panel input.neo-range-input[type='number'] 
     min-width: 0 !important;
 }
 
+/* Checkboxes are handled by controls.css, which carries its own
+   reduced-motion and forced-colors behaviour. */
 @media (prefers-reduced-motion: reduce) {
-    html[data-tg-enabled='on'] #left-nav-panel input[type='checkbox'],
-    html[data-tg-enabled='on'] #left-nav-panel input[type='checkbox']::before,
     html[data-tg-enabled='on'] #left-nav-panel input[type='radio']::before,
     html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
         transition: none !important;
@@ -1799,8 +1681,6 @@ html[data-tg-enabled='on'] #left-nav-panel input.neo-range-input[type='number'] 
 }
 
 @media (forced-colors: active) {
-    html[data-tg-enabled='on'] #left-nav-panel :where(.checkbox_label:not(.menu_button):not(.menu_button_icon))
-    > input[type='checkbox']:not(.displayNone):not([hidden]):not(.del_checkbox):not(.attachmentsBulkEditCheckbox):not(.regex_bulk_checkbox):not(#lm_button_panel_pin):not(#bind_preset_to_connection):not(#send_banned_tokens_textgenerationwebui),
     html[data-tg-enabled='on'] #left-nav-panel input[type='radio']:not(.displayNone):not([hidden]),
     html[data-tg-enabled='on'] #left-nav-panel input[type='range'] {
         appearance: auto !important;
@@ -2361,7 +2241,11 @@ html[data-tg-enabled='on'] #rm_api_block #viewSecrets:hover {
     font: 13px/1.3 var(--tg-font-ui) !important;
 }
 
-#st-telegram-settings :is(input[type='checkbox'], input[type='range']) {
+/* Sliders keep the platform control. Checkboxes are deliberately NOT listed
+   here: this panel's own toggles are switches like every other one in the app,
+   and an `appearance: auto` on an ID-scoped selector would outrank
+   controls.css and turn them back into boxes. */
+#st-telegram-settings input[type='range'] {
     appearance: auto !important;
     -webkit-appearance: auto !important;
     accent-color: var(--tg-accent) !important;
