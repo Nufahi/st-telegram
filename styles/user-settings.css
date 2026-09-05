@@ -1,0 +1,228 @@
+/* User Settings: appearance only. Native scripts own visibility, search,
+   theme application, dependent options and inline-drawer expansion. */
+html[data-tg-enabled='on'] #user-settings-block {
+    --tg-us-action-size: 40px;
+    min-width: 0 !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(.flex-container, #power-user-option-checkboxes) {
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #user-settings-block > .flex-container:first-child {
+    gap: 12px;
+    padding-block: 4px 14px;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #user-settings-block h3 {
+    font: 600 17px/1.3 var(--tg-font-ui) !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(#UI-language-block, #settingsSearch) {
+    flex: 1 1 220px;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #UI-language-block {
+    align-items: center !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #version_display {
+    color: var(--tg-text-hint);
+    overflow-wrap: anywhere;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #user-settings-block-content {
+    gap: 20px;
+    align-items: flex-start;
+    padding-block: 12px;
+}
+
+/* Content-based wrapping also works in a narrow desktop phone frame. */
+html[data-tg-enabled='on'] #user-settings-block #user-settings-block-content > .flex1 {
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #user-settings-block-content h4 {
+    margin: 12px 0 6px !important;
+    padding: 8px 4px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    font: 500 14px/1.35 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #user-settings-block h4 > span {
+    color: inherit !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is([name='AvatarAndChatDisplay'], [name='CharacterHandlingToggles']) > .flex-container {
+    padding: 6px 8px;
+    align-items: center !important;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(select, input[type='text'], input[type='number'], textarea) {
+    min-width: 0 !important;
+    max-width: 100%;
+    min-height: 40px;
+    border-radius: 10px !important;
+    background-color: var(--tg-panel-sunken) !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block select.flex1 {
+    flex-basis: 140px;
+}
+
+html[data-tg-enabled='on'] #user-settings-block textarea {
+    padding: 10px 12px !important;
+    line-height: 1.4 !important;
+    resize: vertical;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #settingsSearch {
+    margin: 0;
+    height: 44px;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #customCSS {
+    min-height: 180px;
+    font-family: var(--tg-font-mono) !important;
+    tab-size: 4;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .checkbox_label:has(> input[type='checkbox']) {
+    align-items: center;
+    min-width: 0;
+    min-height: 44px;
+    margin: 0;
+    padding: 8px;
+    border-radius: 10px;
+    column-gap: 10px;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .checkbox_label :is(small, span, .flex-container) {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .checkbox_label:hover {
+    background: var(--tg-panel-hover);
+}
+
+html[data-tg-enabled='on'] #user-settings-block .menu_button {
+    min-height: var(--tg-us-action-size);
+    margin: 0;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    box-shadow: none !important;
+    filter: none;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .menu_button:has(> i:only-child),
+html[data-tg-enabled='on'] #user-settings-block .menu_button:is(.fa-solid, .fa, .fas) {
+    flex: 0 0 var(--tg-us-action-size);
+    width: var(--tg-us-action-size) !important;
+    min-width: var(--tg-us-action-size) !important;
+    height: var(--tg-us-action-size) !important;
+    min-height: var(--tg-us-action-size) !important;
+    padding: 0 !important;
+    justify-content: center;
+    align-items: center;
+    border: 0 !important;
+    border-radius: 50% !important;
+    color: var(--tg-text-secondary) !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .menu_button > i {
+    color: inherit !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .menu_button:is(.fa-solid, .fa, .fas) {
+    font-family: var(--fa-style-family-classic, 'Font Awesome 6 Free') !important;
+    font-weight: 900 !important;
+}
+
+/* Shared drawer icon CSS must not expose a host-hidden action. */
+html[data-tg-enabled='on'] #user-settings-block .menu_button:is(.displayNone, [hidden]) {
+    display: none !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .menu_button:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(#ui-preset-delete-button, #logout_button) {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(.menu_button, .inline-drawer-toggle):active {
+    background: var(--tg-panel-pressed) !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(.menu_button, .inline-drawer-toggle, input, select, textarea):focus-visible {
+    outline: 2px solid var(--tg-accent);
+    outline-offset: 2px;
+}
+
+html[data-tg-enabled='on'] #user-settings-block :is(input, select, textarea, button):disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .inline-drawer-header {
+    min-height: 44px;
+    padding: 10px 8px !important;
+    border-radius: 10px !important;
+    font-size: 14px !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block .inline-drawer-content {
+    padding: 8px !important;
+}
+
+html[data-tg-enabled='on'] #user-settings-block #color-picker-block > .flex-container {
+    min-height: 44px;
+    padding: 6px 8px;
+    gap: 12px;
+    align-items: center;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+/* Keep the autocomplete double-range widget's native track geometry. */
+html[data-tg-enabled='on'] #user-settings-block input[type='range']:not(.doubleRangeContainer input) {
+    appearance: auto !important;
+    height: 28px !important;
+    width: 100% !important;
+    background: transparent !important;
+    accent-color: var(--tg-accent);
+}
+
+html[data-tg-enabled='on'] #user-settings-block [name='FontBlurChatWidthBlock'] > .flex-container {
+    flex: 1 1 140px;
+    padding: 8px;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #user-settings-block #user-settings-block-content .highlighted {
+    background: var(--tg-accent-soft) !important;
+    outline: 1px solid var(--tg-accent);
+    border-radius: 4px;
+}
+
+@media (pointer: coarse) {
+    html[data-tg-enabled='on'] #user-settings-block {
+        --tg-us-action-size: 44px;
+    }
+}
