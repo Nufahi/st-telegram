@@ -1,0 +1,256 @@
+/* Wallpaper browser only; #bg1 and the selected wallpaper are untouched. */
+html[data-tg-enabled='on'] #Backgrounds {
+    --tg-bg-action-size: 40px;
+    min-width: 0 !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg-header-fixed {
+    padding: 4px 0 12px;
+    background: transparent;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #Backgrounds h3 {
+    font: 600 17px/1.3 var(--tg-font-ui) !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(.bg-header-row-1, .bg-header-row-2, .bg_folder_breadcrumb) {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .bg-header-row-2 {
+    margin-top: 10px;
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(select, #bg-filter) {
+    min-width: 0 !important;
+    min-height: 40px;
+    margin: 0;
+    border-radius: 10px !important;
+    background-color: var(--tg-panel-sunken) !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds select {
+    appearance: auto !important;
+    padding: 8px !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg-filter {
+    flex: 1 1 140px;
+    width: auto;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .menu_button {
+    min-width: var(--tg-bg-action-size);
+    min-height: var(--tg-bg-action-size);
+    margin: 0;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    box-shadow: none !important;
+    filter: none;
+    white-space: normal;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .menu_button:has(> i:only-child) {
+    width: var(--tg-bg-action-size) !important;
+    min-width: var(--tg-bg-action-size);
+    height: var(--tg-bg-action-size);
+    padding: 0 !important;
+    flex-shrink: 0;
+    justify-content: center;
+    border: 0 !important;
+    border-radius: 50% !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .menu_button > i {
+    color: inherit !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .menu_button:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_selection_mode_button.active {
+    background: var(--tg-accent-soft) !important;
+    border-color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .menu_button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+/* Keep the native tab scroller. The toolbar gets its own wrapping row rather
+   than overlapping the tab labels when a desktop panel is narrow. */
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 160px;
+    min-width: 0;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs .bg_tabs_list {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0;
+    margin: 0;
+    border-bottom: 1px solid var(--tg-divider);
+    flex-shrink: 0;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs .bg_tab_button {
+    flex: 1 1 90px;
+    min-width: 0;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    opacity: 1;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs .bg_tab_button a {
+    padding: 12px;
+    min-height: 44px;
+    color: var(--tg-text-secondary) !important;
+    text-decoration: none !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs .bg_tab_button.ui-tabs-active {
+    background: var(--tg-accent-soft);
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs .bg_tab_button.ui-tabs-active a {
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .heading-controls {
+    position: static;
+    transform: none;
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg_tabs .bg_tab_panel {
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    padding: 12px 3px;
+}
+
+/* Respect the native zoom variable, but don't shrink tiles to unusable dots
+   in a narrow desktop sheet. No display override: empty folders stay hidden. */
+html[data-tg-enabled='on'] #Backgrounds :is(#bg_menu_content, #bg_custom_content, #bg_folder_grid) {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, max(140px, calc(100% / var(--bg-thumb-columns, 3) - 10px))), 1fr));
+    gap: 10px;
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(.bg_example, .bg_folder_tile) {
+    min-width: 0;
+    border-radius: 14px;
+    box-shadow: none;
+    outline-color: var(--tg-divider-strong);
+    background-color: var(--tg-panel-sunken);
+}
+
+html[data-tg-enabled='on'] #Backgrounds .bg_example.locked-background {
+    outline-color: var(--tg-warning);
+}
+
+html[data-tg-enabled='on'] #Backgrounds .bg_example.selected-background,
+html[data-tg-enabled='on'] #Backgrounds.bg-selection-mode #bg_menu_content .bg_example.folder-group-selected {
+    outline: 2px solid var(--tg-accent);
+    outline-offset: 0;
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(.BGSampleTitle, .bg_folder_tile_overlay) {
+    color: #fff !important;
+    font: 500 12px/1.4 var(--tg-font-ui);
+    padding: 12px 8px 6px;
+    border-radius: 0 0 14px 14px;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .BGSampleTitle {
+    opacity: 1;
+    text-align: start;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .jg-menu {
+    max-width: calc(100% - 8px);
+    max-height: calc(100% - 8px);
+    overflow: auto;
+    flex-wrap: wrap;
+    top: 4px;
+    right: 4px;
+    padding: 2px;
+    border: 1px solid var(--tg-divider-strong);
+    border-radius: 10px;
+    background: var(--tg-panel);
+    backdrop-filter: none;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .jg-button {
+    flex: 0 0 var(--tg-bg-action-size);
+    width: var(--tg-bg-action-size);
+    height: var(--tg-bg-action-size);
+    color: var(--tg-text-secondary);
+    border-radius: 8px;
+}
+
+html[data-tg-enabled='on'] #Backgrounds .jg-button:hover {
+    background: var(--tg-panel-hover);
+    color: var(--tg-accent);
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(.jg-delete, [data-action='delete-folder']) {
+    color: var(--tg-danger);
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(.bg_new_folder_tile, #bg_chat_hint) {
+    color: var(--tg-text-secondary);
+}
+
+html[data-tg-enabled='on'] #Backgrounds #bg-scroll-top {
+    background: var(--tg-panel) !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+}
+
+html[data-tg-enabled='on'] #Backgrounds :is(.menu_button, .bg_example, .bg_folder_tile, .jg-button, a, select, input):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+    html[data-tg-enabled='on'] #Backgrounds { --tg-bg-action-size: 44px; }
+}
+
+@media (max-width: 1000px) {
+    html[data-tg-enabled='on'] #Backgrounds .mobile-only-menu-toggle {
+        width: 44px;
+        height: 44px;
+    }
+
+    /* Host owns display (including bulk-selection hiding); complete only the
+       mobile-open state that otherwise inherits hidden opacity/visibility. */
+    html[data-tg-enabled='on'] #Backgrounds .mobile-menu-open .jg-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-tg-enabled='on'] #Backgrounds :is(.bg_example, .bg_folder_tile, .jg-menu, .BGSampleTitle) {
+        transition: none;
+    }
+}
