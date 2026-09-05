@@ -2193,6 +2193,343 @@ html[data-tg-enabled='on'] #rm_api_block #viewSecrets:hover {
     }
 }
 
+/* ==========================================================================
+   Advanced Formatting panel (the "A" / font drawer, id="AdvancedFormatting").
+   Reuses the same quiet-hierarchy vocabulary as #left-nav-panel: flat section
+   headers, pill controls, circular icon buttons, single-column stacking.
+
+   Preserved native behaviour (do NOT fight these):
+   - Panel open/close animation owns `display`/`height`; never force them.
+   - `[data-cc-null]` gets grayed out by the host when the Chat Completion API
+     is active, so opacity/filter on it is left untouched here.
+   - The five icon "enable" toggles (#context_derived, #instruct_derived,
+     #instruct_bind_to_context, #instruct_enabled, #sysprompt_enabled) are
+     `display:none` checkboxes whose visible affordance is a sibling <i>. Their
+     .checkbox_label wrappers are carved out of the pill-row rule below.
+   - `.toggleEnabled` / `.menu_button.togglable` red/active coloring is left to
+     the host; the icon-button color rule excludes those inputs' icons.
+   ========================================================================== */
+
+/* The three columns (Context / Instruct / System Prompt) sit in a
+   .spaceEvenly row that never fits the ~300px drawer. Stack them. */
+html[data-tg-enabled='on'] #AdvancedFormatting > .flex-container.spaceEvenly {
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting > .flex-container.spaceEvenly > :is(
+    #ContextSettings,
+    #InstructSettingsColumn,
+    #SystemPromptColumn
+) {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+    padding: 4px 0 10px !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+}
+
+/* Title bar. */
+html[data-tg-enabled='on'] #AdvancedFormatting > .flex-container.alignItemsBaseline {
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 4px 0 10px !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting > .flex-container.alignItemsBaseline > h3 {
+    color: var(--tg-text) !important;
+    font: 600 17px/1.3 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+/* Chat-Completion warning banner keeps its host-controlled visibility; only
+   the look is aligned. */
+html[data-tg-enabled='on'] #AdvancedFormatting #advanced-formatting-cc-notice {
+    margin: 8px 0 !important;
+    padding: 9px 10px !important;
+    border: 1px solid color-mix(in srgb, var(--tg-warning) 30%, transparent) !important;
+    border-radius: 10px !important;
+    background: color-mix(in srgb, var(--tg-warning) 10%, transparent) !important;
+    color: var(--tg-warning) !important;
+    text-shadow: none !important;
+}
+
+/* Section headers: drop the native gradient plaque, use the accent label. */
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.standoutHeader, .range-block-title) {
+    color: var(--tg-accent) !important;
+    font: 500 14px/1.35 var(--tg-font-ui) !important;
+    letter-spacing: 0 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .standoutHeader {
+    margin: 8px 0 2px !important;
+    padding: 8px 0 5px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+}
+
+/* The header's span (used inside .title_restorable) inherits the accent. */
+html[data-tg-enabled='on'] #AdvancedFormatting .standoutHeader :is(span, b) {
+    color: inherit !important;
+    font-weight: 500 !important;
+}
+
+/* Preset selectors and every other <select>. */
+html[data-tg-enabled='on'] #AdvancedFormatting [data-preset-manager-for] {
+    flex: 1 1 150px !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting select {
+    min-width: 0 !important;
+    min-height: 40px !important;
+    padding-inline: 12px 32px !important;
+    background-color: var(--tg-panel-sunken) !important;
+    background-image: url('/img/down-arrow.svg') !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    background-size: 8px 5px !important;
+}
+
+html[dir='rtl'][data-tg-enabled='on'] #AdvancedFormatting select {
+    background-position: left 12px center !important;
+}
+
+/* Text/number poles. */
+html[data-tg-enabled='on'] #AdvancedFormatting input[type='text'],
+html[data-tg-enabled='on'] #AdvancedFormatting input[type='number'] {
+    min-height: 40px !important;
+}
+
+/* Textareas. */
+html[data-tg-enabled='on'] #AdvancedFormatting textarea {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    line-height: 1.4 !important;
+    resize: vertical;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting textarea:not(.textarea_compact):not(.autoSetHeight) {
+    min-height: 72px;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting textarea.monospace {
+    font-family: var(--tg-font-mono) !important;
+}
+
+/* Text buttons (Master Import/Export carry a label, so they stay text-shaped).
+   Icon-only buttons are re-shaped by the circular rule further down. */
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button {
+    min-height: 38px !important;
+    margin: 2px !important;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-accent) !important;
+    filter: none !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.25 !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button:hover {
+    border-color: var(--tg-accent) !important;
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button:active {
+    background: var(--tg-panel-pressed) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button:is(.disabled, [disabled]) {
+    opacity: .45 !important;
+    cursor: not-allowed !important;
+}
+
+/* Circular icon buttons: preset-manager glyphs, the maximize handle, and any
+   bare FA glyph carrying .menu_button/.right_menu_button. The five hidden
+   "enable" checkboxes are inputs, not the <i> icons, so their icons DO get the
+   circular treatment (which is desired) while their color stays host-owned. */
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button):is(
+    .fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands
+),
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button_icon:has(
+    > :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands):only-child
+) {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 36px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: 36px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 15px !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+}
+
+/* Never reveal host-hidden icons: the circular rule above sets `display`, which
+   would outrank .displayNone (the preset import/export glyphs) and the `hidden`
+   attribute. Restore their hidden state explicitly. */
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button, .menu_button_icon):is(.displayNone, [hidden]) {
+    display: none !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button):is(
+    .fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands
+):hover,
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button_icon:has(
+    > :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands):only-child
+):hover {
+    background: var(--tg-panel-hover) !important;
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button):is(
+    .fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands
+):focus-visible,
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button_icon:has(
+    > :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands):only-child
+):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+}
+
+/* The power/bolt/link toggle icons color themselves via .toggleEnabled /
+   .togglable (host, !important). Keep hover neutral there so we don't fight
+   the red-when-off / accent-when-on signal. */
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button.togglable {
+    color: var(--fullred) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button.togglable.toggleEnabled {
+    color: var(--active) !important;
+}
+
+/* Delete preset glyphs read as destructive. */
+html[data-tg-enabled='on'] #AdvancedFormatting :is(
+    [data-preset-manager-delete],
+    #context_delete_preset
+) {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting :is(
+    [data-preset-manager-delete],
+    #context_delete_preset
+):hover {
+    background: var(--tg-danger-soft) !important;
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting .menu_button_icon > :is(
+    .fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands
+) {
+    color: inherit !important;
+    filter: none !important;
+    text-shadow: none !important;
+}
+
+/* Restore each Font Awesome face so glyphs don't fall back to squares. */
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button):is(.fa-solid, .fas, .fa) {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 900 !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button):is(.fa-regular, .far) {
+    font-family: var(--fa-style-family-classic, "Font Awesome 6 Free", "Font Awesome 5 Free") !important;
+    font-weight: 400 !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting :is(.menu_button, .right_menu_button):is(.fa-brands, .fab) {
+    font-family: "Font Awesome 6 Brands", "Font Awesome 5 Brands" !important;
+    font-weight: 400 !important;
+}
+
+/* Checkbox rows become tappable Telegram list rows. Carve-outs:
+   - the icon "enable" toggles (their input has inline display:none) keep their
+     compact header layout;
+   - .flex1 header toggles inside .title_restorable stay put;
+   - rows carrying extra inputs/selects (none here, but future-proof) keep flow.
+   `display` is never declared, so hidden inputs stay hidden and jQuery
+   show/hide on sampler labels keeps working. */
+html[data-tg-enabled='on'] #AdvancedFormatting label.checkbox_label:has(> input[type='checkbox']):not(:has(> input[style*='display'])):not(.flex1) {
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 44px !important;
+    margin: 1px 0 !important;
+    padding: 7px 10px !important;
+    border-radius: 10px !important;
+    color: var(--tg-text) !important;
+    cursor: pointer !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting label.checkbox_label:has(> input[type='checkbox']):not(:has(> input[style*='display'])):not(.flex1):hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+/* Native <details>/<summary> collapsibles (Instruct/System Prompt sequences)
+   read as quiet list sections. */
+html[data-tg-enabled='on'] #AdvancedFormatting details {
+    margin: 4px 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting details > summary {
+    min-height: 40px !important;
+    padding: 9px 0 !important;
+    color: var(--tg-text) !important;
+    font: 500 13px/1.35 var(--tg-font-ui) !important;
+    cursor: pointer;
+    list-style: none;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting details > summary:hover {
+    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting details > summary:focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px !important;
+    border-radius: 6px;
+}
+
+html[data-tg-enabled='on'] #AdvancedFormatting details > summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Labels/hints inside the panel use the muted UI voice, except the checkbox
+   row text which should read at full strength like a Telegram list row. */
+html[data-tg-enabled='on'] #AdvancedFormatting :is(label, small):not(.checkbox_label):not(.checkbox_label *) {
+    color: var(--tg-text-secondary) !important;
+    text-shadow: none !important;
+}
+
 /* The extension's own panel must look identical no matter which ST preset is
    active. These rules only exist while the Telegram stylesheet is loaded, so
    the panel naturally returns to native styling when the extension is off. */
