@@ -17,7 +17,7 @@
  * restoring the old preset, and Zen/Lab modes whose handlers build extra DOM.
  */
 
-import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.23';
+import { TG_VARIANT, tgRoot } from './boot.js?v=0.1.24';
 
 const THEME_NAME = 'Telegram Mobile (Extension)';
 const RESTORE_KEY = 'st-telegram:restore-point:v1';
@@ -406,7 +406,7 @@ function applyTheme() {
     const values = {
         ...THEME_VALUES,
         ...paletteFor(),
-        fast_ui_mode: tgRoot.dataset.tgGlass !== 'on',
+        fast_ui_mode: tgRoot.dataset.tgBlur !== 'on',
     };
     Object.assign(settings, values);
     settings.theme = THEME_NAME;
@@ -469,6 +469,6 @@ window.addEventListener('tg-variant-changed', () => {
     requestAnimationFrame(() => applyTheme());
 });
 
-window.addEventListener('tg-glass-changed', () => applyTheme());
+window.addEventListener('tg-blur-changed', () => applyTheme());
 
 export { applyTheme, THEME_NAME, TG_VARIANT };

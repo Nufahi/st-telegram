@@ -1,239 +1,116 @@
-/* ST Telegram — optional glass surfaces.
+/* ST Telegram — optional wallpaper blur + light bubble glass.
  *
- * ═══ WHAT GLASS IS, AND WHERE IT GOES ═══
+ * ═══ WHAT THIS IS ═══
  *
- * Real glass is not a white film painted on top of a panel. It is the
- * BACKGROUND, blurred and colour-boosted, seen through a thin tint, with the
- * light caught only at the EDGES. Three rules follow from that, and the first
- * version of this file broke all three:
+ * Telegram lets you blur the chat wallpaper so text stays legible over a busy
+ * photo. That is all this file does now: one full-screen blur on the wallpaper
+ * layer, plus a light translucency on the bubbles so the softened wallpaper
+ * reads through them. The old "Liquid Glass" mode (frosted bars, menus, sheets
+ * and a glassed-over flat chat) is gone -- it looked matte and worn, and it
+ * cost a compositor-backed backdrop-filter on every bar.
  *
- *   1. No diagonal sheen. A `linear-gradient(125deg, white, transparent)`
- *      wash does not read as a highlight, it reads as a smear on a dirty
- *      surface -- which is exactly the "matte and worn" look this replaces.
- *      Glass gets a 1px rim, not a gradient across its whole face.
- *   2. Low tint, heavy blur. 68-80% fill with 14px blur is frosted plastic.
- *      Transparency has to be low enough to actually see through, and the
- *      blur has to be wide enough that what you see through it is a smooth
- *      field rather than legible wallpaper detail behind the text.
- *   3. Saturation and brightness must be lifted. A plain `blur()` averages a
- *      photo toward grey, and grey is what makes it look dead. `saturate()`
- *      restores the colour the blur ate; `brightness()` separates the panel
- *      from what is behind it.
+ * ═══ WALLPAPER BLUR GOES ON #bg1 ═══
  *
- * There is something real to refract: SillyTavern's #bg1 wallpaper is a
- * position:absolute, z-index:-1 layer behind the whole app.
+ * SillyTavern paints the wallpaper on #bg1: a single position:absolute,
+ * z-index:-1, full-viewport <div> behind the whole app (css/backgrounds.css).
+ * A plain `filter: blur()` on it blurs the wallpaper everywhere at once --
+ * one layer, not one-per-message, and it is a normal filter, not a
+ * backdrop-filter, so it does not depend on fast UI mode being off.
  *
- * ═══ BLUR GOES ON OVERLAY SURFACES ONLY, NOT ON BUBBLES ═══
+ * Two edge details:
+ *   - #bg1's transition only covers background-image, so we add `filter` to it
+ *     for a smooth fade when the toggle flips.
+ *   - blur() samples past the element's edges, which would leave a soft
+ *     transparent halo at the viewport border. A small scale() pushes the
+ *     blurred edge out of frame so the wallpaper reaches every corner.
  *
- * Message bubbles get translucency but NO backdrop-filter, for three reasons:
+ * This only runs when BOTH the blur toggle and the wallpaper are on: blurring
+ * nothing (wallpaper off) is pointless, and Telegram gates it the same way.
+ *
+ * ═══ BUBBLES ═══
+ *
+ * When blur is on and we are in bubble layout, bubbles become translucent so
+ * the blurred wallpaper shows through -- tint only, NO backdrop-filter:
  *
  *   - The tail (chat.css, `.tg-group-end .mes_block::after`) is painted with
- *     `background: inherit` and cannot carry the parent's filter. A blurred
- *     bubble beside an unblurred tail is a permanent visible seam at the
- *     corner of every grouped message.
- *   - One compositor-backed backdrop-filter per bubble, several hundred
- *     bubbles per chat, re-evaluated on every scroll frame. That is the
- *     single most expensive thing this theme could do on a phone.
- *   - It is what the real apps do. On iOS the glass is on the bars and the
- *     sheets. Bubbles are solid. Blurring them is not more faithful, it is
- *     just more blur.
+ *     `background: inherit` and cannot carry a filter. A blurred bubble beside
+ *     an unblurred tail is a permanent visible seam at every grouped corner.
+ *   - The wallpaper is already blurred by #bg1, so the bubble does not need to
+ *     blur it a second time; it just needs to let it through.
  *
- * Bubbles are translucent, so the wallpaper still reads through them, and the
- * tail matches the bubble exactly because neither is filtered.
- *
- * ═══ DO NOT FILTER DRAWER ANCESTORS ═══
- *
- * backdrop-filter creates a containing block and a stacking context. See the
- * header comment in drawer.css: putting one on .drawer or #top-settings-holder
- * traps their position:fixed panels. Every surface listed below is either a
- * leaf or an established overlay root.
+ * Flat layout has no bubbles, so it opts out entirely and stays the solid
+ * monochrome panel message-layout.css gives it.
  */
 
-/* ── Tokens: opaque fallback ──────────────────────────────────────────────
-   These are the values a WebView without backdrop-filter, a reduced-
-   transparency user, or fast UI mode gets. Components read the tokens only,
-   so there is exactly one place that decides whether glass is live. */
+/* ── Tokens ────────────────────────────────────────────────────────────────
+   Opaque fallback first; the live translucent values are only entered where
+   the wallpaper is actually on, so bubbles never go see-through over a solid
+   background with nothing behind them. Components read the tokens only, so
+   there is one place that decides whether the effect is live. */
 
-html[data-tg-enabled='on'][data-tg-glass='on'] {
-    --tg-glass-panel: var(--tg-panel);
-    --tg-glass-bar: var(--tg-header-bg);
-    --tg-glass-bubble-in: var(--tg-in-bubble);
-    --tg-glass-bubble-out: var(--tg-out-bubble);
-    --tg-glass-filter: none;
-    --tg-glass-shadow: var(--tg-shadow-header);
-    --tg-glass-bar-shadow: var(--tg-shadow-header);
+html[data-tg-enabled='on'][data-tg-blur='on'] {
+    --tg-blur-bubble-in: var(--tg-in-bubble);
+    --tg-blur-bubble-out: var(--tg-out-bubble);
+    --tg-blur-amount: 0px;
 }
 
-/* ── Tokens: live glass ───────────────────────────────────────────────────
-   Only entered where the browser can actually sample the backdrop. Without
-   the filter these alphas would be transparent-not-glass, so the tint and
-   the filter must be set together, never separately. */
+html[data-tg-enabled='on'][data-tg-blur='on'][data-tg-wallpaper='on'] {
+    /* Enough to dissolve wallpaper detail into a smooth field behind text,
+       matching Telegram's own wallpaper blur. */
+    --tg-blur-amount: 20px;
 
-@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    html[data-tg-enabled='on'][data-tg-glass='on'] {
-        /* 26px is past the point where wallpaper detail survives as
-           recognisable shapes behind text, which is what lets the tint stay
-           this low. saturate() puts back the colour the blur averaged out;
-           brightness() lifts the panel off its own background. */
-        --tg-glass-filter: blur(26px) saturate(190%) brightness(1.08);
-
-        /* Menus and sheets float ON TOP of chat content, so they can be thin
-           and let it show through. */
-        --tg-glass-panel: rgba(255, 255, 255, .34);
-
-        /* The top bar and composer sit on the WALLPAPER, not on content. At
-           34% over an arbitrary photo the white averages toward grey and the
-           bar reads as a dead grey slab -- the exact complaint. Bars need a
-           dense tint that still passes some backdrop through: this is what
-           iOS and Telegram do on their bars. */
-        --tg-glass-bar: rgba(255, 255, 255, .74);
-
-        /* The rim, and only the rim. Bright hairline along the top edge where
-           light would catch, a barely-there dark line along the bottom for
-           thickness, and a soft cast shadow so the panel floats. */
-        --tg-glass-shadow:
-            0 6px 24px rgba(16, 32, 48, .10),
-            inset 0 1px 0 rgba(255, 255, 255, .50),
-            inset 0 -1px 0 rgba(16, 32, 48, .05);
-
-        /* Bars carry NO dark cast shadow: a drop shadow under a light
-           translucent bar is read as more grey. Just the bright top rim and a
-           hairline divider (set separately on .tg-header). */
-        --tg-glass-bar-shadow: inset 0 1px 0 rgba(255, 255, 255, .55);
-
-        /* Bubbles: translucent, unfiltered. Higher alpha than the menus
-           because message text has to stay legible over an arbitrary user
-           wallpaper with no blur helping it. */
-        --tg-glass-bubble-in: rgba(255, 255, 255, .78);
-        --tg-glass-bubble-out: rgba(226, 250, 205, .80);
-    }
-
-    html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-glass='on'] {
-        /* Night inverts the brightness: darkening the backdrop is what makes
-           a dark panel read as glass instead of as a grey rectangle. */
-        --tg-glass-filter: blur(26px) saturate(180%) brightness(.72);
-        --tg-glass-panel: rgba(20, 30, 43, .46);
-        --tg-glass-bar: rgba(20, 30, 43, .80);
-
-        --tg-glass-shadow:
-            0 6px 26px rgba(0, 0, 0, .34),
-            inset 0 1px 0 rgba(255, 255, 255, .14),
-            inset 0 -1px 0 rgba(0, 0, 0, .22);
-
-        --tg-glass-bar-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
-
-        --tg-glass-bubble-in: rgba(24, 37, 51, .80);
-        --tg-glass-bubble-out: rgba(43, 82, 120, .82);
-    }
+    /* Translucent so the softened wallpaper reads through. Higher alpha than a
+       full glass panel because message text still has to stay legible over an
+       arbitrary user photo. */
+    --tg-blur-bubble-in: rgba(255, 255, 255, .82);
+    --tg-blur-bubble-out: rgba(226, 250, 205, .84);
 }
 
-/* ── Overlay surfaces ─────────────────────────────────────────────────────
-   background-color and background-image are set separately on purpose: the
-   base rules use the `background` shorthand, which would otherwise reset the
-   image back in. The image is forced to none because these surfaces must
-   show the backdrop, not a painted gradient. */
-
-/* Bars sit on the wallpaper: dense tint, rim only, no dark cast shadow. */
-html[data-tg-enabled='on'][data-tg-glass='on'] :is(
-    .tg-header,
-    .tg-drawer-head,
-    .tg-message-action-sheet
-) {
-    background-color: var(--tg-glass-bar) !important;
-    background-image: none !important;
-    box-shadow: var(--tg-glass-bar-shadow) !important;
-    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
-    backdrop-filter: var(--tg-glass-filter) !important;
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-blur='on'][data-tg-wallpaper='on'] {
+    --tg-blur-bubble-in: rgba(24, 37, 51, .84);
+    --tg-blur-bubble-out: rgba(43, 82, 120, .86);
 }
 
-/* Menus and sheets float over content: thinner tint, full floating shadow. */
-html[data-tg-enabled='on'][data-tg-glass='on'] :is(
-    .popup,
-    #options,
-    #extensionsMenu
-) {
-    background-color: var(--tg-glass-panel) !important;
-    background-image: none !important;
-    box-shadow: var(--tg-glass-shadow) !important;
-    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
-    backdrop-filter: var(--tg-glass-filter) !important;
-}
+/* ── Wallpaper blur ───────────────────────────────────────────────────────
+   The scale() hides the blur's soft edge past the viewport; filter is added
+   to the transition so flipping the toggle fades rather than snaps. */
 
-/* The composer pill is a pseudo-element, so it cannot join the :is() lists
-   above. It is a bar, so it takes the dense bar tint. */
-html[data-tg-enabled='on'][data-tg-glass='on'] #nonQRFormItems::before {
-    background-color: var(--tg-glass-bar) !important;
-    background-image: none !important;
-    box-shadow: var(--tg-glass-bar-shadow) !important;
-    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
-    backdrop-filter: var(--tg-glass-filter) !important;
-}
-
-/* The header sits directly on the wallpaper with nothing scrolling under it,
-   so its bottom edge is the only thing separating it from the chat. A hard
-   Material drop shadow there fights the glass; a hairline does not. */
-html[data-tg-enabled='on'][data-tg-glass='on'] .tg-header {
-    border-bottom: 1px solid var(--tg-divider) !important;
+html[data-tg-enabled='on'][data-tg-blur='on'][data-tg-wallpaper='on'] #bg1 {
+    filter: blur(var(--tg-blur-amount));
+    transform: scale(1.06);
+    transition: background-image var(--animation-duration-3x, .3s) ease-in-out,
+                filter var(--animation-duration-2x, .2s) ease-in-out;
 }
 
 /* ── Bubbles ──────────────────────────────────────────────────────────────
    Tint only. No filter, so the tail's `background: inherit` matches exactly.
    Both selectors mirror the specificity of the chat.css rules they override,
-   and the flat layout opts out entirely because it has no bubble to tint. */
+   and flat layout opts out because it has no bubble to tint. */
 
-html[data-tg-enabled='on'][data-tg-glass='on']:where(:not([data-tg-message-layout='flat']))
+html[data-tg-enabled='on'][data-tg-blur='on']:where(:not([data-tg-message-layout='flat']))
 #chat > .mes:not([is_system='true']) .mes_block {
-    background-color: var(--tg-glass-bubble-in) !important;
+    background-color: var(--tg-blur-bubble-in) !important;
 }
 
-html[data-tg-enabled='on'][data-tg-glass='on']:where(:not([data-tg-message-layout='flat']))
+html[data-tg-enabled='on'][data-tg-blur='on']:where(:not([data-tg-message-layout='flat']))
 #chat > .mes[is_user='true']:not([is_system='true']) .mes_block {
-    background-color: var(--tg-glass-bubble-out) !important;
-}
-
-/* ── Flat layout ──────────────────────────────────────────────────────────
-   Flat mode has no bubbles: message-layout.css makes #chat one solid panel
-   and every message a transparent row. So glass goes on #chat itself -- the
-   whole message list becomes a single glass surface over the wallpaper, and
-   the rows stay transparent with their hover intact. This carries an extra
-   [data-tg-glass='on'] over the message-layout.css rule it overrides, which
-   is imported after this file, so the specificity has to win on its own.
-
-   No backdrop-filter on the rows, same reason as bubbles: it would be one
-   compositor layer per message on every scroll frame. One filter on #chat
-   covers the entire list at once. */
-html[data-tg-enabled='on'][data-tg-glass='on'][data-tg-message-layout='flat'] #chat {
-    background-color: var(--tg-glass-panel) !important;
-    background-image: none !important;
-    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
-    backdrop-filter: var(--tg-glass-filter) !important;
+    background-color: var(--tg-blur-bubble-out) !important;
 }
 
 /* ── Opt-outs ─────────────────────────────────────────────────────────────
-   Override the tokens on body, not the per-surface rules. Overriding tokens
-   is a single edit that cannot fall out of sync with the surface list, and it
-   keeps both sides of the conversation on one transparency policy -- the bug
-   in the previous version was an opt-out that reached the outgoing bubble but
-   lost to the more specific incoming selector. */
+   Reduced-transparency users and fast UI mode get solid bubbles back. Only the
+   tokens are overridden -- one edit, and both bubble sides stay on one policy.
+   The #bg1 blur is left alone: it is a wallpaper effect, not transparency, and
+   reduced-transparency does not mean "sharpen my photos". */
 
-html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur {
-    --tg-glass-panel: var(--tg-panel);
-    --tg-glass-bar: var(--tg-header-bg);
-    --tg-glass-bubble-in: var(--tg-in-bubble);
-    --tg-glass-bubble-out: var(--tg-out-bubble);
-    --tg-glass-filter: none;
-    --tg-glass-shadow: var(--tg-shadow-header);
-    --tg-glass-bar-shadow: var(--tg-shadow-header);
+html[data-tg-enabled='on'][data-tg-blur='on'] body.no-blur {
+    --tg-blur-bubble-in: var(--tg-in-bubble);
+    --tg-blur-bubble-out: var(--tg-out-bubble);
 }
 
 @media (prefers-reduced-transparency: reduce) {
-    html[data-tg-enabled='on'][data-tg-glass='on'] body {
-        --tg-glass-panel: var(--tg-panel);
-        --tg-glass-bar: var(--tg-header-bg);
-        --tg-glass-bubble-in: var(--tg-in-bubble);
-        --tg-glass-bubble-out: var(--tg-out-bubble);
-        --tg-glass-filter: none;
-        --tg-glass-shadow: var(--tg-shadow-header);
-        --tg-glass-bar-shadow: var(--tg-shadow-header);
+    html[data-tg-enabled='on'][data-tg-blur='on'] body {
+        --tg-blur-bubble-in: var(--tg-in-bubble);
+        --tg-blur-bubble-out: var(--tg-out-bubble);
     }
 }

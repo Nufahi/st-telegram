@@ -5,9 +5,9 @@
    the scrolling message area, so painting it alone leaves the composer strip
    and the gap beneath it transparent, exposing the native wallpaper as a bright
    band along the bottom. Paint the whole #sheld column instead so chat,
-   composer and any gaps share one seamless panel. Glass flat mode keeps #chat
-   translucent over the wallpaper on purpose, so it is excluded here. */
-html[data-tg-enabled='on'][data-tg-message-layout='flat']:not([data-tg-glass='on']) #sheld {
+   composer and any gaps share one seamless panel. Flat mode is always solid
+   monochrome -- it has no bubbles for the wallpaper blur to show through. */
+html[data-tg-enabled='on'][data-tg-message-layout='flat'] #sheld {
     background: var(--tg-panel) !important;
     background-image: none !important;
 }

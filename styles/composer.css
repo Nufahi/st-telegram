@@ -125,9 +125,8 @@ div#send_form.compact {
 /* Flat (no-bubbles) mode paints #chat with --tg-panel, the same colour as the
    pill above, so the rounded input blends into the chat and its corners read as
    a stray fragment. Give the pill the recessed field colour instead, as a
-   Telegram text field sits slightly sunken against its panel. Glass owns the
-   pill's fill when enabled (glass.css), so it is excluded here. */
-html[data-tg-enabled='on'][data-tg-message-layout='flat']:not([data-tg-glass='on']) #nonQRFormItems::before {
+   Telegram text field sits slightly sunken against its panel. */
+html[data-tg-enabled='on'][data-tg-message-layout='flat'] #nonQRFormItems::before {
     background: var(--tg-panel-sunken) !important;
     border-color: var(--tg-divider-strong) !important;
 }
