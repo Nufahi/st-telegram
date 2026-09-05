@@ -56,10 +56,12 @@
 
 html[data-tg-enabled='on'][data-tg-glass='on'] {
     --tg-glass-panel: var(--tg-panel);
+    --tg-glass-bar: var(--tg-header-bg);
     --tg-glass-bubble-in: var(--tg-in-bubble);
     --tg-glass-bubble-out: var(--tg-out-bubble);
     --tg-glass-filter: none;
     --tg-glass-shadow: var(--tg-shadow-header);
+    --tg-glass-bar-shadow: var(--tg-shadow-header);
 }
 
 /* ── Tokens: live glass ───────────────────────────────────────────────────
@@ -74,7 +76,17 @@ html[data-tg-enabled='on'][data-tg-glass='on'] {
            this low. saturate() puts back the colour the blur averaged out;
            brightness() lifts the panel off its own background. */
         --tg-glass-filter: blur(26px) saturate(190%) brightness(1.08);
+
+        /* Menus and sheets float ON TOP of chat content, so they can be thin
+           and let it show through. */
         --tg-glass-panel: rgba(255, 255, 255, .34);
+
+        /* The top bar and composer sit on the WALLPAPER, not on content. At
+           34% over an arbitrary photo the white averages toward grey and the
+           bar reads as a dead grey slab -- the exact complaint. Bars need a
+           dense tint that still passes some backdrop through: this is what
+           iOS and Telegram do on their bars. */
+        --tg-glass-bar: rgba(255, 255, 255, .74);
 
         /* The rim, and only the rim. Bright hairline along the top edge where
            light would catch, a barely-there dark line along the bottom for
@@ -84,7 +96,12 @@ html[data-tg-enabled='on'][data-tg-glass='on'] {
             inset 0 1px 0 rgba(255, 255, 255, .50),
             inset 0 -1px 0 rgba(16, 32, 48, .05);
 
-        /* Bubbles: translucent, unfiltered. Higher alpha than the bars
+        /* Bars carry NO dark cast shadow: a drop shadow under a light
+           translucent bar is read as more grey. Just the bright top rim and a
+           hairline divider (set separately on .tg-header). */
+        --tg-glass-bar-shadow: inset 0 1px 0 rgba(255, 255, 255, .55);
+
+        /* Bubbles: translucent, unfiltered. Higher alpha than the menus
            because message text has to stay legible over an arbitrary user
            wallpaper with no blur helping it. */
         --tg-glass-bubble-in: rgba(255, 255, 255, .78);
@@ -96,11 +113,14 @@ html[data-tg-enabled='on'][data-tg-glass='on'] {
            a dark panel read as glass instead of as a grey rectangle. */
         --tg-glass-filter: blur(26px) saturate(180%) brightness(.72);
         --tg-glass-panel: rgba(20, 30, 43, .46);
+        --tg-glass-bar: rgba(20, 30, 43, .80);
 
         --tg-glass-shadow:
             0 6px 26px rgba(0, 0, 0, .34),
             inset 0 1px 0 rgba(255, 255, 255, .14),
             inset 0 -1px 0 rgba(0, 0, 0, .22);
+
+        --tg-glass-bar-shadow: inset 0 1px 0 rgba(255, 255, 255, .12);
 
         --tg-glass-bubble-in: rgba(24, 37, 51, .80);
         --tg-glass-bubble-out: rgba(43, 82, 120, .82);
@@ -113,10 +133,21 @@ html[data-tg-enabled='on'][data-tg-glass='on'] {
    image back in. The image is forced to none because these surfaces must
    show the backdrop, not a painted gradient. */
 
+/* Bars sit on the wallpaper: dense tint, rim only, no dark cast shadow. */
 html[data-tg-enabled='on'][data-tg-glass='on'] :is(
     .tg-header,
     .tg-drawer-head,
-    .tg-message-action-sheet,
+    .tg-message-action-sheet
+) {
+    background-color: var(--tg-glass-bar) !important;
+    background-image: none !important;
+    box-shadow: var(--tg-glass-bar-shadow) !important;
+    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
+    backdrop-filter: var(--tg-glass-filter) !important;
+}
+
+/* Menus and sheets float over content: thinner tint, full floating shadow. */
+html[data-tg-enabled='on'][data-tg-glass='on'] :is(
     .popup,
     #options,
     #extensionsMenu
@@ -128,12 +159,12 @@ html[data-tg-enabled='on'][data-tg-glass='on'] :is(
     backdrop-filter: var(--tg-glass-filter) !important;
 }
 
-/* The composer pill is a pseudo-element, so it cannot join the :is() list
-   above. Same treatment, same tokens. */
+/* The composer pill is a pseudo-element, so it cannot join the :is() lists
+   above. It is a bar, so it takes the dense bar tint. */
 html[data-tg-enabled='on'][data-tg-glass='on'] #nonQRFormItems::before {
-    background-color: var(--tg-glass-panel) !important;
+    background-color: var(--tg-glass-bar) !important;
     background-image: none !important;
-    box-shadow: var(--tg-glass-shadow) !important;
+    box-shadow: var(--tg-glass-bar-shadow) !important;
     -webkit-backdrop-filter: var(--tg-glass-filter) !important;
     backdrop-filter: var(--tg-glass-filter) !important;
 }
@@ -160,6 +191,24 @@ html[data-tg-enabled='on'][data-tg-glass='on']:where(:not([data-tg-message-layou
     background-color: var(--tg-glass-bubble-out) !important;
 }
 
+/* ── Flat layout ──────────────────────────────────────────────────────────
+   Flat mode has no bubbles: message-layout.css makes #chat one solid panel
+   and every message a transparent row. So glass goes on #chat itself -- the
+   whole message list becomes a single glass surface over the wallpaper, and
+   the rows stay transparent with their hover intact. This carries an extra
+   [data-tg-glass='on'] over the message-layout.css rule it overrides, which
+   is imported after this file, so the specificity has to win on its own.
+
+   No backdrop-filter on the rows, same reason as bubbles: it would be one
+   compositor layer per message on every scroll frame. One filter on #chat
+   covers the entire list at once. */
+html[data-tg-enabled='on'][data-tg-glass='on'][data-tg-message-layout='flat'] #chat {
+    background-color: var(--tg-glass-panel) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
+    backdrop-filter: var(--tg-glass-filter) !important;
+}
+
 /* ── Opt-outs ─────────────────────────────────────────────────────────────
    Override the tokens on body, not the per-surface rules. Overriding tokens
    is a single edit that cannot fall out of sync with the surface list, and it
@@ -169,18 +218,22 @@ html[data-tg-enabled='on'][data-tg-glass='on']:where(:not([data-tg-message-layou
 
 html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur {
     --tg-glass-panel: var(--tg-panel);
+    --tg-glass-bar: var(--tg-header-bg);
     --tg-glass-bubble-in: var(--tg-in-bubble);
     --tg-glass-bubble-out: var(--tg-out-bubble);
     --tg-glass-filter: none;
     --tg-glass-shadow: var(--tg-shadow-header);
+    --tg-glass-bar-shadow: var(--tg-shadow-header);
 }
 
 @media (prefers-reduced-transparency: reduce) {
     html[data-tg-enabled='on'][data-tg-glass='on'] body {
         --tg-glass-panel: var(--tg-panel);
+        --tg-glass-bar: var(--tg-header-bg);
         --tg-glass-bubble-in: var(--tg-in-bubble);
         --tg-glass-bubble-out: var(--tg-out-bubble);
         --tg-glass-filter: none;
         --tg-glass-shadow: var(--tg-shadow-header);
+        --tg-glass-bar-shadow: var(--tg-shadow-header);
     }
 }
