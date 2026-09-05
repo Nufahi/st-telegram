@@ -780,28 +780,29 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
 /* SillyTavern alone controls display for edit actions. The theme only places
    and paints them, so inactive toolbars cannot be forced open. */
 #chat > .mes .mes_edit_buttons {
-    position: absolute !important;
-    right: var(--tg-bubble-pad-x) !important;
-    bottom: 5px !important;
-    top: auto !important;
+    position: static !important;
     float: none !important;
-    z-index: 2;
+    width: 100%;
+    max-width: 100%;
+    flex-wrap: wrap;
     gap: 4px !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 4px 0 6px !important;
     justify-content: flex-end !important;
     filter: none !important;
 }
 
-/* Keep the lower-right controls clear of the editable text and timestamp. */
-#chat > .mes .mes_block:has(.edit_textarea) {
-    padding-bottom: 42px !important;
+/* While editing, the corner metadata would sit on top of the textarea, so the
+   clock rejoins the header row and the reserved corner box is dropped. Keyed
+   on the textarea SillyTavern inserts, never on the toolbar's visibility. */
+#chat > .mes .mes_block:has(.edit_textarea) .ch_name .timestamp {
+    position: static !important;
+    align-self: center !important;
+    margin-left: 6px !important;
 }
 
-#chat > .mes .mes_block:has(.edit_textarea) .ch_name .timestamp {
-    right: auto !important;
-    left: var(--tg-bubble-pad-x) !important;
-    bottom: 7px !important;
+#chat > .mes .mes_block:has(.edit_textarea) .mes_text::after {
+    display: none;
 }
 
 #chat > .mes .mes_reasoning_actions {
@@ -828,6 +829,25 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     color: var(--tg-danger) !important;
     border-color: var(--tg-danger) !important;
     transform: scale(1.06) !important;
+}
+
+#chat > .mes .mes_edit_buttons .menu_button {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+}
+
+#chat > .mes .mes_edit_buttons .menu_button:focus-visible {
+    outline: 2px solid var(--tg-accent);
+    outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+    #chat > .mes .mes_edit_buttons .menu_button {
+        flex-basis: 44px;
+        width: 44px;
+        height: 44px;
+    }
 }
 
 #chat > .mes .edit_textarea {

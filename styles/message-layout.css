@@ -60,25 +60,6 @@ html[data-tg-enabled='on'][data-tg-message-layout='flat'] #chat > .mes:not([is_s
     bottom: 0 !important;
 }
 
-/* Editing keeps its action rail below the textarea. These rules intentionally
-   restore the space that the flat bubble reset removes. */
-html[data-tg-enabled='on'][data-tg-message-layout='flat']
-#chat > .mes:not([is_system='true']) .mes_block:has(.edit_textarea) {
-    padding-bottom: 42px !important;
-}
-
-html[data-tg-enabled='on'][data-tg-message-layout='flat']
-#chat > .mes:not([is_system='true']) .mes_block:has(.edit_textarea) .ch_name .timestamp {
-    right: auto !important;
-    left: 0 !important;
-    bottom: 7px !important;
-}
-
-html[data-tg-enabled='on'][data-tg-message-layout='flat']
-#chat > .mes:not([is_system='true']) .mes_edit_buttons {
-    right: 0 !important;
-}
-
 html[data-tg-enabled='on'][data-tg-message-layout='flat'] #chat > .mes:not([is_system='true']).tg-group-start {
     padding-top: 12px !important;
 }

@@ -1,23 +1,39 @@
-/* Optional Liquid Glass mode, controlled from Telegram Mobile settings. */
-
+/* Optional glass surfaces. Opaque tokens remain the fallback for WebViews
+   without backdrop filters and for reduced-transparency / fast UI mode. */
 html[data-tg-enabled='on'][data-tg-glass='on'] {
-    --tg-glass-panel: rgba(255, 255, 255, .68);
-    --tg-glass-panel-strong: rgba(255, 255, 255, .78);
-    --tg-glass-bubble-in: rgba(255, 255, 255, .68);
-    --tg-glass-bubble-out: rgba(239, 253, 222, .72);
-    --tg-glass-border: rgba(255, 255, 255, .52);
-    --tg-glass-shadow: 0 8px 28px rgba(37, 55, 70, .16), inset 0 1px 0 rgba(255, 255, 255, .56);
+    --tg-glass-panel: var(--tg-panel);
+    --tg-glass-bubble-in: var(--tg-in-bubble);
+    --tg-glass-bubble-out: var(--tg-out-bubble);
+    --tg-glass-filter: none;
+    --tg-glass-bubble-filter: none;
+    --tg-glass-border: rgba(255, 255, 255, .60);
+    --tg-glass-highlight: linear-gradient(125deg, rgba(255, 255, 255, .28), transparent 24%, transparent 76%, rgba(255, 255, 255, .12));
+    --tg-glass-shadow: 0 4px 16px rgba(26, 45, 62, .12), inset 0 1px 0 rgba(255, 255, 255, .80), inset 0 -1px 0 rgba(70, 100, 120, .16);
 }
 
 html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-glass='on'] {
-    --tg-glass-panel: rgba(23, 33, 43, .68);
-    --tg-glass-panel-strong: rgba(23, 33, 43, .80);
-    --tg-glass-bubble-in: rgba(24, 37, 51, .72);
-    --tg-glass-bubble-out: rgba(43, 82, 120, .72);
-    --tg-glass-border: rgba(255, 255, 255, .16);
-    --tg-glass-shadow: 0 10px 30px rgba(0, 0, 0, .30), inset 0 1px 0 rgba(255, 255, 255, .14);
+    --tg-glass-border: rgba(255, 255, 255, .24);
+    --tg-glass-highlight: linear-gradient(125deg, rgba(255, 255, 255, .12), transparent 24%, transparent 76%, rgba(255, 255, 255, .04));
+    --tg-glass-shadow: 0 4px 18px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255, 255, 255, .32), inset 0 -1px 0 rgba(0, 0, 0, .24);
 }
 
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    html[data-tg-enabled='on'][data-tg-glass='on'] {
+        --tg-glass-panel: rgba(255, 255, 255, .42);
+        --tg-glass-bubble-in: rgba(255, 255, 255, .50);
+        --tg-glass-bubble-out: rgba(231, 252, 211, .50);
+        --tg-glass-filter: blur(12px) saturate(165%);
+        --tg-glass-bubble-filter: blur(8px) saturate(150%);
+    }
+
+    html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-glass='on'] {
+        --tg-glass-panel: rgba(20, 30, 43, .48);
+        --tg-glass-bubble-in: rgba(24, 37, 51, .54);
+        --tg-glass-bubble-out: rgba(38, 76, 113, .54);
+    }
+}
+
+/* Do not filter drawer ancestors: that would trap their fixed-position panels. */
 html[data-tg-enabled='on'][data-tg-glass='on'] :is(
     .tg-header,
     .tg-drawer-head,
@@ -25,54 +41,54 @@ html[data-tg-enabled='on'][data-tg-glass='on'] :is(
     #options,
     #extensionsMenu
 ) {
-    background-color: var(--tg-glass-panel-strong) !important;
-    background-image: linear-gradient(145deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0)) !important;
+    background-color: var(--tg-glass-panel) !important;
+    background-image: var(--tg-glass-highlight) !important;
     border-color: var(--tg-glass-border) !important;
     box-shadow: var(--tg-glass-shadow) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(155%) !important;
-    backdrop-filter: blur(20px) saturate(155%) !important;
+    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
+    backdrop-filter: var(--tg-glass-filter) !important;
 }
 
 html[data-tg-enabled='on'][data-tg-glass='on'] #nonQRFormItems::before {
-    background-color: var(--tg-glass-panel-strong) !important;
-    background-image: linear-gradient(145deg, rgba(255, 255, 255, .18), rgba(255, 255, 255, .02)) !important;
+    background-color: var(--tg-glass-panel) !important;
+    background-image: var(--tg-glass-highlight) !important;
     border-color: var(--tg-glass-border) !important;
     box-shadow: var(--tg-glass-shadow) !important;
-    -webkit-backdrop-filter: blur(18px) saturate(150%) !important;
-    backdrop-filter: blur(18px) saturate(150%) !important;
+    -webkit-backdrop-filter: var(--tg-glass-filter) !important;
+    backdrop-filter: var(--tg-glass-filter) !important;
 }
 
-html[data-tg-enabled='on'][data-tg-glass='on'] #chat > .mes[is_user='false']:not([is_system='true']) .mes_block {
+html[data-tg-enabled='on'][data-tg-glass='on']:where(:not([data-tg-message-layout='flat']))
+#chat > .mes:not([is_system='true']) .mes_block {
     background-color: var(--tg-glass-bubble-in) !important;
-    background-image: linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, 0)) !important;
+    background-image: var(--tg-glass-highlight) !important;
     border: 1px solid var(--tg-glass-border) !important;
     box-shadow: var(--tg-glass-shadow) !important;
-    -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
-    backdrop-filter: blur(14px) saturate(145%) !important;
+    -webkit-backdrop-filter: var(--tg-glass-bubble-filter) !important;
+    backdrop-filter: var(--tg-glass-bubble-filter) !important;
 }
 
-html[data-tg-enabled='on'][data-tg-glass='on'] #chat > .mes[is_user='true'] .mes_block {
+html[data-tg-enabled='on'][data-tg-glass='on']:where(:not([data-tg-message-layout='flat']))
+#chat > .mes[is_user='true']:not([is_system='true']) .mes_block {
     background-color: var(--tg-glass-bubble-out) !important;
-    background-image: linear-gradient(145deg, rgba(255, 255, 255, .14), rgba(255, 255, 255, 0)) !important;
-    border: 1px solid var(--tg-glass-border) !important;
-    box-shadow: var(--tg-glass-shadow) !important;
-    -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
-    backdrop-filter: blur(14px) saturate(145%) !important;
 }
 
-html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur :is(
-    .tg-header,
-    .tg-drawer-head,
-    .popup,
-    #options,
-    #extensionsMenu,
-    #chat > .mes .mes_block
-) {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
+/* Override inherited tokens, not competing per-surface selectors. Both sides
+   of the conversation must have the same transparency policy. */
+html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur {
+    --tg-glass-panel: var(--tg-panel);
+    --tg-glass-bubble-in: var(--tg-in-bubble);
+    --tg-glass-bubble-out: var(--tg-out-bubble);
+    --tg-glass-filter: none;
+    --tg-glass-bubble-filter: none;
 }
 
-html[data-tg-enabled='on'][data-tg-glass='on'] body.no-blur #nonQRFormItems::before {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
+@media (prefers-reduced-transparency: reduce) {
+    html[data-tg-enabled='on'][data-tg-glass='on'] body {
+        --tg-glass-panel: var(--tg-panel);
+        --tg-glass-bubble-in: var(--tg-in-bubble);
+        --tg-glass-bubble-out: var(--tg-out-bubble);
+        --tg-glass-filter: none;
+        --tg-glass-bubble-filter: none;
+    }
 }

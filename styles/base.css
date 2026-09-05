@@ -280,7 +280,6 @@ html[data-tg-variant='night'] #options {
 /* Floating prompt, the "AI is generating" timer bar and the rest of
    SillyTavern's desktop affordances without a Telegram equivalent. */
 #top-bar,
-#rm_print_characters_pagination,
 #sheldheader,
 #chat_import_button,
 #loading_mes {
@@ -930,6 +929,66 @@ html[data-tg-enabled='on'] #chat > .welcomePanel .recentChatPinned {
 }
 
 /* ── Character / chat lists ─────────────────────────────────────────────── */
+
+/* The character list is paginated by SillyTavern, so the pager has to stay
+   reachable: hiding it strands every character past the first page. Restyled
+   for touch instead, with the page-size select and bulk tools kept intact. */
+html[data-tg-enabled='on'] #rm_print_characters_pagination {
+    gap: 8px;
+    padding: 8px 10px;
+    flex: 0 0 auto;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs {
+    flex: 1 1 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 6px 10px;
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs-nav {
+    color: var(--tg-text-secondary);
+    font: 500 13px var(--tg-font-ui);
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs-pages ul {
+    gap: 4px;
+    margin: 0;
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs-pages a {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 8px;
+    border: 1px solid var(--tg-divider);
+    border-radius: 12px;
+    background: var(--tg-panel);
+    font-family: var(--tg-font-ui);
+    opacity: 1;
+    touch-action: manipulation;
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs-pages .disabled a {
+    opacity: .35;
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs-pages li:not(.disabled) a:hover {
+    background: var(--tg-panel-hover);
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination .paginationjs-size-changer select {
+    min-height: 44px;
+    max-width: 100%;
+}
+
+html[data-tg-enabled='on'] #rm_print_characters_pagination :focus-visible {
+    outline: 2px solid var(--tg-accent);
+    outline-offset: 2px;
+}
 
 /* These live inside the settings sheets. Give them Telegram's list-row
    geometry so the drawer panels feel part of the same app. */
