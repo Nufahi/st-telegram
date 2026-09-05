@@ -779,15 +779,27 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
 
 /* SillyTavern alone controls display for edit actions. The theme only places
    and paints them, so inactive toolbars cannot be forced open. */
+/* Flatten the native header only during editing so its toolbar can follow
+   the message body in normal flow, including when the buttons wrap. */
+#chat > .mes .mes_block:has(.edit_textarea) {
+    display: flex;
+    flex-direction: column;
+}
+
+#chat > .mes .mes_block:has(.edit_textarea) .ch_name {
+    display: contents !important;
+}
+
 #chat > .mes .mes_edit_buttons {
     position: static !important;
     float: none !important;
+    order: 1;
     width: 100%;
     max-width: 100%;
     flex-wrap: wrap;
     gap: 4px !important;
     margin: 0 !important;
-    padding: 4px 0 6px !important;
+    padding: 6px 0 4px !important;
     justify-content: flex-end !important;
     filter: none !important;
 }
