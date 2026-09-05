@@ -1,0 +1,327 @@
+/* World Info / Lorebooks. Native code owns drawer visibility, entry expansion,
+   conditional fields and Select2. No display overrides on controls or labels. */
+html[data-tg-enabled='on'] #WorldInfo {
+    --tg-wi-action-size: 40px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo > .flex-container {
+    padding-block: 4px 12px;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #WorldInfo h3 {
+    font: 600 17px/1.3 var(--tg-font-ui) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wi-holder {
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(#wiTopBlock, #wiActivationSettings) {
+    gap: 12px;
+    align-items: stretch;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wiTopBlock > .range-block {
+    flex: 1 1 280px;
+    min-width: 0;
+    padding: 12px 0;
+    background: transparent;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(.range-block-title, h4, h5) {
+    color: var(--tg-accent) !important;
+    font: 500 14px/1.35 var(--tg-font-ui) !important;
+    text-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(#wiSliders, #wiCheckboxes) {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wiSliders > div {
+    min-width: 0;
+    flex: 1 1 140px;
+    padding: 8px;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #WorldInfo .budget_cap_note {
+    line-height: 1.4;
+}
+
+html[data-tg-enabled='on'] #WorldInfo input[type='range'] {
+    appearance: auto !important;
+    height: 28px !important;
+    width: 100% !important;
+    background: transparent !important;
+    accent-color: var(--tg-accent);
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(.checkbox_label, label.checkbox):has(> input[type='checkbox']):not([for='__invisible']) {
+    min-width: 0;
+    min-height: 44px;
+    align-items: center;
+    padding: 7px 8px;
+    border-radius: 10px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(.checkbox_label, label.checkbox) :is(small, span) {
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(#world_popup, #world_popup_entries_list) {
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #world_popup > .flex-container {
+    gap: 6px;
+    padding-block: 10px;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(#world_editor_select, #world_editor_select ~ .select2-container, #world_info_search, #world_info_sort_order) {
+    flex: 1 1 180px;
+    min-width: 0;
+    max-width: 100%;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(select, input[type='text'], input[type='search'], input[type='number']):where(:not(.select2-hidden-accessible):not(.select2-search__field)) {
+    min-width: 0 !important;
+    min-height: 40px;
+    border-radius: 10px !important;
+    background-color: var(--tg-panel-sunken) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo textarea:not(.select2-search__field) {
+    min-width: 0;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    line-height: 1.4 !important;
+    resize: vertical;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .world_entry select[name='entryStateSelector'] {
+    min-width: 44px !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo textarea:is(.keyprimarytextpole, .keysecondarytextpole) {
+    padding-inline-end: 32px !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .menu_button {
+    min-height: 40px;
+    margin: 0;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    box-shadow: none !important;
+    filter: none;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .menu_button:is(.fa-solid, .fa, .fas) {
+    flex: 0 0 var(--tg-wi-action-size);
+    width: var(--tg-wi-action-size) !important;
+    min-width: var(--tg-wi-action-size) !important;
+    height: var(--tg-wi-action-size) !important;
+    min-height: var(--tg-wi-action-size) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    color: var(--tg-text-secondary) !important;
+    font-family: var(--fa-style-family-classic, 'Font Awesome 6 Free') !important;
+    font-weight: 900 !important;
+}
+
+/* Undo the shared drawer icon rule's display: inline-grid for host-hidden icons. */
+html[data-tg-enabled='on'] #WorldInfo .menu_button:is(.displayNone, [hidden]) {
+    display: none !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(.menu_button, .checkbox_label, label.checkbox):hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(#world_popup_delete, .delete_entry_button) {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(#world_popup_delete, .delete_entry_button):hover {
+    background: var(--tg-danger-soft) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(.menu_button, .inline-drawer-toggle, .killSwitch, .switch_input_type_icon, .paginationjs-pages a):focus-visible {
+    outline: 2px solid var(--tg-accent);
+    outline-offset: 2px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .inline-drawer-header {
+    min-height: 44px;
+    padding: 10px 8px !important;
+    border-radius: 10px !important;
+    font-size: 14px !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .inline-drawer-content {
+    padding: 8px !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .wi-card-entry {
+    margin: 12px 0;
+    padding: 0;
+    border: 1px solid var(--tg-divider-strong);
+    border-radius: 14px;
+    background: var(--tg-panel);
+}
+
+html[data-tg-enabled='on'] #WorldInfo .world_entry :is(.flex-container, .world_entry_form_control, .world_entry_thin_controls) {
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .world_entry_form_control > small {
+    margin-block: 4px;
+    color: var(--tg-text-secondary);
+    line-height: 1.4;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .world_entry_edit > .flex-container {
+    gap: 12px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .killSwitch {
+    padding: 8px;
+    font-size: 22px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #world_info_pagination {
+    flex: 1 1 100%;
+    min-width: 0;
+    padding-block: 6px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .paginationjs {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .paginationjs-pages a {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    background: var(--tg-panel-sunken);
+    color: var(--tg-accent);
+    opacity: 1;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .paginationjs-pages .disabled a {
+    opacity: .35;
+}
+
+/* Select2 selections stay in the panel; the dropdown is attached to body.
+   Scope the latter by its active panel instead of repainting every Select2. */
+html[data-tg-enabled='on'] #WorldInfo .select2-container {
+    min-width: 0;
+    max-width: 100%;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .select2-selection {
+    min-height: 40px;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: var(--tg-panel-sunken) !important;
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .select2-selection__rendered {
+    color: var(--tg-text) !important;
+}
+
+html[data-tg-enabled='on'] #WorldInfo .select2-selection__choice {
+    border-color: var(--tg-divider) !important;
+    border-radius: 8px !important;
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-text) !important;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+html[data-tg-enabled='on'] #WorldInfo :is(.select2-selection__choice__remove, .select2-selection__clear) {
+    color: var(--tg-text-secondary) !important;
+    background: transparent !important;
+}
+
+html[data-tg-enabled='on'] body:has(#WorldInfo.openDrawer) > .select2-container .select2-dropdown {
+    background: var(--tg-panel);
+    color: var(--tg-text);
+    border: 1px solid var(--tg-divider-strong);
+    border-radius: 10px;
+}
+
+html[data-tg-enabled='on'] body:has(#WorldInfo.openDrawer) > .select2-container .select2-results__option--highlighted[aria-selected] {
+    background: var(--tg-accent);
+    color: var(--tg-text-on-accent);
+}
+
+@media (pointer: coarse) {
+    html[data-tg-enabled='on'] #WorldInfo {
+        --tg-wi-action-size: 44px;
+    }
+}
+
+@media (max-width: 1000px) {
+    html[data-tg-enabled='on'] #WorldInfo :is(#wiTopBlock, #wiActivationSettings, .WIEntryContentAndMemo, [name='keywordsAndLogicBlock'], [name='contentAndCharFilterBlock']) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo :is(#wiTopBlock > .range-block, #wiSliders, #wiCheckboxes) {
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .WIEnteryHeaderControls {
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 8px;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .WIEntryTitleAndStatus {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .world_entry_thin_controls {
+        flex-wrap: wrap;
+        flex-basis: 100%;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .wi-card-entry > .inline-drawer > .inline-drawer-header {
+        flex-wrap: wrap;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .world_entry_thin_controls > .world_entry_form_control {
+        flex: 1 1 120px;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .WIEnteryHeaderControls > .world_entry_form_control {
+        flex: 1 1 90px;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo [name='perEntryOverridesBlock'] > .world_entry_form_control {
+        flex: 1 1 140px;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo .world_entry_edit > .flex-container > :is(.flex2, .flex4) {
+        flex: 1 1 140px !important;
+    }
+}
