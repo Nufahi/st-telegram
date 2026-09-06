@@ -29,6 +29,10 @@ html[data-tg-enabled='on'] #WorldInfo #wiTopBlock > .range-block {
     background: transparent;
 }
 
+html[data-tg-enabled='on'] #WorldInfo #wiTopBlock > .range-block:has(#wiActivationSettings) {
+    flex-basis: 560px;
+}
+
 html[data-tg-enabled='on'] #WorldInfo :is(.range-block-title, h4, h5) {
     color: var(--tg-accent) !important;
     font: 500 14px/1.35 var(--tg-font-ui) !important;
@@ -36,15 +40,43 @@ html[data-tg-enabled='on'] #WorldInfo :is(.range-block-title, h4, h5) {
 }
 
 html[data-tg-enabled='on'] #WorldInfo :is(#wiSliders, #wiCheckboxes) {
-    flex: 1 1 260px;
+    flex: 1 1 220px;
     min-width: 0;
+}
+
+/* The host's .flex2 shorthand is important and otherwise resets the basis to
+   zero, squeezing sliders beside checkboxes in narrow desktop drawers. */
+html[data-tg-enabled='on'] #WorldInfo #wiSliders {
+    flex: 2 1 400px !important;
+    gap: 12px;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wiCheckboxes {
+    align-self: start;
 }
 
 html[data-tg-enabled='on'] #WorldInfo #wiSliders > div {
     min-width: 0;
-    flex: 1 1 140px;
+    flex: 1 1 180px;
     padding: 8px;
     border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wiSliders > div > small {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wiSliders :is(input, select) {
+    flex: 0 0 auto;
+    max-width: 100%;
+    width: 100%;
+}
+
+html[data-tg-enabled='on'] #WorldInfo #wiSliders input[type='range'] {
+    min-width: 0;
+    height: 36px !important;
 }
 
 html[data-tg-enabled='on'] #WorldInfo .budget_cap_note {
@@ -279,14 +311,19 @@ html[data-tg-enabled='on'] body:has(#WorldInfo.openDrawer) > .select2-container 
 }
 
 @media (max-width: 1000px) {
-    html[data-tg-enabled='on'] #WorldInfo :is(#wiTopBlock, #wiActivationSettings, .WIEntryContentAndMemo, [name='keywordsAndLogicBlock'], [name='contentAndCharFilterBlock']) {
+    html[data-tg-enabled='on'] #WorldInfo :is(#wiTopBlock, .WIEntryContentAndMemo, [name='keywordsAndLogicBlock'], [name='contentAndCharFilterBlock']) {
         flex-direction: column !important;
         align-items: stretch !important;
     }
 
-    html[data-tg-enabled='on'] #WorldInfo :is(#wiTopBlock > .range-block, #wiSliders, #wiCheckboxes) {
+    html[data-tg-enabled='on'] #WorldInfo #wiTopBlock > .range-block,
+    html[data-tg-enabled='on'] #WorldInfo #wiTopBlock > .range-block:has(#wiActivationSettings) {
         flex-basis: auto;
         width: 100%;
+    }
+
+    html[data-tg-enabled='on'] #WorldInfo #wiActivationSettings {
+        flex-direction: row;
     }
 
     html[data-tg-enabled='on'] #WorldInfo .WIEnteryHeaderControls {

@@ -862,8 +862,11 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content a {
 }
 
 /* SillyTavern also uses .menu_button for compact Font Awesome toolbar icons. */
-#top-settings-holder .drawer-content :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands).menu_button {
+#top-settings-holder .drawer-content:where(:not(#right-nav-panel)) :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands).menu_button {
     display: inline-grid !important;
+}
+
+#top-settings-holder .drawer-content :is(.fa, .fas, .far, .fab, .fa-solid, .fa-regular, .fa-brands).menu_button {
     place-items: center !important;
     width: 32px !important;
     min-width: 32px !important;
