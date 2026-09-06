@@ -1,0 +1,210 @@
+/* Native extension scripts own collapse, visibility and enabled state. */
+html[data-tg-enabled='on'] #rm_extensions_block {
+    min-width: 0 !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block > .extensions_block {
+    gap: 16px;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block h3 {
+    font: 600 17px/1.3 var(--tg-font-ui) !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block :is(#extensions_settings, #extensions_settings2) {
+    flex: 1 1 320px;
+    width: auto;
+    min-width: 0;
+    gap: 12px;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .inline-drawer-header {
+    min-height: 48px;
+    padding: 12px 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--tg-divider) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-text) !important;
+    box-shadow: none !important;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .inline-drawer-header:hover {
+    background: var(--tg-panel-hover) !important;
+    filter: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .inline-drawer-content {
+    padding: 8px 10px 14px !important;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block :is(select, input[type='text'], input[type='number'], input[type='password'], textarea):where(:not(.select2-hidden-accessible):not(.select2-search__field)) {
+    min-width: 0 !important;
+    max-width: 100%;
+    min-height: 40px;
+    border-radius: 10px !important;
+    background-color: var(--tg-panel-sunken) !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block :is(#extensions_url, #extensions_api_key) {
+    flex: 1 1 200px;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .checkbox_label:has(> input[type='checkbox']):not(:has(.menu_button)) {
+    align-items: center;
+    min-height: 44px;
+    min-width: 0;
+    column-gap: 10px;
+    padding-block: 6px;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .checkbox_label > :is(span, small) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .menu_button,
+html[data-tg-enabled='on'] .popup .extensions_info .menu_button {
+    min-height: 40px;
+    margin: 2px;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .menu_button:hover,
+html[data-tg-enabled='on'] .popup .extensions_info .menu_button:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .menu_button > i,
+html[data-tg-enabled='on'] .popup .extensions_info .menu_button > i {
+    color: inherit !important;
+}
+
+/* Counter the shared drawer's icon display rule without exposing hidden
+   imports, unavailable updates or extension-specific backing checkboxes. */
+html[data-tg-enabled='on'] #rm_extensions_block .menu_button:is(.displayNone, [hidden]),
+html[data-tg-enabled='on'] .popup .extensions_info .menu_button:is(.displayNone, [hidden]) {
+    display: none !important;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block .menu_button:is(:disabled, .disabled),
+html[data-tg-enabled='on'] .popup .extensions_info .menu_button:is(:disabled, .disabled) {
+    opacity: .45 !important;
+    cursor: not-allowed;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block :is(.menu_button, input, select, textarea, .inline-drawer-header):focus-visible,
+html[data-tg-enabled='on'] .popup .extensions_info :is(.menu_button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block #extensions_status {
+    font-size: 13px;
+    color: var(--tg-text-secondary);
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block #extensions_status.success {
+    color: var(--tg-accent);
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block #extensions_status.failure,
+html[data-tg-enabled='on'] .popup .extensions_info .failure {
+    color: var(--tg-danger) !important;
+}
+
+/* The manager is a body-level popup, not a settings-column descendant. */
+html[data-tg-enabled='on'] .popup .extensions_info :is(.extensions_toolbar, .third_party_toolbar) {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-block: 8px;
+    background: var(--tg-panel);
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_block {
+    grid-template-columns: auto auto minmax(0, 1fr) !important;
+    padding: 10px 8px !important;
+    gap: 8px !important;
+    border-bottom: 1px solid var(--tg-divider);
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_actions {
+    grid-column: 2 / -1 !important;
+    justify-self: end;
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_actions > .menu_button:not(.displayNone):not([hidden]) {
+    flex: 0 0 40px !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_actions > .btn_delete {
+    color: var(--tg-danger) !important;
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_disabled {
+    color: var(--tg-text-secondary);
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_missing {
+    color: var(--tg-danger);
+}
+
+html[data-tg-enabled='on'] .popup .extensions_info .extension_name.update_available {
+    color: var(--tg-accent);
+}
+
+@media (pointer: coarse) {
+    html[data-tg-enabled='on'] #rm_extensions_block .menu_button,
+    html[data-tg-enabled='on'] .popup .extensions_info .menu_button {
+        min-width: 44px !important;
+        min-height: 44px;
+    }
+
+    html[data-tg-enabled='on'] .popup .extensions_info .extension_actions > .menu_button:not(.displayNone):not([hidden]) {
+        flex-basis: 44px !important;
+        width: 44px !important;
+        min-width: 44px !important;
+        max-width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        max-height: 44px !important;
+    }
+}
+
+/* These native toolbars default to nowrap, even in narrow desktop sheets. */
+html[data-tg-enabled='on'] #rm_extensions_block #qr--settings :is(.qr--head, .qr--actions),
+html[data-tg-enabled='on'] #rm_extensions_block #memory_settings .memory_contents_controls {
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block #qr--settings :is(.qr--title, .qr--actions) {
+    min-width: 0;
+    max-width: 100%;
+}
+
+html[data-tg-enabled='on'] #rm_extensions_block #qr--settings #qr--set {
+    flex: 1 1 140px;
+}
