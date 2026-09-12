@@ -1,272 +1,496 @@
-/* Persona selection, bindings, pagination and visibility remain host-owned. */
+/* ── Personas ─────────────────────────────────────────────────────────────
+   Owns #PersonaManagement. The host ships almost no CSS for this panel — the
+   wrapper classes (.persona_management_left_column, _right_column,
+   _current_persona, _global_settings) and #PersonaManagement itself have zero
+   stock rules, so layout is entirely utility classes plus what is written here.
+
+   Not this file's job:
+
+   • Icon button geometry — drawer.css owns it once via --tg-panel-icon.
+   • Form control paint — drawer.css already gives every input/select/textarea
+     in a .drawer-content the sunken Telegram treatment.
+
+   The two structural fights with the host:
+
+   • `.avatar-container { width: 100% }` (style.css:3521) makes every card a
+     full-width row, which is right for the list and wrong for the grid.
+   • The text column carries `.wide100pLess70px` = `calc(100% - 70px)`, a number
+     tuned to the stock 50px avatar, so it leaves dead space beside ours. */
+
 html[data-tg-enabled='on'] #PersonaManagement {
-    --tg-persona-action: 40px;
+    --tg-grid-cell: 92px;
+    --tg-grid-avatar: 56px;
     min-width: 0 !important;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement h3 {
-    font: 600 17px/1.3 var(--tg-font-ui) !important;
-    overflow-wrap: anywhere;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement h4 {
-    color: var(--tg-accent) !important;
-    font: 500 14px/1.4 var(--tg-font-ui) !important;
-    margin: 16px 0 8px !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: 0 !important;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement > .flex-container > .flex-container > .flex1 {
-    flex-basis: 200px;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement :is(.flex-container, .buttons_block, .character_select_container, .character_name_block) {
     min-width: 0;
 }
 
+/* ── Headings ────────────────────────────────────────────────────────────── */
+html[data-tg-enabled='on'] #PersonaManagement h3 {
+    color: var(--tg-text) !important;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement h4 {
+    margin: 16px 0 8px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    text-transform: none !important;
+}
+
+/* ── Two-column shell ────────────────────────────────────────────────────── */
 html[data-tg-enabled='on'] #PersonaManagement #persona-management-block {
     gap: 20px !important;
     margin-top: 12px;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement :is(.persona_management_left_column, .persona_management_right_column) {
-    flex: 1 1 320px;
+    flex: 1 1 320px !important;
     width: 100%;
     max-width: 100%;
     min-width: 0;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement :is(.persona_controls_buttons_block, #persona_connections_buttons) {
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #your_name {
-    flex: 1 1 100%;
-    margin: 0 !important;
-    font: 600 18px/1.4 var(--tg-font-ui) !important;
-    overflow-wrap: anywhere;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement :is(select, input[type='search'], input[type='number'], textarea) {
-    min-width: 0 !important;
-    max-width: 100%;
-    min-height: 40px;
-    border-radius: 10px !important;
-    background-color: var(--tg-panel-sunken) !important;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement select {
-    appearance: auto !important;
-    padding-inline: 10px !important;
-}
-
+/* ── Left column toolbar ─────────────────────────────────────────────────── */
 html[data-tg-enabled='on'] #PersonaManagement #persona_search_bar {
-    flex: 1 1 160px;
+    flex: 1 1 160px !important;
+    min-height: 36px !important;
+    border-radius: 10px !important;
+    margin: 0 !important;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement #persona_sort_order {
+    flex: 0 0 auto !important;
     width: auto !important;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #persona_controls > label {
-    flex: 1 1 140px;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #persona_description {
-    min-height: 180px;
-    padding: 10px 12px !important;
-    line-height: 1.5 !important;
-    resize: vertical;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #persona_depth_position_settings > .flex1 {
-    flex: 1 1 120px;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .menu_button {
-    min-width: var(--tg-persona-action);
-    min-height: var(--tg-persona-action);
-    margin: 0;
-    padding: 8px 12px !important;
-    border: 1px solid var(--tg-divider-strong) !important;
+    max-width: none !important;
+    min-height: 36px !important;
     border-radius: 10px !important;
+    appearance: auto !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #persona_pagination_container {
+    flex: 1 1 100% !important;
+}
+
+/* ── Persona list: rows ──────────────────────────────────────────────────── */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block {
+    gap: 2px !important;
+    justify-content: flex-start !important;
+    padding: 0 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: auto !important;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 12px !important;
     background: transparent !important;
-    color: var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container:hover {
+    background: var(--tg-panel-hover) !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container.selected {
+    background: var(--tg-accent-soft) !important;
+    box-shadow: inset 0 0 0 1px var(--tg-accent) !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container > .avatar {
+    flex: 0 0 var(--tg-avatar-size-row) !important;
+    width: var(--tg-avatar-size-row) !important;
+    min-width: var(--tg-avatar-size-row) !important;
+    max-width: var(--tg-avatar-size-row) !important;
+    height: var(--tg-avatar-size-row) !important;
+    min-height: var(--tg-avatar-size-row) !important;
+    align-self: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    outline: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container > .avatar > img {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    display: block !important;
+    border: 0 !important;
+    border-radius: 50% !important;
     box-shadow: none !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement :is(.menu_button, .right_menu_button).fa-solid {
-    flex: 0 0 var(--tg-persona-action);
-    width: var(--tg-persona-action) !important;
-    min-width: var(--tg-persona-action) !important;
-    max-width: var(--tg-persona-action) !important;
-    height: var(--tg-persona-action) !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    color: var(--tg-text-secondary) !important;
-    font-family: var(--fa-style-family-classic, 'Font Awesome 6 Free') !important;
-    font-weight: 900 !important;
+/* The default persona is marked by a golden outline in stock; keep the idea
+   but paint it in the theme's accent ring so it matches the selected state. */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container.default_persona > .avatar {
+    box-shadow: 0 0 0 2px var(--tg-warning) !important;
+}
+
+/* Kills `.wide100pLess70px` = calc(100% - 70px). */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container .character_select_container {
+    flex: 1 1 0 !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    gap: 2px !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container .ch_name {
+    color: var(--tg-text) !important;
     font-size: 16px !important;
-    align-content: center;
+    font-weight: 500 !important;
+    overflow-wrap: anywhere;
+}
+
+/* getUserAvatarBlock() pads short descriptions with '\n\xa0\n\xa0' so every
+   card is three rows tall. Clamping to two lines suppresses that padding and
+   keeps rows the same height without the host's filler. */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container .ch_description {
+    display: -webkit-box !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 14px !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+    text-overflow: ellipsis !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container .ch_additional_info {
+    color: var(--tg-text-hint) !important;
+    font-size: 12px !important;
+    max-width: 100% !important;
+}
+
+/* Lock indicators are status badges, not actions, so they must not inherit the
+   panel's 36px round icon geometry. */
+html[data-tg-enabled='on'] #PersonaManagement .avatar_container_states {
+    flex-wrap: wrap !important;
+    gap: 4px !important;
+    max-width: 100% !important;
+    margin-top: 2px;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .avatar_container_states .menu_button {
+    display: inline-flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 22px !important;
+    padding: 2px 6px !important;
+    border-radius: 8px !important;
+    background: var(--tg-panel-sunken) !important;
+    color: var(--tg-text-secondary) !important;
+    font-size: 11px !important;
+    gap: 4px !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .avatar_container_states .menu_button i {
+    font-size: 11px !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar_upload {
+    width: var(--tg-avatar-size-row) !important;
+    height: var(--tg-avatar-size-row) !important;
+    margin: 8px !important;
+    border-radius: 50% !important;
+    background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
+    font-size: 28px !important;
+    line-height: 1 !important;
+}
+
+/* ── Persona list: grid mode ─────────────────────────────────────────────
+   Independent of body.charListGrid — this is #user_avatar_block.gridView,
+   persisted separately in accountStorage. The host reuses the character grid
+   selectors here (width 30% / max-width 100px), so a real grid track replaces
+   them for the same reason it does in characters.css. */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(var(--tg-grid-cell), 1fr));
+    gap: 2px !important;
+    align-content: start;
+    justify-content: stretch !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container {
+    position: relative;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    padding: 6px 2px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
     text-align: center;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .menu_button:hover {
-    background: var(--tg-panel-hover) !important;
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container > .avatar {
+    flex: 0 0 var(--tg-grid-avatar) !important;
+    width: var(--tg-grid-avatar) !important;
+    min-width: var(--tg-grid-avatar) !important;
+    max-width: var(--tg-grid-avatar) !important;
+    height: var(--tg-grid-avatar) !important;
+    min-height: var(--tg-grid-avatar) !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container .character_select_container {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    justify-content: center !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container .character_name_block {
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 0 !important;
+    margin: 0 !important;
+}
+
+/* Fixed two lines: grid rows are sized individually, so variable name heights
+   would make the rows ragged. */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container .ch_name {
+    display: -webkit-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: calc(2 * 1.25 * 13px) !important;
+    overflow: hidden !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.25 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container :is(.ch_description, .ch_additional_info) {
+    display: none !important;
+}
+
+/* In a 92px cell the lock badges cannot sit in flow without doubling the card
+   height, so they become a corner overlay. */
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container .avatar_container_states {
+    position: absolute !important;
+    top: 4px;
+    right: 4px;
+    z-index: 1;
+    flex-direction: column !important;
+    gap: 2px !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container .avatar_container_states .menu_button {
+    min-height: 18px !important;
+    padding: 1px 4px !important;
+    border-radius: 6px !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container .avatar_container_states .label {
+    display: none !important;
+}
+
+/* ── Current persona ─────────────────────────────────────────────────────── */
+html[data-tg-enabled='on'] #PersonaManagement #persona_controls {
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #your_name {
+    flex: 1 1 100% !important;
+    margin: 0 !important;
+    color: var(--tg-text) !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement :is(.persona_controls_buttons_block, #persona_connections_buttons) {
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin: 0 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #persona_controls > label {
+    flex: 1 1 140px !important;
+    height: auto !important;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement select {
+    min-height: 36px !important;
+    border-radius: 10px !important;
+    appearance: auto !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #persona_description {
+    min-height: 180px !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    line-height: 1.45 !important;
+    resize: vertical !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .extension_token_counter {
+    color: var(--tg-text-hint);
+    font-size: 12px;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #persona_depth_position_settings > .flex1 {
+    flex: 1 1 120px !important;
+    min-width: 0;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #persona_depth_value {
+    min-height: 36px !important;
+    border-radius: 10px !important;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement #persona_delete_button {
     color: var(--tg-danger) !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement #persona_connections_buttons .locked {
+html[data-tg-enabled='on'] #PersonaManagement .editor_maximize {
+    color: var(--tg-text-secondary) !important;
+    cursor: pointer;
+}
+
+/* ── Connections ────────────────────────────────────────────────────────
+   These three are text buttons with an icon, not icon-only, so they keep a
+   pill shape and only change colour when locked. */
+html[data-tg-enabled='on'] #PersonaManagement #persona_connections_buttons .menu_button {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 36px !important;
+    padding: 6px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-text) !important;
+    font-size: 14px !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #persona_connections_buttons .menu_button.locked {
     border-color: var(--tg-accent) !important;
     background: var(--tg-accent-soft) !important;
+    color: var(--tg-accent) !important;
 }
 
+html[data-tg-enabled='on'] #PersonaManagement #persona_connections_buttons .menu_button.locked i.icon {
+    color: var(--tg-accent) !important;
+}
+
+/* Default-persona lock is the "crown", a different meaning from a chat lock. */
 html[data-tg-enabled='on'] #PersonaManagement #lock_persona_default.locked {
     border-color: var(--tg-warning) !important;
+    color: var(--tg-warning) !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .menu_button:is(.displayNone, [hidden]) {
-    display: none !important;
+html[data-tg-enabled='on'] #PersonaManagement #lock_persona_default.locked i.icon {
+    color: var(--tg-warning) !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement :is(.menu_button, input, select, textarea, .avatar-container, .avatar_upload, .paginationjs-pages a):focus-visible {
-    outline: 2px solid var(--tg-accent) !important;
-    outline-offset: 2px;
+html[data-tg-enabled='on'] #PersonaManagement #persona_connections_info_block {
+    color: var(--tg-text-secondary) !important;
+    font-size: 13px !important;
 }
 
+/* ── Global settings ─────────────────────────────────────────────────────── */
 html[data-tg-enabled='on'] #PersonaManagement .persona_management_global_settings {
     margin-top: 16px;
+    padding-top: 8px;
     border-top: 1px solid var(--tg-divider);
 }
 
+html[data-tg-enabled='on'] #PersonaManagement .range-block {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+}
+
 html[data-tg-enabled='on'] #PersonaManagement .checkbox_label {
-    min-height: 44px;
-    padding: 8px 0;
-    align-items: center;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    min-height: 40px;
+    color: var(--tg-text) !important;
+    font-size: 14px !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .checkbox_label > span {
-    min-width: 0;
-    overflow-wrap: anywhere;
+html[data-tg-enabled='on'] #PersonaManagement .checkbox_label span {
+    color: var(--tg-text) !important;
+    font-size: 14px !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block {
-    gap: 6px;
-    justify-content: flex-start;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container {
-    gap: 12px;
-    margin: 0;
-    padding: 10px;
-    border: 1px solid transparent;
-    border-radius: 14px;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container:hover {
-    background: var(--tg-panel-hover);
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container.selected {
-    border-color: var(--tg-accent);
-    background: var(--tg-accent-soft);
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container .avatar {
-    flex: 0 0 52px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container .avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: inherit;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .character_select_container {
-    flex: 1 1 0;
-    width: auto;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .avatar_container_states {
-    flex-wrap: wrap;
-    gap: 4px;
-    max-width: 100%;
-}
-
-/* These are status badges, not actions. Keep the host's conditional display. */
-html[data-tg-enabled='on'] #PersonaManagement .avatar_state.menu_button {
-    min-width: 0;
-    min-height: 24px;
-    max-width: 100%;
-    padding: 3px 5px !important;
-    font-size: 11px !important;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement .ch_name {
-    color: var(--tg-text);
-    overflow-wrap: anywhere;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container {
-    flex: 1 1 120px;
-    width: auto;
-    max-width: 180px;
-    align-items: center;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView :is(.character_select_container, .ch_name, .ch_additional_info) {
-    max-width: 100%;
-    width: 100%;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar_upload {
-    background: var(--tg-accent-soft);
-    color: var(--tg-accent);
-    margin: 8px;
-}
-
-html[data-tg-enabled='on'] #PersonaManagement #persona_pagination_container {
-    flex: 1 1 100%;
-    min-width: 0;
-}
-
+/* ── Pagination ────────────────────────────────────────────────────────── */
 html[data-tg-enabled='on'] #PersonaManagement .paginationjs {
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: space-between;
+    flex-wrap: wrap !important;
+    gap: 6px;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages a {
-    display: grid;
+html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages ul li a {
+    display: grid !important;
     place-items: center;
-    min-width: var(--tg-persona-action);
-    min-height: var(--tg-persona-action);
-    padding: 4px;
-    border: 0;
-    border-radius: 10px;
-    background: var(--tg-panel-sunken);
+    min-width: var(--tg-panel-icon) !important;
+    min-height: var(--tg-panel-icon) !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    color: var(--tg-text-secondary) !important;
+    opacity: 1 !important;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages .disabled a {
-    opacity: .35;
+html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages ul li.active a {
+    background: var(--tg-accent) !important;
+    color: var(--tg-text-on-accent) !important;
 }
 
-@media (pointer: coarse) {
+html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages ul li.disabled a {
+    opacity: .35 !important;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .paginationjs-nav {
+    color: var(--tg-text-hint) !important;
+    font-weight: 400 !important;
+}
+
+@media (hover: none) and (pointer: coarse) {
     html[data-tg-enabled='on'] #PersonaManagement {
-        --tg-persona-action: 44px;
+        --tg-grid-cell: 104px;
+        --tg-grid-avatar: 64px;
     }
 }

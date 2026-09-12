@@ -25,7 +25,7 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.37';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.38';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -249,12 +249,13 @@ function whenPanelOpen(panelId, run, attempts = 12) {
  *    open and the panel we then open survives.
  *
  * Returns immediately; the panel exists but opens on the next tick. */
-function openNativePanel(drawerSelector, panelId) {
+function openNativePanel(drawerSelector, panelId, origin = 'chat') {
     const panel = document.getElementById(panelId);
-    /* Every caller of this helper is a chat-side entry point: the header
-       avatar, a message avatar or search. Record that so Back returns to the
-       chat instead of opening a launcher the user never went through. */
-    panelOrigin = 'chat';
+    /* Most callers are chat-side entry points: the header avatar, a message
+       avatar or search. Record that so Back returns to the chat instead of
+       opening a launcher the user never went through. Callers inside the
+       launcher pass 'drawer' so Back takes the user back to it. */
+    panelOrigin = origin;
     /* Close the launcher first so it is not left covering the panel. */
     toggleDrawer(false);
 
@@ -739,8 +740,8 @@ function onMessageAvatarClick(event) {
 }
 
 /* Open the persona settings, which is the user's own "profile". */
-function openPersonaPanel() {
-    openNativePanel('#persona-management-button', 'PersonaManagement');
+function openPersonaPanel(origin = 'chat') {
+    openNativePanel('#persona-management-button', 'PersonaManagement', origin);
 }
 
 /* Open a character card by NAME, because that is all a message row carries.
@@ -946,7 +947,7 @@ function ensureDrawerChrome() {
         const head = el('div', 'tg-drawer-head');
         head.innerHTML = `
             <div class="tg-drawer-head-top">
-                <div class="tg-drawer-avatar"><img alt=""></div>
+                <div class="tg-drawer-avatar" role="button" tabindex="0" aria-label="Persona settings" title="Persona settings"><img alt=""></div>
                 <div class="tg-drawer-actions">
                     <button type="button" class="tg-drawer-theme" aria-label="Toggle theme"></button>
                     <button type="button" class="tg-drawer-disable" aria-label="Disable Telegram theme" title="Disable Telegram theme"></button>
@@ -954,6 +955,16 @@ function ensureDrawerChrome() {
             </div>
             <div class="tg-drawer-name"></div>
             <div class="tg-drawer-sub"></div>`;
+        /* The avatar is the user's own profile button, mirroring the way
+           tapping your avatar on a message opens the persona panel. Origin is
+           'drawer' so Back returns to this launcher, not to the chat. */
+        const avatar = head.querySelector('.tg-drawer-avatar');
+        avatar?.addEventListener('click', () => openPersonaPanel('drawer'));
+        avatar?.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            openPersonaPanel('drawer');
+        });
         head.querySelector('.tg-drawer-theme')?.addEventListener('click', () => {
             const next = tgRoot.dataset.tgVariant === 'night' ? 'day' : 'night';
             tgWrite('variant', next);
@@ -966,7 +977,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.37');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.38');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);
