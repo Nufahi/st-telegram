@@ -25,7 +25,7 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.42';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.43';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -420,6 +420,27 @@ function canSwipeBack(row, mes) {
     return Number(match[1]) > 1 && Number(match[2]) > 1;
 }
 
+/* Should this row carry the swipe rail?
+ *
+ * This asks SillyTavern rather than deciding for itself. refreshSwipeButtons()
+ * puts .swipes_visible on a row whose message has alternatives (or is a
+ * pristine greeting) and .last_swipe on a row where swiping right would start
+ * a new generation -- together they are exactly the condition under which the
+ * native right chevron is shown, and .last_mes is the condition under which
+ * any of them is shown at all.
+ *
+ * The earlier version keyed off `.swipes-counter.swipe-picker-enabled`, which
+ * looked equivalent but is not: the picker needs swipes.length > 1, so a fresh
+ * single-swipe reply got no rail, and with the native chevron hidden by our own
+ * rules there was nothing left to press. You could not reach a second swipe
+ * because reaching it was the precondition for the button. That class arrived
+ * with SillyTavern's swipe-history picker, which is why this used to work. */
+function hasSwipeRail(row, isUser, isSystem) {
+    if (isUser || isSystem) return false;
+    if (!row.classList.contains('last_mes')) return false;
+    return row.classList.contains('swipes_visible') || row.classList.contains('last_swipe');
+}
+
 function refreshMessages() {
     const chat = document.getElementById('chat');
     if (!chat) return;
@@ -454,8 +475,7 @@ function refreshMessages() {
         const { row, isUser, isSystem, name, mes, date } = entry;
         row.classList.toggle('tg-group-start', !messagesShareGroup(entry, entries[index - 1]));
         row.classList.toggle('tg-group-end', !messagesShareGroup(entry, entries[index + 1]));
-        row.classList.toggle('tg-has-swipes', !isUser && !isSystem
-            && Boolean(row.querySelector('.swipes-counter.swipe-picker-enabled.interactable')));
+        row.classList.toggle('tg-has-swipes', hasSwipeRail(row, isUser, isSystem));
 
         if (!isUser && !isSystem && name) {
             const idx = String(nameColorIndex(name));
@@ -1015,7 +1035,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.42');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.43');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);

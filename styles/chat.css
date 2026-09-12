@@ -68,6 +68,11 @@ body {
     background: transparent !important;
     background-image: none !important;
     backdrop-filter: none !important;
+    /* On phones SillyTavern frames the chat with left, right and bottom
+       hairlines (css/mobile-styles.css, the max-width:1000px block). The bottom
+       one reads as a divider between the conversation and the composer, which
+       Telegram does not have -- the composer sits on the same surface. */
+    border: 0 !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     padding: 8px 8px 10px !important;
@@ -901,10 +906,27 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     opacity: 1;
 }
 
-/* Preserve the native swipe hit areas without drawing their arrows. */
+/* The native chevrons are never drawn, but the elements stay in place and
+   clickable -- SillyTavern's swipe handlers are delegated to them.
+ *
+ * The glyph is switched off at the font level, not with opacity. Opacity alone
+ * is not enough: the rail rules below raise these elements back to 1, and
+ * during a swipe SillyTavern re-toggles .swipes_visible, .last_swipe and .fade
+ * on the row, so for one frame the FontAwesome chevron flashed through our
+ * circle. A transparent colour at zero size cannot be undone by an opacity
+ * change, so no state is left where it can appear. Our own icon is drawn in
+ * ::after, which sets its own size and colour. */
 #chat > .mes :is(.swipe_left, .swipe_right) {
-    opacity: 0 !important;
+    color: transparent !important;
+    font-size: 0 !important;
+    text-shadow: none !important;
     pointer-events: auto !important;
+}
+
+/* Rows the rail has not claimed keep the buttons out of sight entirely; the
+   .tg-has-swipes rules below opt their own rail back in. */
+#chat > .mes:not(.tg-has-swipes) :is(.swipe_left, .swipe_right) {
+    opacity: 0 !important;
 }
 
 #chat > .mes > .swipe_left {
@@ -1012,7 +1034,10 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     transform: scale(.94);
 }
 
-#chat > .mes.tg-has-swipes .swipes-counter.swipe-picker-enabled.interactable {
+/* Styled whether or not the swipe-history picker is available: the pill is the
+   rail's counter, and a reply with a single swipe still needs to read as part of
+   the rail rather than as leftover 10px text. */
+#chat > .mes.tg-has-swipes .swipes-counter:not([hidden]) {
     position: static !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -1030,6 +1055,11 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     line-height: 1 !important;
     white-space: nowrap !important;
     opacity: 1 !important;
+    visibility: visible !important;
+    cursor: default;
+}
+
+#chat > .mes.tg-has-swipes .swipes-counter.swipe-picker-enabled {
     cursor: pointer;
 }
 
@@ -1049,6 +1079,7 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     color: transparent !important;
     font-size: 0 !important;
     opacity: 1 !important;
+    visibility: visible !important;
     pointer-events: auto !important;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
@@ -1076,6 +1107,16 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
 #chat > .mes.tg-has-swipes :is(.swipe_left, .swipe_right, .swipes-counter):focus-visible {
     outline: 2px solid var(--tg-accent) !important;
     outline-offset: 2px !important;
+}
+
+/* SillyTavern sets body.hideAllSwipeButtons while a reply is generating and
+   hides the controls with opacity. Our rail rules force opacity back to 1, so
+   the rail has to opt out of itself here or it stays live mid-generation and a
+   press lands on a message that is still being written. */
+body.hideAllSwipeButtons #chat > .mes.tg-has-swipes .swipeRightBlock {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
 }
 
 /* ── Reasoning / chain of thought ───────────────────────────────────────── */

@@ -79,8 +79,33 @@ html[data-tg-enabled='on'][data-tg-message-layout='flat'] #chat > .mes:not([is_s
     padding-bottom: 12px !important;
 }
 
+/* The swipe rail needs its own strip of empty space, but in flat mode that
+   space has to belong to the row rather than sit in a margin between rows: the
+   row paints the hover highlight and a rail floating outside it would hover the
+   next message instead. Reserve the height as bottom padding and drop the rail
+   into it.
+ *
+ * Left-aligned here, unlike the bubble layout. There is no bubble edge to hang
+   off in flat mode, so the rail lines up with the start of the text instead of
+   being stranded against the far right edge of the window. */
 html[data-tg-enabled='on'][data-tg-message-layout='flat'] #chat > .mes:not([is_system='true']).tg-has-swipes {
-    margin-bottom: 34px !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 42px !important;
+}
+
+html[data-tg-enabled='on'][data-tg-message-layout='flat']
+#chat > .mes:not([is_system='true']).tg-has-swipes .swipeRightBlock {
+    right: auto !important;
+    left: 12px !important;
+    bottom: 6px !important;
+    justify-content: flex-start !important;
+}
+
+@media (max-width: 600px) {
+    html[data-tg-enabled='on'][data-tg-message-layout='flat']
+    #chat > .mes:not([is_system='true']).tg-has-swipes .swipeRightBlock {
+        left: 10px !important;
+    }
 }
 
 @media (max-width: 600px) {
