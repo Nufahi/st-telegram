@@ -576,18 +576,13 @@ html[data-tg-fab='stop'] #rightSendForm > #send_but { display: none !important; 
 /* ── Quick replies bar ──────────────────────────────────────────────────── */
 
 /* StoryForge owns the Quick Inserts geometry, including its centred phone
-   layout. Only pin its colours for the two Telegram variants. */
+   layout. Only pin its colours. Tokens, not literals, so the buttons follow
+   the active colour scheme instead of staying blue-grey. */
 
-html[data-tg-enabled='on'][data-tg-variant='day'] #sf-qi-bar .sf-qi-btn.menu_button {
-    background-color: #f1f1f1 !important;
-    border-color: rgba(0, 0, 0, .16) !important;
-    color: #707579 !important;
-}
-
-html[data-tg-enabled='on'][data-tg-variant='night'] #sf-qi-bar .sf-qi-btn.menu_button {
-    background-color: #131c26 !important;
-    border-color: rgba(255, 255, 255, .14) !important;
-    color: #aaaaaa !important;
+html[data-tg-enabled='on'] #sf-qi-bar .sf-qi-btn.menu_button {
+    background-color: var(--tg-panel-sunken) !important;
+    border-color: var(--tg-divider-strong) !important;
+    color: var(--tg-text-secondary) !important;
 }
 
 /* Rendered as Telegram's horizontally scrolling suggestion chips. */

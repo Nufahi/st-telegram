@@ -10,7 +10,7 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.34';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.35';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -18,8 +18,22 @@ function buildPanel() {
     const wrapper = document.createElement('div');
     wrapper.id = PANEL_ID;
 
-    const accentOptions = Object.keys(TG_ACCENTS)
-        .map((key) => `<option value="${key}">${key[0].toUpperCase()}${key.slice(1)}</option>`)
+    /* Telegram's own colour picker is a row of filled circles with a check in
+       the active one, not a dropdown, so that is what we build. The swatch
+       colour is passed as an inline custom property rather than a background,
+       so the CSS below can reuse it for the focus ring too.
+     *
+       Only the first swatch is tabbable; arrow keys move between them. That is
+       the standard radiogroup pattern -- seven tab stops for one setting is
+       what makes swatch strips unusable with a keyboard. */
+    const accentSwatches = Object.entries(TG_ACCENTS)
+        .map(([key, colours], index) => {
+            const label = `${key[0].toUpperCase()}${key.slice(1)}`;
+            return `<button type="button" class="tg-swatch" role="radio" aria-checked="false"`
+                + ` tabindex="${index === 0 ? '0' : '-1'}" data-tg-scheme="${key}"`
+                + ` style="--tg-swatch: ${colours.night}" title="${label}"`
+                + ` aria-label="${label}"></button>`;
+        })
         .join('');
 
     /* Reuse SillyTavern's inline-drawer markup so its own delegated collapse
@@ -155,6 +169,76 @@ function buildPanel() {
                 text-align: right;
                 color: var(--tg-text-secondary, currentColor);
             }
+            /* The swatch strip needs the full row width, so its label sits
+               above it rather than beside it. */
+            #${PANEL_ID} .tg-row-stacked {
+                display: block;
+            }
+            #${PANEL_ID} .tg-row-stacked > label {
+                display: block;
+                margin-bottom: 8px;
+            }
+            #${PANEL_ID} .tg-swatches {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 12px;
+                padding: 2px 0 4px;
+            }
+            #${PANEL_ID} .tg-swatch {
+                flex: 0 0 auto;
+                position: relative;
+                box-sizing: border-box;
+                width: 28px !important;
+                min-width: 28px !important;
+                height: 28px !important;
+                min-height: 28px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                border: 0 !important;
+                border-radius: 50% !important;
+                background: var(--tg-swatch) !important;
+                box-shadow: none !important;
+                cursor: pointer;
+                /* Telegram scales the swatch up when it is picked. The ring is
+                   drawn with an outline offset so it never eats into the
+                   circle's own diameter. */
+                transition: transform 150ms cubic-bezier(.4, 0, .2, 1),
+                            outline-color 150ms cubic-bezier(.4, 0, .2, 1);
+                outline: 2px solid transparent;
+                outline-offset: 3px;
+            }
+            #${PANEL_ID} .tg-swatch:hover {
+                transform: scale(1.08);
+            }
+            #${PANEL_ID} .tg-swatch[aria-checked="true"] {
+                outline-color: var(--tg-swatch);
+            }
+            /* The check mark. Drawn as two borders rotated 45deg rather than a
+               font icon, because Font Awesome is not guaranteed to have loaded
+               when this panel mounts and a missing glyph would leave the active
+               swatch indistinguishable. */
+            #${PANEL_ID} .tg-swatch[aria-checked="true"]::after {
+                content: '';
+                position: absolute;
+                top: 8px;
+                left: 8px;
+                width: 11px;
+                height: 6px;
+                border: 0 solid #fff;
+                border-left-width: 2px;
+                border-bottom-width: 2px;
+                border-radius: 1px;
+                transform: rotate(-45deg);
+            }
+            #${PANEL_ID} .tg-swatch:focus-visible {
+                outline-color: var(--tg-swatch);
+                box-shadow: 0 0 0 5px color-mix(in srgb, var(--tg-swatch) 30%, transparent) !important;
+            }
+            @media (prefers-reduced-motion: reduce) {
+                #${PANEL_ID} .tg-swatch { transition: none; }
+                #${PANEL_ID} .tg-swatch:hover { transform: none; }
+            }
             #${PANEL_ID} .tg-note {
                 opacity: .65;
                 font-size: 12px;
@@ -197,9 +281,11 @@ function buildPanel() {
                     <label for="tg-night-start">Night starts at</label>
                     <input type="time" id="tg-night-start">
                 </div>
-                <div class="tg-row">
-                    <label for="tg-accent">Accent colour</label>
-                    <select id="tg-accent">${accentOptions}</select>
+                <div class="tg-row tg-row-stacked">
+                    <label>Colour scheme
+                        <small>Recolours the whole app, as Telegram's themes do.</small>
+                    </label>
+                    <div class="tg-swatches" id="tg-accent" role="radiogroup" aria-label="Colour scheme">${accentSwatches}</div>
                 </div>
                 <div class="tg-row">
                     <label for="tg-blur">Blur wallpaper
@@ -265,7 +351,17 @@ function wire(panel) {
     variant.value = tgRead('variant', ['day', 'night'], 'night');
     dayStart.value = tgReadRaw('theme-day-start', '07:00');
     nightStart.value = tgReadRaw('theme-night-start', '19:00');
-    accent.value = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
+    const swatches = [...accent.querySelectorAll('.tg-swatch')];
+    const syncAccent = (scheme) => {
+        for (const swatch of swatches) {
+            const active = swatch.dataset.tgScheme === scheme;
+            swatch.setAttribute('aria-checked', active ? 'true' : 'false');
+            /* Keep exactly one tab stop, on the active swatch, so tabbing into
+               the group lands on the current value and not always on blue. */
+            swatch.tabIndex = active ? 0 : -1;
+        }
+    };
+    syncAccent(tgRead('accent', Object.keys(TG_ACCENTS), 'blue'));
     blur.checked = tgRead('blur', ['on', 'off'], 'off') === 'on';
     flatMessages.checked = tgRead('message-layout', ['bubbles', 'flat'], 'bubbles') === 'flat';
     messageFontSize.value = String(Math.min(22, Math.max(14, Number(tgReadRaw('message-font-size', '16')) || 16)));
@@ -292,7 +388,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.34');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.35');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);
@@ -331,9 +427,29 @@ function wire(panel) {
         tgApplyVariant(tgResolveVariant());
     });
 
-    accent.addEventListener('change', () => {
-        tgWrite('accent', accent.value);
-        tgRoot.dataset.tgAccent = accent.value;
+    const pickAccent = (scheme) => {
+        tgWrite('accent', scheme);
+        tgRoot.dataset.tgAccent = scheme;
+        syncAccent(scheme);
+    };
+
+    accent.addEventListener('click', (event) => {
+        const swatch = event.target.closest('.tg-swatch');
+        if (swatch) pickAccent(swatch.dataset.tgScheme);
+    });
+
+    /* Arrow keys move the selection, wrapping at both ends, which is what a
+       radiogroup is expected to do and the only way this control is usable
+       without a mouse given it has a single tab stop. */
+    accent.addEventListener('keydown', (event) => {
+        const step = { ArrowLeft: -1, ArrowUp: -1, ArrowRight: 1, ArrowDown: 1 }[event.key];
+        if (!step) return;
+        const from = swatches.indexOf(event.target.closest('.tg-swatch'));
+        if (from < 0) return;
+        event.preventDefault();
+        const next = swatches[(from + step + swatches.length) % swatches.length];
+        pickAccent(next.dataset.tgScheme);
+        next.focus();
     });
 
     blur.addEventListener('change', () => {

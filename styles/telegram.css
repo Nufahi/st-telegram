@@ -14,13 +14,13 @@
  * under 60 KB.
  */
 
-@import url('./tokens.css?v=0.1.12-quote-text-colour');
+@import url('./tokens.css?v=0.1.35-colour-schemes');
 @import url('./icons.css?v=0.1.4-hidden-message-actions');
-@import url('./base.css?v=0.1.33-loader-fullscreen');
+@import url('./base.css?v=0.1.35-colour-schemes');
 @import url('./controls.css?v=0.1.19-switches');
-@import url('./chat.css?v=0.1.25-edit-footer');
-@import url('./header.css?v=0.1.2-square-top-info-bar');
-@import url('./composer.css?v=0.1.24-wallpaper-blur');
+@import url('./chat.css?v=0.1.35-colour-schemes');
+@import url('./header.css?v=0.1.35-colour-schemes');
+@import url('./composer.css?v=0.1.35-colour-schemes');
 @import url('./drawer.css?v=0.1.34-panel-dividers');
 @import url('./world-info.css?v=0.1.32-activation-layout');
 @import url('./user-settings.css?v=0.1.27-user-settings');
@@ -28,6 +28,6 @@
 @import url('./extensions.css?v=0.1.30-extensions');
 @import url('./personas.css?v=0.1.31-personas');
 @import url('./characters.css?v=0.1.32-characters');
-@import url('./glass.css?v=0.1.24-wallpaper-blur');
+@import url('./glass.css?v=0.1.35-colour-schemes');
 @import url('./message-layout.css?v=0.1.24-wallpaper-blur');
 @import url('./frame.css?v=0.1.28-desktop-panels');

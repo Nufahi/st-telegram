@@ -86,11 +86,14 @@ html[data-tg-wallpaper='on'] #chat::before {
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background: rgba(213, 219, 223, .20);
+    /* Per-scheme in tokens.css: an alpha tint cannot be derived from the
+       opaque --tg-chat-bg in CSS, so the recolour has to supply it. The
+       literals are the default blue scheme's values. */
+    background: var(--tg-wallpaper-tint, rgba(213, 219, 223, .20));
 }
 
 html[data-tg-variant='night'][data-tg-wallpaper='on'] #chat::before {
-    background: rgba(14, 22, 33, .38);
+    background: var(--tg-wallpaper-tint, rgba(14, 22, 33, .38));
 }
 
 /* Telegram's scrollbar is an overlay thumb with no track. */

@@ -291,10 +291,15 @@ html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_
    the panel colour instead of SillyTavern's tinted blur. That keeps the screen
    a flat Telegram surface for the frame between `loaderElement.remove()` and
    the dialog actually closing. Other transparent dialogs — the image lightbox —
-   keep their dimmed backdrop. Literal colours rather than the --tg-panel token,
-   because ::backdrop only inherits custom properties from its originating
-   element in recent engines and an unresolved var() would leave the screen
-   see-through mid-load. */
+   keep their dimmed backdrop.
+
+   Literal colours rather than the --tg-panel token, because ::backdrop only
+   inherits custom properties from its originating element in recent engines and
+   an unresolved var() would leave the screen see-through mid-load. That is also
+   why the colour schemes are spelled out one by one below instead of read from
+   tokens.css -- a wrong-hued splash for one frame is a cosmetic nit, a
+   see-through one is a broken load. Day is #ffffff in every scheme, so only
+   night needs the extra rules. */
 html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
     background: #ffffff !important;
     backdrop-filter: none !important;
@@ -303,6 +308,30 @@ html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_
 
 html[data-tg-enabled='on'][data-tg-variant='night'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
     background: #17212b !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-accent='teal'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #182a29 !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-accent='green'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #192920 !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-accent='yellow'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #29241a !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-accent='orange'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #292019 !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-accent='pink'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #291920 !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-accent='violet'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #20192a !important;
 }
 
 /* Establish a Telegram-owned colour/font boundary around the surfaces this

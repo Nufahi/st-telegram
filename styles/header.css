@@ -189,49 +189,32 @@ html[data-tg-variant='night'] .tg-header-btn:active {
 }
 
 /* ── Top Info Bar extension ────────────────────────────────────────────────
-   Leave all sizing and flow to the extension. The theme only supplies fixed
-   Telegram colours so its phone layout cannot be changed accidentally. */
+   Leave all sizing and flow to the extension. The theme only supplies the
+   colours so its phone layout cannot be changed accidentally.
 
-html[data-tg-enabled='on'][data-tg-variant='day'] :is(#extensionTopBar, #extensionConnectionProfiles) {
-    background-color: #ffffff !important;
-    border-color: rgba(0, 0, 0, .16) !important;
+   These used to be per-variant literals. They are tokens now, otherwise the
+   bar stayed Telegram-blue-grey in every recoloured scheme while the app
+   around it changed hue. */
+
+html[data-tg-enabled='on'] :is(#extensionTopBar, #extensionConnectionProfiles) {
+    background-color: var(--tg-panel) !important;
+    border-color: var(--tg-divider-strong) !important;
     border-radius: 0 !important;
-    color: #000000 !important;
+    color: var(--tg-text) !important;
 }
 
-html[data-tg-enabled='on'][data-tg-variant='night'] :is(#extensionTopBar, #extensionConnectionProfiles) {
-    background-color: #17212b !important;
-    border-color: rgba(255, 255, 255, .14) !important;
-    border-radius: 0 !important;
-    color: #ffffff !important;
-}
-
-html[data-tg-enabled='on'][data-tg-variant='day'] :is(
+html[data-tg-enabled='on'] :is(
     #extensionTopBarChatName,
     #extensionTopBarSearchInput,
     #extensionConnectionProfilesSelect
 ) {
-    background-color: #f1f1f1 !important;
-    border-color: rgba(0, 0, 0, .16) !important;
-    color: #000000 !important;
+    background-color: var(--tg-panel-sunken) !important;
+    border-color: var(--tg-divider-strong) !important;
+    color: var(--tg-text) !important;
 }
 
-html[data-tg-enabled='on'][data-tg-variant='night'] :is(
-    #extensionTopBarChatName,
-    #extensionTopBarSearchInput,
-    #extensionConnectionProfilesSelect
-) {
-    background-color: #131c26 !important;
-    border-color: rgba(255, 255, 255, .14) !important;
-    color: #ffffff !important;
-}
-
-html[data-tg-enabled='on'][data-tg-variant='day'] #extensionTopBar > .right_menu_button {
-    color: #707579 !important;
-}
-
-html[data-tg-enabled='on'][data-tg-variant='night'] #extensionTopBar > .right_menu_button {
-    color: #aaaaaa !important;
+html[data-tg-enabled='on'] #extensionTopBar > .right_menu_button {
+    color: var(--tg-text-secondary) !important;
 }
 
 /* Its optional chat-file sidebar lives outside #sheld in #movingDivs. Keep

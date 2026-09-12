@@ -61,14 +61,19 @@ html[data-tg-enabled='on'][data-tg-blur='on'][data-tg-wallpaper='on'] {
 
     /* Translucent so the softened wallpaper reads through. Higher alpha than a
        full glass panel because message text still has to stay legible over an
-       arbitrary user photo. */
-    --tg-blur-bubble-in: rgba(255, 255, 255, .82);
-    --tg-blur-bubble-out: rgba(226, 250, 205, .84);
+       arbitrary user photo.
+
+       The rgba() values come from tokens.css per colour scheme, because an
+       alpha colour cannot be derived from the opaque bubble token in CSS and
+       hardcoding them here left the glass blue-green in every other scheme.
+       The literals are the blue fallback for the default scheme only. */
+    --tg-blur-bubble-in: var(--tg-blur-bubble-in-wp, rgba(255, 255, 255, .82));
+    --tg-blur-bubble-out: var(--tg-blur-bubble-out-wp, rgba(226, 250, 205, .84));
 }
 
 html[data-tg-enabled='on'][data-tg-variant='night'][data-tg-blur='on'][data-tg-wallpaper='on'] {
-    --tg-blur-bubble-in: rgba(24, 37, 51, .84);
-    --tg-blur-bubble-out: rgba(43, 82, 120, .86);
+    --tg-blur-bubble-in: var(--tg-blur-bubble-in-wp, rgba(24, 37, 51, .84));
+    --tg-blur-bubble-out: var(--tg-blur-bubble-out-wp, rgba(43, 82, 120, .86));
 }
 
 /* ── Wallpaper blur ───────────────────────────────────────────────────────

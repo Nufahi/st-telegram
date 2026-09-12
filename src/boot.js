@@ -21,7 +21,7 @@
  *    Everything ships in a <link> we own and can remove.
  */
 
-const TG_VERSION = '0.1.34';
+const TG_VERSION = '0.1.35';
 
 /* Bump this whenever styles/*.css changes. It is the CSS cache-bust key.
  *
@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.34';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.34-panel-dividers';
+const TG_STYLE_BUILD = '0.1.35-colour-schemes';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the
@@ -118,15 +118,26 @@ function tgResolveVariant() {
 
 const TG_VARIANT = tgResolveVariant();
 
-/* Accent colour. Telegram ships a set of named accents; the user picks one
-   and every bubble/button/link follows it. */
+/* Colour scheme. Telegram does not ship "accents" -- it ships whole themes,
+   and picking pink there recolours the chat background, the panels, the
+   outgoing bubble, the hints and the links, not just the send button. So this
+   key drives a FULL RECOLOUR in tokens.css; the name stays 'accent' only so
+   existing localStorage values keep working.
+ *
+ * The hexes here are the swatch colours the settings panel paints, which is
+ * why they are duplicated from tokens.css: the swatch row has to render before
+ * the scheme it represents is applied, so it cannot read the tokens. If you
+ * change --tg-accent for a scheme, change it here too. Day and night share the
+ * accent in every scheme, but the shape is kept per-variant so a scheme that
+ * needs to diverge can. */
 const TG_ACCENTS = {
-    blue: { day: '#3390ec', night: '#3390ec' },
-    green: { day: '#4fae4e', night: '#4fae4e' },
-    teal: { day: '#3aa2a0', night: '#3aa2a0' },
-    orange: { day: '#e8734a', night: '#e8734a' },
-    pink: { day: '#e0559b', night: '#e0559b' },
-    violet: { day: '#8a56ac', night: '#8774e1' },
+    blue: { day: '#328fec', night: '#328fec' },
+    teal: { day: '#329f96', night: '#329f96' },
+    green: { day: '#3b9b63', night: '#3b9b63' },
+    yellow: { day: '#af811d', night: '#af811d' },
+    orange: { day: '#c56520', night: '#c56520' },
+    pink: { day: '#d44986', night: '#d44986' },
+    violet: { day: '#9566d6', night: '#9566d6' },
 };
 const TG_ACCENT = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
 
