@@ -1,30 +1,32 @@
-/* Native right_menu and action visibility belong to SillyTavern. */
-html[data-tg-enabled='on'] #right-nav-panel {
-    --tg-character-action: 40px;
-    /* Grid mode cell metrics. The cell is the minimum column width; the track
-       grows to fill the row, so the column count follows the panel width. */
-    --tg-grid-cell: 92px;
-    --tg-grid-avatar: 56px;
-}
+/* Character panel — DECORATION ONLY.
+ *
+ * ═══ The rule for this file ═══
+ *
+ * Do not touch layout. No display, no flex/grid, no width/height, no
+ * position/inset, no margin, no padding that moves a box, no flex-direction,
+ * no alignment or justification, no order, no gap. Colours, borders, radii,
+ * shadows, typography and focus rings only.
+ *
+ * Why, learned twice the hard way:
+ *
+ * 1. The character list has TWO host layouts over IDENTICAL markup, switched
+ *    only by the `body.charListGrid` class (css/toggle-dependent.css:60-160).
+ *    Any geometry that reads well as a row squashes the grid, and vice versa.
+ *    Every attempt to own both ended with one of them broken.
+ *
+ * 2. The editor is a nest of host rules tuned to each other -- #avatar_div is
+ *    `flexnowrap` holding two 100%-wide children (style.css:3545 and :3560),
+ *    the text column is `calc(100% - 70px)` sized for a 50px avatar
+ *    (st-tailwind.css:158), and .ch_fav_icon compensates with
+ *    `margin-left: -75px` (style.css:3429). Shift one and the rest drift.
+ *
+ * SillyTavern's own layout is coherent. Let it be, and only restyle the
+ * surfaces: rounded buttons, themed inputs, Telegram's dividers and accents.
+ */
 
-html[data-tg-enabled='on'] #right-nav-panel :is(.scrollableInner, .right_menu, .flex-container, .buttons_block, .title_restorable, .tag_controls, #avatar_controls, #form_create) {
-    min-width: 0;
-    max-width: 100%;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel :is(#rm_button_bar, #avatar_div, #avatar_controls, .form_create_bottom_buttons_block, .title_restorable, #rm_group_top_bar, .group_member_icon) {
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #rm_button_selected_ch h2 {
-    font: 600 18px/1.4 var(--tg-font-ui) !important;
-    overflow-wrap: anywhere;
-}
+/* ── Section headers ────────────────────────────────────────────────────── */
 
 html[data-tg-enabled='on'] #right-nav-panel :is(.inline-drawer-header, .title_restorable) {
-    min-height: 44px;
-    padding: 10px 4px !important;
     color: var(--tg-accent) !important;
     background: transparent !important;
     border: 0 !important;
@@ -32,43 +34,41 @@ html[data-tg-enabled='on'] #right-nav-panel :is(.inline-drawer-header, .title_re
     font-size: 14px;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel .inline-drawer-content {
-    padding: 8px 4px 12px !important;
+html[data-tg-enabled='on'] #right-nav-panel #rm_button_selected_ch h2 {
+    font: 600 18px/1.4 var(--tg-font-ui) !important;
+    overflow-wrap: anywhere;
 }
 
+/* ── Form controls ──────────────────────────────────────────────────────── */
+
+/* drawer.css already gives every control in a .drawer-content its colours,
+   border and focus ring. Only the corner radius differs here. */
 html[data-tg-enabled='on'] #right-nav-panel :is(input:not([type]), input[type='text'], input[type='search'], input[type='number'], select, textarea),
 html[data-tg-enabled='on'] #character_popup :is(input[type='text'], input[type='number'], select, textarea) {
-    min-height: 40px;
-    min-width: 0 !important;
-    max-width: 100%;
     background-color: var(--tg-panel-sunken) !important;
     border-radius: 10px !important;
 }
 
+/* Keep the native dropdown arrow: drawer.css paints its own via a background
+   image, which a themed select in this panel does not inherit cleanly. */
 html[data-tg-enabled='on'] #right-nav-panel select,
 html[data-tg-enabled='on'] #character_popup select {
     appearance: auto !important;
-    padding-inline: 10px !important;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel #character_sort_order {
-    flex: 1 1 140px;
+html[data-tg-enabled='on'] #character_popup input[type='range'] {
+    appearance: auto !important;
+    background: transparent !important;
+    accent-color: var(--tg-accent);
 }
 
-html[data-tg-enabled='on'] #right-nav-panel :is(#description_textarea, #firstmessage_textarea),
-html[data-tg-enabled='on'] #character_popup textarea {
-    min-height: 140px;
-    padding: 10px 12px !important;
-    line-height: 1.5 !important;
-    resize: vertical;
-}
+/* ── Buttons ────────────────────────────────────────────────────────────── */
 
+/* drawer.css fills every .menu_button in a drawer panel with solid accent,
+   which is far too loud for a screen holding a dozen icon buttons. Telegram
+   uses quiet outlined controls here. Geometry stays the host's. */
 html[data-tg-enabled='on'] #right-nav-panel .menu_button,
 html[data-tg-enabled='on'] #character_popup .menu_button {
-    min-width: var(--tg-character-action, 40px);
-    min-height: var(--tg-character-action, 40px);
-    margin: 0;
-    padding: 8px 12px !important;
     border: 1px solid var(--tg-divider-strong) !important;
     border-radius: 10px !important;
     background: transparent !important;
@@ -76,22 +76,14 @@ html[data-tg-enabled='on'] #character_popup .menu_button {
     box-shadow: none !important;
 }
 
+/* Icon buttons read as glyphs, not as boxes. */
 html[data-tg-enabled='on'] #right-nav-panel :is(.menu_button, .right_menu_button).fa-solid,
 html[data-tg-enabled='on'] #character_popup :is(.menu_button, .right_menu_button, .editor_maximize, #character_cross).fa-solid {
-    flex: 0 0 var(--tg-character-action, 40px);
-    width: var(--tg-character-action, 40px) !important;
-    min-width: var(--tg-character-action, 40px) !important;
-    height: var(--tg-character-action, 40px) !important;
-    min-height: var(--tg-character-action, 40px) !important;
-    padding: 0 !important;
     border: 0 !important;
     border-radius: 50% !important;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    text-align: center;
     color: var(--tg-text-secondary) !important;
-    font: 900 16px var(--fa-style-family-classic, 'Font Awesome 6 Free') !important;
+    font-family: var(--fa-style-family-classic, 'Font Awesome 6 Free') !important;
+    font-weight: 900 !important;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel :is(.menu_button, .right_menu_button):hover {
@@ -113,26 +105,12 @@ html[data-tg-enabled='on'] #character_popup :is(.menu_button, input, select, tex
     outline-offset: 2px;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel #avatar_div_div {
-    flex: 0 0 96px;
-    width: 96px;
-    height: 96px;
-    margin: 4px;
-    border-radius: 18px;
-}
+/* ── Lists ──────────────────────────────────────────────────────────────── */
 
-html[data-tg-enabled='on'] #right-nav-panel #avatar_controls {
-    flex: 1 1 200px;
-    height: auto;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #avatar_controls > label {
-    flex: 1 1 160px;
-}
-
+/* Rounded highlight on hover and selection. Both layouts tolerate this
+   because neither a radius nor a background changes a box's size. */
 html[data-tg-enabled='on'] #right-nav-panel .entity_block {
-    border-radius: 12px !important;
-    margin-bottom: 4px !important;
+    border-radius: 10px !important;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .entity_block.character_selected {
@@ -140,166 +118,8 @@ html[data-tg-enabled='on'] #right-nav-panel .entity_block.character_selected {
     box-shadow: inset 0 0 0 1px var(--tg-accent) !important;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel :is(.character_select_container, .group_select_container, .character_name_block) {
-    min-width: 0;
-    flex: 1 1 0;
-}
-
-/* Grid mode.
-
-   The host calls this "grid" but implements it as a wrapping flex row with
-   `width: 30%; max-width: 100px` cells (css/toggle-dependent.css:60-160), so
-   cell width jumps between 30% and 100px depending on panel width and the last
-   row is spread by `justify-content: space-around`. We replace it with a real
-   grid track so the column count follows the panel and every cell is identical.
-
-   Everything here needs `!important` because base.css gives entity blocks
-   Telegram list-row geometry (62px tall, avatar left, 12px gap) with
-   `!important` throughout, and that has to be undone for the column layout. */
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(var(--tg-grid-cell), 1fr));
-    gap: 2px;
-    align-content: start;
-    justify-content: stretch;
-    padding: 4px 6px 10px !important;
-}
-
-/* Status rows (empty list, "N characters hidden", the folder back button) are
-   not cells. Let them keep the full row. */
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block > :is(.text_block, .bogus_folder_select_back) {
-    grid-column: 1 / -1;
-}
-
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block > .bogus_folder_select_back {
-    flex-direction: row !important;
-    align-items: center !important;
-    gap: 12px !important;
-    width: auto !important;
-    max-width: none !important;
-    padding: 6px 8px !important;
-    text-align: left;
-}
-
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block > .bogus_folder_select_back :is(.character_select_container, .character_name_block, .ch_name) {
-    width: auto !important;
-    max-width: none !important;
-    text-align: left !important;
-}
-
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block {
-    position: relative;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 4px !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: auto !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 6px 2px !important;
-    border-radius: 10px !important;
-    overflow: hidden !important;
-    text-align: center;
-}
-
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block > :is(.avatar, .missing-avatar) {
-    flex: 0 0 auto !important;
-    width: var(--tg-grid-avatar) !important;
-    min-width: var(--tg-grid-avatar) !important;
-    max-width: var(--tg-grid-avatar) !important;
-    height: var(--tg-grid-avatar) !important;
-    min-height: var(--tg-grid-avatar) !important;
-    max-height: var(--tg-grid-avatar) !important;
-    align-self: center !important;
-    justify-content: center !important;
-    align-items: center !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-}
-
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block > .missing-avatar {
-    display: flex !important;
-    font-size: 26px !important;
-}
-
-/* The text column is `width: calc(100% - 70px)` in the markup, sized for the
-   50px list avatar. In a column card it has to take the whole cell. */
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block :is(.character_select_container, .group_select_container) {
-    flex: 0 0 auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    gap: 0 !important;
-    justify-content: center !important;
-}
-
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block :is(.character_name_block, .group_name_block) {
-    flex-direction: column !important;
-    align-items: center !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: 100% !important;
-    gap: 0 !important;
-    margin: 0 !important;
-}
-
-/* Two lines, always. A clamp alone would let one- and two-line names produce
-   different cell heights, and grid rows are sized per row, so the list would
-   look ragged. The fixed height keeps every row identical. */
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block .ch_name {
-    display: -webkit-box !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    height: calc(2 * 1.25 * 13px) !important;
-    overflow: hidden !important;
-    font-size: 13px !important;
-    font-weight: 400 !important;
-    line-height: 1.25 !important;
-    text-align: center !important;
-    white-space: normal !important;
-    text-wrap: wrap !important;
-    overflow-wrap: anywhere;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-}
-
-/* Bulk edit prepends the checkbox as the card's first child, which would push
-   the avatar down. Float it over the corner instead. */
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block > .bulk_select_checkbox {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    z-index: 1;
-    margin: 0 !important;
-}
-
-html[data-tg-enabled='on'] body.no-hotswap #right-nav-panel .hotswap {
-    display: none !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel :is(#rm_group_buttons, #GroupFavDelOkBack) {
-    flex: 1 1 240px !important;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #rm_group_buttons > .flex1 {
-    flex: 1 1 180px;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .checkbox_label {
-    min-height: 44px;
-    align-items: center;
-    white-space: normal;
-    flex-wrap: wrap;
-    padding-block: 6px;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #rm_group_buttons label {
-    white-space: normal;
+html[data-tg-enabled='on'] #right-nav-panel .group_member {
+    border-bottom: 1px solid var(--tg-divider);
 }
 
 html[data-tg-enabled='on'] #right-nav-panel :is(#rm_group_members, #rm_group_add_members) {
@@ -307,68 +127,15 @@ html[data-tg-enabled='on'] #right-nav-panel :is(#rm_group_members, #rm_group_add
     border: 0;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel .group_member {
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 4px;
-    border-bottom: 1px solid var(--tg-divider);
+/* The hot-swap strip is a user setting; when it is off the row should go. */
+html[data-tg-enabled='on'] body.no-hotswap #right-nav-panel .hotswap {
+    display: none !important;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel .group_member_name {
-    height: auto;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .group_member_icon > .flex-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #spoiler_free_desc .widthFitContent {
-    flex-shrink: 0;
-}
-
-html[data-tg-enabled='on'] #character_popup .inline-drawer-header {
-    min-height: 44px;
-    padding: 10px 4px;
-    border-bottom: 1px solid var(--tg-divider);
-}
-
-html[data-tg-enabled='on'] #character_popup input[type='range'] {
-    appearance: auto !important;
-    height: 40px !important;
-    background: transparent !important;
-    accent-color: var(--tg-accent);
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .group_member_icon {
-    flex: 1 1 100%;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .paginationjs {
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: center;
-}
+/* ── Pagination ─────────────────────────────────────────────────────────── */
 
 html[data-tg-enabled='on'] #right-nav-panel .paginationjs-pages a {
-    display: grid;
-    place-items: center;
-    min-width: 44px;
-    min-height: 44px;
     border: 0;
     border-radius: 10px;
     background: var(--tg-panel-sunken);
-}
-
-@media (pointer: coarse) {
-    html[data-tg-enabled='on'] :is(#right-nav-panel, #character_popup) {
-        --tg-character-action: 44px;
-    }
-
-    /* Touch needs a bigger tap target than a 92px cell around a 56px avatar. */
-    html[data-tg-enabled='on'] #right-nav-panel {
-        --tg-grid-cell: 104px;
-        --tg-grid-avatar: 64px;
-    }
 }

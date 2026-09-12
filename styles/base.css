@@ -1099,10 +1099,12 @@ html[data-tg-enabled='on'] #rm_print_characters_pagination :focus-visible {
     outline-offset: 2px;
 }
 
-/* These live inside the settings sheets. Give them Telegram's list-row
-   geometry so the drawer panels feel part of the same app. */
-.character_select.entity_block,
-.group_select.entity_block,
+/* Chat pickers get Telegram's list-row geometry. The CHARACTER and GROUP
+   lists deliberately do NOT: their markup carries two host layouts at once
+   (rows, and the `body.charListGrid` grid), tuned to each other down to
+   `.ch_fav_icon { margin-left: -75px }`. Forcing row geometry on them made
+   the grid collapse into squashed cells. They keep the host's layout and are
+   only recoloured -- see the header of styles/characters.css. */
 .select_chat_block,
 .recentChat {
     display: flex !important;
@@ -1125,28 +1127,38 @@ html[data-tg-enabled='on'] #rm_print_characters_pagination :focus-visible {
     background: var(--tg-panel-hover) !important;
 }
 
+/* Round avatars everywhere: a radius does not change a box's size, so this is
+   safe in both the row and the grid layout. */
 .character_select.entity_block > .avatar,
 .group_select.entity_block > .avatar,
 .select_chat_block > .avatar,
 .recentChat > .avatar {
-    width: var(--tg-avatar-size) !important;
-    height: var(--tg-avatar-size) !important;
-    min-width: var(--tg-avatar-size) !important;
     border-radius: 50% !important;
     overflow: hidden !important;
     border: 0 !important;
-    flex: 0 0 auto !important;
 }
 
 .character_select.entity_block > .avatar:not(.avatar_collage) > img,
 .group_select.entity_block > .avatar:not(.avatar_collage) > img,
 .select_chat_block > .avatar:not(.avatar_collage) > img,
 .recentChat > .avatar:not(.avatar_collage) > img {
+    object-fit: cover !important;
+    border-radius: 50% !important;
+}
+
+.select_chat_block > .avatar,
+.recentChat > .avatar {
+    width: var(--tg-avatar-size) !important;
+    height: var(--tg-avatar-size) !important;
+    min-width: var(--tg-avatar-size) !important;
+    flex: 0 0 auto !important;
+}
+
+.select_chat_block > .avatar:not(.avatar_collage) > img,
+.recentChat > .avatar:not(.avatar_collage) > img {
     width: 100% !important;
     height: 100% !important;
     aspect-ratio: 1 / 1 !important;
-    object-fit: cover !important;
-    border-radius: 50% !important;
 }
 
 /* Inline avatar lists reuse .character_select/.group_select on the avatar
@@ -1175,20 +1187,16 @@ html[data-tg-enabled='on'] #rm_print_characters_pagination :focus-visible {
     border-radius: inherit !important;
 }
 
+/* Colour only. Font size is left to the host: grid mode scales it down to
+   `calc(var(--mainFontSize) * .8)` and a fixed 16px overflowed the cells. */
 .character_select.entity_block .ch_name,
 .group_select.entity_block .ch_name {
-    font-size: 16px !important;
-    font-weight: 500 !important;
     color: var(--tg-text) !important;
 }
 
 .character_select.entity_block .ch_description,
 .group_select.entity_block .ch_description {
-    font-size: 14px !important;
     color: var(--tg-text-secondary) !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
 }
 
 /* ── Generic form controls inside panels ────────────────────────────────── */

@@ -25,7 +25,7 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.39';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.40';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -401,6 +401,25 @@ function messagesShareGroup(current, adjacent) {
     return dateKey(current.date) === dateKey(adjacent.date);
 }
 
+/* Is there an earlier swipe to go back to? Telegram only shows a back
+ * affordance once you have moved forward, so the left arrow appears at swipe
+ * 2 of N and not before.
+ *
+ * The message object is the source of truth: swipe() assigns swipe_id before
+ * it touches the DOM. The counter text is the fallback for rows we could not
+ * match to chat data. Deliberately NOT the row's `swipeid` attribute --
+ * SillyTavern writes that once in addOneMessage and never rewrites it while
+ * swiping, so it is stale the moment you swipe. The counter's separators are
+ * zero-width spaces (U+200B), hence the digits-only match. */
+function canSwipeBack(row, mes) {
+    if (mes && Array.isArray(mes.swipes)) {
+        return Number(mes.swipe_id ?? 0) > 0 && mes.swipes.length > 1;
+    }
+    const match = row.querySelector('.swipes-counter')?.textContent?.match(/(\d+)\D+(\d+)/);
+    if (!match) return false;
+    return Number(match[1]) > 1 && Number(match[2]) > 1;
+}
+
 function refreshMessages() {
     const chat = document.getElementById('chat');
     if (!chat) return;
@@ -419,6 +438,7 @@ function refreshMessages() {
             isUser,
             isSystem,
             name,
+            mes,
             key: isSystem ? `sys:${index}` : `${isUser ? 'u' : 'c'}:${name}`,
             date: parseMessageDate(mes),
         };
@@ -431,7 +451,7 @@ function refreshMessages() {
     let lastDateKey = null;
 
     entries.forEach((entry, index) => {
-        const { row, isUser, isSystem, name, date } = entry;
+        const { row, isUser, isSystem, name, mes, date } = entry;
         row.classList.toggle('tg-group-start', !messagesShareGroup(entry, entries[index - 1]));
         row.classList.toggle('tg-group-end', !messagesShareGroup(entry, entries[index + 1]));
         row.classList.toggle('tg-has-swipes', !isUser && !isSystem
@@ -464,6 +484,8 @@ function refreshMessages() {
         const swipeRail = row.querySelector(':scope > .swipeRightBlock');
         const swipeBack = row.querySelector(':scope > .swipe_left');
         if (swipeRail && swipeBack) swipeRail.prepend(swipeBack);
+
+        row.classList.toggle('tg-can-back', canSwipeBack(row, mes));
 
         /* Preserve the native nodes so ST can keep updating their values, but
            move them out of the narrow avatar column into the message bubble. */
@@ -989,7 +1011,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.39');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.40');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);
@@ -1218,6 +1240,13 @@ function watchGeneration() {
         scheduleRefresh();
     });
 
+    /* Swiping between existing alternatives changes the counter text and
+       nothing else -- no class, no attribute. The observer does not watch
+       character data (it would fire on every streamed token), so the back
+       arrow would stay stale without this. */
+    source.on(types.MESSAGE_SWIPED || 'message_swiped', () => scheduleRefresh());
+    source.on(types.MESSAGE_SWIPE_DELETED || 'message_swipe_deleted', () => scheduleRefresh());
+
     generationSubscribed = true;
 }
 
@@ -1240,7 +1269,7 @@ const OWNED = '.tg-header, .tg-date-pill, .tg-message-meta, .tg-drawer-head, .tg
    never a reason to refresh -- we are the ones who changed it. */
 const OWNED_CLASSES = [
     'tg-group-start', 'tg-group-end', 'tg-drawer-open', 'tg-group-top',
-    'tg-action-target', 'tg-action-pressing', 'tg-has-swipes',
+    'tg-action-target', 'tg-action-pressing', 'tg-has-swipes', 'tg-can-back',
 ];
 
 /* Is this node one we created? Used to recognise our own writes coming back

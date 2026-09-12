@@ -959,16 +959,15 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     order: 2;
 }
 
-/* SillyTavern hides the back arrow with opacity + visibility when there is
-   no earlier swipe to return to (.mes:not(.swipes_visible) .swipe_left).
-   Inside the rail that would leave a 32px hole, so collapse it instead --
-   and never set opacity on the button outside .swipes_visible, or a single
-   swipe message gets a dead circle. */
-#chat > .mes.tg-has-swipes:not(.swipes_visible) .swipeRightBlock > .swipe_left {
+/* The back arrow is drawn only when there is an earlier swipe to return to,
+   i.e. from swipe 2 of N onward -- src/chat.js sets .tg-can-back from the
+   message's swipe_id. Collapsed rather than faded, because a dimmed circle
+   in the rail still reads as a button and leaves a 32px hole. */
+#chat > .mes.tg-has-swipes:not(.tg-can-back) .swipeRightBlock > .swipe_left {
     display: none !important;
 }
 
-#chat > .mes.tg-has-swipes.swipes_visible .swipe_left {
+#chat > .mes.tg-has-swipes.tg-can-back .swipe_left {
     position: relative !important;
     display: inline-flex !important;
     align-items: center !important;
@@ -977,7 +976,10 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     width: 32px !important;
     min-width: 32px !important;
     height: 32px !important;
-    margin: 0 !important;
+    /* Tucked closer to the counter than the counter is to the next arrow:
+       back only steps through numbers, while next can also start a new
+       generation, so it earns its own breathing room. Rail gap is 7px. */
+    margin: 0 -3px 0 0 !important;
     padding: 0 !important;
     border: 0 !important;
     border-radius: 50% !important;
@@ -991,7 +993,7 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     -webkit-tap-highlight-color: transparent;
 }
 
-#chat > .mes.tg-has-swipes.swipes_visible .swipe_left::after {
+#chat > .mes.tg-has-swipes.tg-can-back .swipe_left::after {
     content: '';
     width: 18px;
     height: 18px;
@@ -1001,11 +1003,11 @@ body.tg-action-sheet-open #chat > .mes .swipeRightBlock {
     pointer-events: none;
 }
 
-#chat > .mes.tg-has-swipes.swipes_visible .swipe_left:hover {
+#chat > .mes.tg-has-swipes.tg-can-back .swipe_left:hover {
     background: var(--tg-panel-hover) !important;
 }
 
-#chat > .mes.tg-has-swipes.swipes_visible .swipe_left:active {
+#chat > .mes.tg-has-swipes.tg-can-back .swipe_left:active {
     background: var(--tg-panel-pressed) !important;
     transform: scale(.94);
 }
