@@ -931,6 +931,10 @@ html[data-tg-enabled='on'] body button.menu_button.menu_button_icon.drawer-opene
     box-shadow: 0 0 0 2px var(--tg-accent-soft) !important;
 }
 
+/* Buttons whose colour IS their meaning must be excluded, or this rule paints
+   them all panel-grey: our own scheme swatches live in the extensions drawer,
+   which is a .drawer-content, and this selector outweighs the panel's own
+   scoped CSS. `.sdc-preset-swatch` is here for the same reason. */
 html[data-tg-enabled='on'] #top-settings-holder .drawer-content button:not(
     .menu_button,
     .sdc-preset-swatch,
@@ -943,7 +947,8 @@ html[data-tg-enabled='on'] #top-settings-holder .drawer-content button:not(
     .fa-solid,
     .fa-regular,
     .fa-brands,
-    .tg-panel-back
+    .tg-panel-back,
+    .tg-swatch
 ) {
     background-color: var(--tg-panel-sunken) !important;
     background-image: none !important;
@@ -1497,16 +1502,18 @@ html[data-tg-enabled='on'] #left-nav-panel :is(
     white-space: normal !important;
 }
 
+/* Accordions here are NOT groups: all five in this panel are nested inside one
+   of the four group blocks above, which already carry the separator. Ruling a
+   line under each of them left two stray hairlines inside
+   #respective-ranges-and-temps, and `:not(:last-child)` cannot suppress them --
+   what follows them (#range_block_openai's Seed row, and the sibling
+   #*_api-settings blocks) is hidden by inline `display: none` from openai.js
+   and script.js, so the accordion is visually last while still matching
+   :not(:last-child). Hence: no border at all here. */
 html[data-tg-enabled='on'] #left-nav-panel .inline-drawer {
     border: 0 !important;
     background: transparent !important;
     box-shadow: none !important;
-}
-
-/* An accordion reads as its own group, so it keeps a separator -- but not when
-   it is the last thing in the panel, and not when its header is hidden. */
-html[data-tg-enabled='on'] #left-nav-panel .inline-drawer:not(:last-child):has(> .inline-drawer-toggle) {
-    border-bottom: 1px solid var(--tg-divider) !important;
 }
 
 html[data-tg-enabled='on'] #left-nav-panel .inline-drawer-header {

@@ -10,7 +10,7 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.35';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.36';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -185,10 +185,18 @@ function buildPanel() {
                 gap: 12px;
                 padding: 2px 0 4px;
             }
-            #${PANEL_ID} .tg-swatch {
+            /* The panel lives in the extensions drawer, so every rule the theme
+               writes for #top-settings-holder .drawer-content button applies
+               here too and outweighs a plain class selector. These are matched
+               on html[data-tg-enabled] to win that fight -- a swatch whose
+               background is overpainted is not a swatch. */
+            html #${PANEL_ID} .tg-swatch,
+            html[data-tg-enabled='on'] #${PANEL_ID} .tg-swatch {
                 flex: 0 0 auto;
                 position: relative;
                 box-sizing: border-box;
+                appearance: none !important;
+                -webkit-appearance: none !important;
                 width: 28px !important;
                 min-width: 28px !important;
                 height: 28px !important;
@@ -198,41 +206,40 @@ function buildPanel() {
                 border: 0 !important;
                 border-radius: 50% !important;
                 background: var(--tg-swatch) !important;
+                background-color: var(--tg-swatch) !important;
+                background-image: none !important;
                 box-shadow: none !important;
+                filter: none !important;
                 cursor: pointer;
-                /* Telegram scales the swatch up when it is picked. The ring is
-                   drawn with an outline offset so it never eats into the
-                   circle's own diameter. */
+                /* The selected swatch is marked by a ring, not a tick. A tick
+                   has to be drawn in one fixed colour and there is no single
+                   colour that stays legible on all seven circles; a ring in the
+                   swatch's own colour reads at a glance on every one of them.
+                   The ring is an outline with an offset, so it is painted
+                   outside the circle and never shrinks it. */
                 transition: transform 150ms cubic-bezier(.4, 0, .2, 1),
                             outline-color 150ms cubic-bezier(.4, 0, .2, 1);
-                outline: 2px solid transparent;
+                outline: 2px solid transparent !important;
                 outline-offset: 3px;
             }
             #${PANEL_ID} .tg-swatch:hover {
                 transform: scale(1.08);
             }
-            #${PANEL_ID} .tg-swatch[aria-checked="true"] {
-                outline-color: var(--tg-swatch);
+            html #${PANEL_ID} .tg-swatch[aria-checked="true"],
+            html[data-tg-enabled='on'] #${PANEL_ID} .tg-swatch[aria-checked="true"] {
+                outline-color: var(--tg-swatch) !important;
             }
-            /* The check mark. Drawn as two borders rotated 45deg rather than a
-               font icon, because Font Awesome is not guaranteed to have loaded
-               when this panel mounts and a missing glyph would leave the active
-               swatch indistinguishable. */
-            #${PANEL_ID} .tg-swatch[aria-checked="true"]::after {
-                content: '';
-                position: absolute;
-                top: 8px;
-                left: 8px;
-                width: 11px;
-                height: 6px;
-                border: 0 solid #fff;
-                border-left-width: 2px;
-                border-bottom-width: 2px;
-                border-radius: 1px;
-                transform: rotate(-45deg);
+            /* Nothing is drawn inside the circle. Guard against the host and
+               third-party themes that attach pseudo-element glyphs to buttons
+               by class or by state. */
+            #${PANEL_ID} .tg-swatch::before,
+            #${PANEL_ID} .tg-swatch::after {
+                content: none !important;
+                display: none !important;
             }
-            #${PANEL_ID} .tg-swatch:focus-visible {
-                outline-color: var(--tg-swatch);
+            html #${PANEL_ID} .tg-swatch:focus-visible,
+            html[data-tg-enabled='on'] #${PANEL_ID} .tg-swatch:focus-visible {
+                outline-color: var(--tg-swatch) !important;
                 box-shadow: 0 0 0 5px color-mix(in srgb, var(--tg-swatch) 30%, transparent) !important;
             }
             @media (prefers-reduced-motion: reduce) {
@@ -388,7 +395,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.35');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.36');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);
