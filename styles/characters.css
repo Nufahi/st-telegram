@@ -22,7 +22,87 @@
  *
  * SillyTavern's own layout is coherent. Let it be, and only restyle the
  * surfaces: rounded buttons, themed inputs, Telegram's dividers and accents.
+ *
+ * ONE sanctioned exception, below: the avatar header of the single-character
+ * editor. It is scoped to #rm_ch_create_block, which is one screen with a
+ * fixed set of children -- not a list with two layouts, and not the group
+ * editor. Nothing outside that id may be moved.
  */
+
+/* ── Editor avatar header (the one layout exception) ────────────────────── */
+
+/* Stock leaves this screen with a pile of dead space beside the avatar:
+   #avatar_div is `flexnowrap` (index.html:6048) holding two children that are
+   BOTH 100% wide -- `.avatar_div .avatar { width: 100%; height: 100% }`
+   (style.css:3545) and `#avatar_controls { width: 100%; flex-grow: 1 }`
+   (style.css:3560). The avatar has no size of its own, so it collapses to
+   whatever is left and the button column ends up hanging off its side.
+
+   Telegram's "Edit profile" shape fixes it: one round avatar centred on its
+   own row, the actions in a centred row underneath. */
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block {
+    --tg-editor-avatar: 88px;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block #avatar_div {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px;
+}
+
+/* All six dimensions, because the host sets width/height to 100% and the
+   element is a <label> with no intrinsic size to fall back on. */
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block #avatar_div_div {
+    flex: 0 0 auto !important;
+    width: var(--tg-editor-avatar) !important;
+    min-width: var(--tg-editor-avatar) !important;
+    max-width: var(--tg-editor-avatar) !important;
+    height: var(--tg-editor-avatar) !important;
+    min-height: var(--tg-editor-avatar) !important;
+    max-height: var(--tg-editor-avatar) !important;
+    align-self: center !important;
+    margin: 4px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    background: var(--tg-panel-sunken);
+}
+
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block #avatar_load_preview {
+    width: 100% !important;
+    height: 100% !important;
+    aspect-ratio: 1 / 1 !important;
+    object-fit: cover !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+}
+
+/* Full width under the avatar instead of a squeezed side column. */
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block #avatar_controls {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: 0 !important;
+    gap: 8px;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block .form_create_bottom_buttons_block {
+    flex: 0 0 auto !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px;
+}
+
+/* The "More..." dropdown wrapper is `.flex1.height100p`, which only makes
+   sense while it is a side column. */
+html[data-tg-enabled='on'] #right-nav-panel #rm_ch_create_block #avatar_controls > label {
+    width: 100%;
+    height: auto !important;
+}
 
 /* ── Section headers ────────────────────────────────────────────────────── */
 
