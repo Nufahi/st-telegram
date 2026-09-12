@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.38';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.38-panels-rewrite';
+const TG_STYLE_BUILD = '0.1.38-drawer-persona';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the

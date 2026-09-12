@@ -54,16 +54,6 @@
     --tg-avatar-size: 40px;
     --tg-avatar-size-header: 37px;
     --tg-avatar-size-bubble: 33px;
-    /* The big round avatar in the character/group/persona editors. */
-    --tg-avatar-size-editor: 88px;
-    /* The avatar in a settings-panel list row (characters, personas, chats). */
-    --tg-avatar-size-row: 52px;
-
-    /* Round icon buttons inside a settings panel. SillyTavern reuses
-       .menu_button for both text buttons and Font Awesome toolbar icons; the
-       icon-only geometry is defined once in drawer.css off this token so the
-       panels do not each invent their own size. */
-    --tg-panel-icon: 36px;
 
     /* Type scale. Telegram Android defaults to 16sp body text. */
     --tg-font-body-size: 16px;

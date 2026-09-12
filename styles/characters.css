@@ -1,298 +1,138 @@
-/* ── Characters ───────────────────────────────────────────────────────────
-   Owns #right-nav-panel (character editor, group editor, character list) and
-   #character_popup (Advanced Definitions).
-
-   Things this file deliberately does NOT do:
-
-   • Icon button geometry. drawer.css defines it once off --tg-panel-icon for
-     every .drawer-content, this panel included. Re-declaring it here is what
-     produced two competing size rules for the same buttons.
-   • Form control paint. drawer.css already gives every input/select/textarea
-     in a .drawer-content the sunken Telegram treatment. Only size deltas and
-     textarea metrics belong here.
-   • The hot-swap strip. drawer.css:543+ owns #CharListButtonAndHotSwaps.
-   • Any height override on #right-nav-panel. It closes via .fillRight with
-     height 0; forcing 100dvh once left the big editor avatar hanging visible
-     inside the closed drawer.
-
-   Almost everything needs !important because base.css:1102-1192 gives entity
-   blocks Telegram list-row geometry with !important throughout, and the host
-   pins the editor avatar with `.avatar_div .avatar { width: 100%; height: 100% }`
-   plus `#avatar_controls { width: 100%; flex-grow: 1 }` inside a nowrap row —
-   two 100%-wide siblings, which is where the "avatar plus a pile of empty
-   space, buttons askew" came from. */
-
+/* Native right_menu and action visibility belong to SillyTavern. */
 html[data-tg-enabled='on'] #right-nav-panel {
-    /* Minimum grid cell; the column count follows the panel width. */
+    --tg-character-action: 40px;
+    /* Grid mode cell metrics. The cell is the minimum column width; the track
+       grows to fill the row, so the column count follows the panel width. */
     --tg-grid-cell: 92px;
     --tg-grid-avatar: 56px;
 }
 
-/* Nothing in the panel may establish a horizontal scroll. */
-html[data-tg-enabled='on'] #right-nav-panel :is(.scrollableInner, .right_menu, #form_create, #avatar-and-name-block, #avatar_controls, .buttons_block, .title_restorable, .tag_controls) {
+html[data-tg-enabled='on'] #right-nav-panel :is(.scrollableInner, .right_menu, .flex-container, .buttons_block, .title_restorable, .tag_controls, #avatar_controls, #form_create) {
     min-width: 0;
     max-width: 100%;
 }
 
-/* ── Editor: avatar above, actions under it ───────────────────────────────
-   Telegram's "Edit profile" shape. The host lays this out as a nowrap row of
-   two full-width children; we turn the whole stack into a centred column so
-   the avatar is a real circle and the action row sits directly beneath it. */
-html[data-tg-enabled='on'] #right-nav-panel #avatar-and-name-block {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100%;
-    padding: 6px 0 2px;
+html[data-tg-enabled='on'] #right-nav-panel :is(#rm_button_bar, #avatar_div, #avatar_controls, .form_create_bottom_buttons_block, .title_restorable, #rm_group_top_bar, .group_member_icon) {
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel #avatar-and-name-block > .flex-container {
-    width: 100%;
-    gap: 10px !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #avatar_div {
-    display: flex !important;
-    flex-direction: column !important;
-    flex-wrap: nowrap !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 10px !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-/* The label is the avatar. Stock resolves it to 100% x 100% + 10px margin via
-   `.avatar_div .avatar`, so every dimension has to be pinned. */
-html[data-tg-enabled='on'] #right-nav-panel #avatar_div_div {
-    display: block !important;
-    flex: 0 0 auto !important;
-    width: var(--tg-avatar-size-editor) !important;
-    min-width: var(--tg-avatar-size-editor) !important;
-    max-width: var(--tg-avatar-size-editor) !important;
-    height: var(--tg-avatar-size-editor) !important;
-    min-height: var(--tg-avatar-size-editor) !important;
-    max-height: var(--tg-avatar-size-editor) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    background: var(--tg-panel-sunken);
-    cursor: pointer;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #avatar_div_div:hover {
-    filter: brightness(1.06) !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #avatar_load_preview {
-    width: 100% !important;
-    height: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    object-position: center;
-    display: block !important;
-    margin: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    box-shadow: none !important;
-}
-
-/* Action row and the More… dropdown, stacked full width under the avatar. */
-html[data-tg-enabled='on'] #right-nav-panel #avatar_controls {
-    display: flex !important;
-    flex: 0 0 auto !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    gap: 10px !important;
-    width: 100% !important;
-    height: auto !important;
-    padding: 0 !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .form_create_bottom_buttons_block {
-    display: flex !important;
-    flex: 0 0 auto !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    justify-content: center !important;
-    gap: 6px !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #avatar_controls > label {
-    display: block !important;
-    flex: 0 0 auto !important;
-    width: 100% !important;
-    height: auto !important;
-    margin: 0 !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel :is(#name_div, #tags_div) {
-    width: 100% !important;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #character_name_pole {
-    height: 40px !important;
-    border-radius: 10px !important;
-    padding: 0 12px !important;
-    margin: 0 !important;
-    text-align: center !important;
-    font-size: 16px !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .extension_token_counter {
-    margin: 2px 0 0 !important;
-    color: var(--tg-text-hint);
-    font-size: 12px;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .tag_controls {
-    gap: 6px !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #tagInput {
-    height: 36px !important;
-    border-radius: 10px !important;
-    padding: 0 12px !important;
-    margin: 0 !important;
-}
-
-/* ── Section headers ─────────────────────────────────────────────────────── */
 html[data-tg-enabled='on'] #right-nav-panel #rm_button_selected_ch h2 {
-    color: var(--tg-text) !important;
-    font-size: 18px !important;
-    font-weight: 600 !important;
-    line-height: 1.25 !important;
+    font: 600 18px/1.4 var(--tg-font-ui) !important;
+    overflow-wrap: anywhere;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel :is(.title_restorable, .inline-drawer-header) {
-    display: flex !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-    gap: 8px !important;
-    min-height: 40px;
-    margin: 12px 0 4px !important;
-    padding: 0 !important;
+html[data-tg-enabled='on'] #right-nav-panel :is(.inline-drawer-header, .title_restorable) {
+    min-height: 44px;
+    padding: 10px 4px !important;
+    color: var(--tg-accent) !important;
+    background: transparent !important;
     border: 0 !important;
     border-bottom: 1px solid var(--tg-divider) !important;
-    background: transparent !important;
-    color: var(--tg-accent) !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    text-transform: none !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .inline-drawer-header .title_restorable {
-    margin: 0 !important;
-    border-bottom: 0 !important;
+    font-size: 14px;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .inline-drawer-content {
-    padding: 4px 0 8px !important;
+    padding: 8px 4px 12px !important;
 }
 
-/* #spoiler_free_desc wraps its chevron in .widthFitContent; it must not
-   collapse when the title text is long. */
-html[data-tg-enabled='on'] #right-nav-panel #spoiler_free_desc .widthFitContent {
-    flex-shrink: 0;
-}
-
-/* ── Text areas ──────────────────────────────────────────────────────────
-   drawer.css already paints them. Only metrics here. */
-html[data-tg-enabled='on'] #right-nav-panel textarea {
-    min-height: 140px !important;
-    padding: 10px 12px !important;
+html[data-tg-enabled='on'] #right-nav-panel :is(input:not([type]), input[type='text'], input[type='search'], input[type='number'], select, textarea),
+html[data-tg-enabled='on'] #character_popup :is(input[type='text'], input[type='number'], select, textarea) {
+    min-height: 40px;
+    min-width: 0 !important;
+    max-width: 100%;
+    background-color: var(--tg-panel-sunken) !important;
     border-radius: 10px !important;
-    line-height: 1.45 !important;
-    resize: vertical !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel textarea.autoSetHeight {
-    min-height: 0 !important;
-    resize: none !important;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel select,
-html[data-tg-enabled='on'] #right-nav-panel input[type='search'],
-html[data-tg-enabled='on'] #right-nav-panel input[type='text'] {
-    min-height: 36px !important;
-    border-radius: 10px !important;
-}
-
-/* Keep the native arrow: these are real <select>s, and the drawer's custom
-   arrow image is applied only where the panel provides room for it. */
-html[data-tg-enabled='on'] #right-nav-panel select {
+html[data-tg-enabled='on'] #character_popup select {
     appearance: auto !important;
-    padding: 0 8px !important;
+    padding-inline: 10px !important;
 }
 
-/* ── Danger and state colours ────────────────────────────────────────────
-   Icon geometry comes from drawer.css; only meaning-carrying colour here. */
+html[data-tg-enabled='on'] #right-nav-panel #character_sort_order {
+    flex: 1 1 140px;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel :is(#description_textarea, #firstmessage_textarea),
+html[data-tg-enabled='on'] #character_popup textarea {
+    min-height: 140px;
+    padding: 10px 12px !important;
+    line-height: 1.5 !important;
+    resize: vertical;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel .menu_button,
+html[data-tg-enabled='on'] #character_popup .menu_button {
+    min-width: var(--tg-character-action, 40px);
+    min-height: var(--tg-character-action, 40px);
+    margin: 0;
+    padding: 8px 12px !important;
+    border: 1px solid var(--tg-divider-strong) !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    color: var(--tg-accent) !important;
+    box-shadow: none !important;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel :is(.menu_button, .right_menu_button).fa-solid,
+html[data-tg-enabled='on'] #character_popup :is(.menu_button, .right_menu_button, .editor_maximize, #character_cross).fa-solid {
+    flex: 0 0 var(--tg-character-action, 40px);
+    width: var(--tg-character-action, 40px) !important;
+    min-width: var(--tg-character-action, 40px) !important;
+    height: var(--tg-character-action, 40px) !important;
+    min-height: var(--tg-character-action, 40px) !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    color: var(--tg-text-secondary) !important;
+    font: 900 16px var(--fa-style-family-classic, 'Font Awesome 6 Free') !important;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel :is(.menu_button, .right_menu_button):hover {
+    background: var(--tg-panel-hover) !important;
+}
+
 html[data-tg-enabled='on'] #right-nav-panel :is(#delete_button, #rm_group_delete, #bulkDeleteButton) {
     color: var(--tg-danger) !important;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel :is(.fav_on, .world_set, .toggleEnabled, .bulk_edit_overlay_active) {
+html[data-tg-enabled='on'] #right-nav-panel :is(.fav_on, .world_set, .bulk_edit_overlay_active) {
     color: var(--tg-accent) !important;
     background: var(--tg-accent-soft) !important;
 }
 
-/* ── Character list: top bar ─────────────────────────────────────────────── */
-html[data-tg-enabled='on'] #right-nav-panel #charListFixedTop {
-    padding: 4px 0 8px !important;
+html[data-tg-enabled='on'] #right-nav-panel :is(.menu_button, .right_menu_button, input, select, textarea, .entity_block, .inline-drawer-header):focus-visible,
+html[data-tg-enabled='on'] #character_popup :is(.menu_button, input, select, textarea):focus-visible {
+    outline: 2px solid var(--tg-accent) !important;
+    outline-offset: 2px;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel #rm_button_bar {
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 6px !important;
+html[data-tg-enabled='on'] #right-nav-panel #avatar_div_div {
+    flex: 0 0 96px;
+    width: 96px;
+    height: 96px;
+    margin: 4px;
+    border-radius: 18px;
 }
 
-/* Stock sizes these off --mainFontSize (1.7em square). The shared panel icon
-   token keeps them consistent with every other drawer. */
-html[data-tg-enabled='on'] #right-nav-panel #rm_button_bar .menu_button {
-    width: var(--tg-panel-icon) !important;
-    height: var(--tg-panel-icon) !important;
-    aspect-ratio: 1 !important;
+html[data-tg-enabled='on'] #right-nav-panel #avatar_controls {
+    flex: 1 1 200px;
+    height: auto;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel #character_sort_order {
-    flex: 1 1 140px !important;
-    min-width: 0 !important;
-    margin: 0 !important;
+html[data-tg-enabled='on'] #right-nav-panel #avatar_controls > label {
+    flex: 1 1 160px;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel #form_character_search_form {
-    gap: 6px !important;
-    margin-top: 6px;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #character_search_bar {
-    flex: 1 1 auto !important;
-    margin: 0 !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .rm_tag_controls {
-    gap: 6px !important;
-    margin-top: 6px !important;
-}
-
-/* ── Character list: rows ────────────────────────────────────────────────
-   base.css gives the row its Telegram geometry; only the shape of the
-   selection state belongs to this panel. */
 html[data-tg-enabled='on'] #right-nav-panel .entity_block {
     border-radius: 12px !important;
-    margin-bottom: 2px !important;
+    margin-bottom: 4px !important;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .entity_block.character_selected {
@@ -300,17 +140,22 @@ html[data-tg-enabled='on'] #right-nav-panel .entity_block.character_selected {
     box-shadow: inset 0 0 0 1px var(--tg-accent) !important;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel .entity_block :is(.character_select_container, .group_select_container, .character_name_block, .group_name_block) {
-    flex: 1 1 0;
+html[data-tg-enabled='on'] #right-nav-panel :is(.character_select_container, .group_select_container, .character_name_block) {
     min-width: 0;
+    flex: 1 1 0;
 }
 
-/* ── Character list: grid mode ───────────────────────────────────────────
+/* Grid mode.
+
    The host calls this "grid" but implements it as a wrapping flex row with
    `width: 30%; max-width: 100px` cells (css/toggle-dependent.css:60-160), so
    cell width jumps between 30% and 100px depending on panel width and the last
-   row is spread by `justify-content: space-around`. A real grid track makes
-   the column count follow the panel and every cell identical. */
+   row is spread by `justify-content: space-around`. We replace it with a real
+   grid track so the column count follows the panel and every cell is identical.
+
+   Everything here needs `!important` because base.css gives entity blocks
+   Telegram list-row geometry (62px tall, avatar left, 12px gap) with
+   `!important` throughout, and that has to be undone for the column layout. */
 html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block {
     display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(var(--tg-grid-cell), 1fr));
@@ -431,213 +276,97 @@ html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characte
     margin: 0 !important;
 }
 
-/* ── Group editor ────────────────────────────────────────────────────────
-   Same centred avatar treatment as a single character. */
-html[data-tg-enabled='on'] #right-nav-panel #rm_group_top_bar {
-    flex-direction: column !important;
-    align-items: center !important;
-    gap: 10px !important;
-    width: 100% !important;
-    font-size: 100% !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #rm_group_top_bar > div:first-child {
-    display: flex !important;
-    justify-content: center !important;
-    width: 100%;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #rm_group_top_bar label.add_avatar {
-    flex: 0 0 auto !important;
-    width: var(--tg-avatar-size-editor) !important;
-    height: var(--tg-avatar-size-editor) !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    background: var(--tg-panel-sunken);
-    cursor: pointer;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel :is(#group_avatar_preview, #group_avatar_preview > .avatar) {
-    display: block !important;
-    flex: 0 0 auto !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    max-width: none !important;
-    height: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #group_avatar_preview img {
-    width: 100% !important;
-    height: 100% !important;
-    max-width: none !important;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    display: block !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    box-shadow: none !important;
+html[data-tg-enabled='on'] body.no-hotswap #right-nav-panel .hotswap {
+    display: none !important;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel :is(#rm_group_buttons, #GroupFavDelOkBack) {
-    flex: 1 1 100% !important;
-    flex-wrap: wrap !important;
-    align-items: center !important;
-    gap: 8px !important;
-    width: 100%;
-    padding: 0 !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #GroupFavDelOkBack {
-    justify-content: center !important;
+    flex: 1 1 240px !important;
+    min-width: 0;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel #rm_group_buttons > .flex1 {
-    flex: 1 1 180px !important;
+    flex: 1 1 180px;
     min-width: 0;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel #rm_group_buttons label {
-    white-space: normal !important;
-    color: var(--tg-text-secondary) !important;
-    font-size: 13px !important;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .checkbox_label {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    min-height: 36px;
-    white-space: normal !important;
-    color: var(--tg-text) !important;
-    font-size: 14px !important;
+    min-height: 44px;
+    align-items: center;
+    white-space: normal;
+    flex-wrap: wrap;
+    padding-block: 6px;
+}
+
+html[data-tg-enabled='on'] #right-nav-panel #rm_group_buttons label {
+    white-space: normal;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel :is(#rm_group_members, #rm_group_add_members) {
-    background: transparent !important;
-    padding: 0 !important;
+    background: transparent;
+    border: 0;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .group_member {
-    border-radius: 12px !important;
-    margin: 0 !important;
-    padding: 6px 8px !important;
-    background: transparent !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .group_member:not(:last-child) {
-    border-bottom: 1px solid var(--tg-divider) !important;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--tg-divider);
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .group_member_name {
-    height: auto !important;
-    min-width: 0;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .group_member_icon {
-    flex: 0 0 auto !important;
+    height: auto;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .group_member_icon > .flex-container {
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    gap: 4px !important;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
-/* ── Advanced Definitions popup ─────────────────────────────────────────
-   Not a .drawer-content, so it gets none of drawer.css's treatment. Only the
-   pieces that would otherwise read as stock chrome are restyled. */
-html[data-tg-enabled='on'] #character_popup :is(.title_restorable, .inline-drawer-header) {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-    margin: 12px 0 4px !important;
-    border-bottom: 1px solid var(--tg-divider) !important;
-    background: transparent !important;
-    color: var(--tg-accent) !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
+html[data-tg-enabled='on'] #right-nav-panel #spoiler_free_desc .widthFitContent {
+    flex-shrink: 0;
 }
 
-html[data-tg-enabled='on'] #character_popup :is(input, select, textarea) {
-    background: var(--tg-panel-sunken) !important;
-    color: var(--tg-text) !important;
-    border: 1px solid var(--tg-divider-strong) !important;
-    border-radius: 10px !important;
-    font-family: var(--tg-font-ui) !important;
-    box-shadow: none !important;
+html[data-tg-enabled='on'] #character_popup .inline-drawer-header {
+    min-height: 44px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--tg-divider);
 }
 
 html[data-tg-enabled='on'] #character_popup input[type='range'] {
+    appearance: auto !important;
+    height: 40px !important;
     background: transparent !important;
-    border: 0 !important;
-    accent-color: var(--tg-accent) !important;
+    accent-color: var(--tg-accent);
 }
 
-html[data-tg-enabled='on'] #character_popup textarea {
-    padding: 10px 12px !important;
-    line-height: 1.45 !important;
-}
-
-html[data-tg-enabled='on'] #character_popup #character_cross {
-    color: var(--tg-text-secondary) !important;
-    opacity: 1 !important;
-    font-size: 22px !important;
-    cursor: pointer;
-}
-
-html[data-tg-enabled='on'] #character_popup .editor_maximize {
-    color: var(--tg-text-secondary) !important;
-    filter: none !important;
-    opacity: 1 !important;
-    cursor: pointer;
-}
-
-/* ── Pagination ────────────────────────────────────────────────────────── */
-html[data-tg-enabled='on'] #right-nav-panel :is(#rm_print_characters_pagination, .group_pagination) {
-    flex-wrap: wrap !important;
-    gap: 6px !important;
-    padding: 6px 0 !important;
+html[data-tg-enabled='on'] #right-nav-panel .group_member_icon {
+    flex: 1 1 100%;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel .paginationjs {
-    flex-wrap: wrap !important;
-    gap: 6px;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
 }
 
-html[data-tg-enabled='on'] #right-nav-panel .paginationjs-pages ul li a {
-    display: grid !important;
+html[data-tg-enabled='on'] #right-nav-panel .paginationjs-pages a {
+    display: grid;
     place-items: center;
-    min-width: var(--tg-panel-icon) !important;
-    min-height: var(--tg-panel-icon) !important;
-    border: 0 !important;
-    border-radius: 50% !important;
-    color: var(--tg-text-secondary) !important;
-    opacity: 1 !important;
+    min-width: 44px;
+    min-height: 44px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--tg-panel-sunken);
 }
 
-html[data-tg-enabled='on'] #right-nav-panel .paginationjs-pages ul li.active a {
-    background: var(--tg-accent) !important;
-    color: var(--tg-text-on-accent) !important;
-}
+@media (pointer: coarse) {
+    html[data-tg-enabled='on'] :is(#right-nav-panel, #character_popup) {
+        --tg-character-action: 44px;
+    }
 
-html[data-tg-enabled='on'] #right-nav-panel .paginationjs-pages ul li.disabled a {
-    opacity: .35 !important;
-}
-
-html[data-tg-enabled='on'] #right-nav-panel .paginationjs-nav {
-    color: var(--tg-text-hint) !important;
-    font-weight: 400 !important;
-}
-
-@media (hover: none) and (pointer: coarse) {
+    /* Touch needs a bigger tap target than a 92px cell around a 56px avatar. */
     html[data-tg-enabled='on'] #right-nav-panel {
         --tg-grid-cell: 104px;
         --tg-grid-avatar: 64px;
