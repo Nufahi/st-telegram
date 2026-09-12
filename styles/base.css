@@ -225,6 +225,86 @@ html[data-tg-enabled='on'][data-tg-variant='night'] body #loader::before {
     }
 }
 
+/* SillyTavern hosts every blocking loader inside a <dialog class="popup">
+   flagged `transparent`, `wide` and `large`. Our own .popup paint below would
+   turn that host into an opaque rounded card sized `var(--sheldWidth)` by
+   90dvh, and hideOverlay() removes #loader *before* it closes the dialog, so
+   the bare card flashed on screen at the end of every page load. Keep the
+   transparent hosts transparent (this is also what stock SillyTavern does,
+   and it covers the image lightbox) so nothing can ever paint there. */
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup {
+    border: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup > .popup-body,
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup > .popup-body > .popup-content {
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* The loader host itself takes the whole viewport — not just the chat width —
+   so the branded splash is fullscreen on desktop as well as on mobile. The
+   selector matches on the `transparent + wide + large` class combination the
+   loader is constructed with rather than on `:has(#loader)`, because #loader
+   is detached one frame before the dialog closes and a `:has()` rule would
+   stop applying exactly on the frame that used to flash. The image lightbox
+   is transparent and large but never wide, so it is unaffected. */
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup {
+    position: fixed !important;
+    inset: 0 !important;
+    box-sizing: border-box !important;
+    width: 100vw !important;
+    width: 100dvw !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+    transform: none !important;
+}
+
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup > .popup-body,
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup > .popup-body > .popup-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 !important;
+}
+
+/* The splash covers the viewport on its own, so the loader's backdrop carries
+   the panel colour instead of SillyTavern's tinted blur. That keeps the screen
+   a flat Telegram surface for the frame between `loaderElement.remove()` and
+   the dialog actually closing. Other transparent dialogs — the image lightbox —
+   keep their dimmed backdrop. Literal colours rather than the --tg-panel token,
+   because ::backdrop only inherits custom properties from its originating
+   element in recent engines and an unresolved var() would leave the screen
+   see-through mid-load. */
+html[data-tg-enabled='on'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+html[data-tg-enabled='on'][data-tg-variant='night'] body .popup.transparent_dialogue_popup.wide_dialogue_popup.large_dialogue_popup::backdrop {
+    background: #17212b !important;
+}
+
 /* Establish a Telegram-owned colour/font boundary around the surfaces this
    extension controls. Component files can still override these deliberately,
    but the active SillyTavern theme no longer supplies their inherited base. */

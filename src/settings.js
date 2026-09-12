@@ -10,7 +10,7 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.32';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.33';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -262,7 +262,7 @@ function wire(panel) {
     /* Load current state. */
     enabled.checked = tgRead('enabled', ['on', 'off'], 'on') !== 'off';
     themeAuto.value = tgRead('theme-auto', ['manual', 'system', 'time'], 'manual');
-    variant.value = tgRead('variant', ['day', 'night'], 'day');
+    variant.value = tgRead('variant', ['day', 'night'], 'night');
     dayStart.value = tgReadRaw('theme-day-start', '07:00');
     nightStart.value = tgReadRaw('theme-night-start', '19:00');
     accent.value = tgRead('accent', Object.keys(TG_ACCENTS), 'blue');
@@ -292,7 +292,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.32');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.33');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);

@@ -21,7 +21,7 @@
  *    Everything ships in a <link> we own and can remove.
  */
 
-const TG_VERSION = '0.1.32';
+const TG_VERSION = '0.1.33';
 
 /* Bump this whenever styles/*.css changes. It is the CSS cache-bust key.
  *
@@ -29,7 +29,7 @@ const TG_VERSION = '0.1.32';
  * appeared permanently stuck shut, and the cause was a corrected stylesheet
  * being served from cache under an unchanged key. The symptom is the worst
  * kind -- the fix is on disk, the code is right, and nothing happens. */
-const TG_STYLE_BUILD = '0.1.32-characters';
+const TG_STYLE_BUILD = '0.1.33-loader-fullscreen';
 
 /* Derive the EXTENSION ROOT from this module's URL. SillyTavern names the
    extension directory after the git repo, so a hardcoded path breaks the
@@ -95,7 +95,7 @@ function tgResolveVariant() {
         try {
             return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'night' : 'day';
         } catch {
-            return 'day';
+            return 'night';
         }
     }
 
@@ -113,7 +113,7 @@ function tgResolveVariant() {
         return minutes >= dayStart || minutes < nightStart ? 'day' : 'night';
     }
 
-    return tgRead('variant', ['day', 'night'], 'day');
+    return tgRead('variant', ['day', 'night'], 'night');
 }
 
 const TG_VARIANT = tgResolveVariant();
