@@ -1,6 +1,10 @@
 /* Native right_menu and action visibility belong to SillyTavern. */
 html[data-tg-enabled='on'] #right-nav-panel {
     --tg-character-action: 40px;
+    /* Grid mode cell metrics. The cell is the minimum column width; the track
+       grows to fill the row, so the column count follows the panel width. */
+    --tg-grid-cell: 92px;
+    --tg-grid-avatar: 56px;
 }
 
 html[data-tg-enabled='on'] #right-nav-panel :is(.scrollableInner, .right_menu, .flex-container, .buttons_block, .title_restorable, .tag_controls, #avatar_controls, #form_create) {
@@ -141,16 +145,135 @@ html[data-tg-enabled='on'] #right-nav-panel :is(.character_select_container, .gr
     flex: 1 1 0;
 }
 
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block {
-    flex: 1 1 120px;
-    width: auto;
-    max-width: 180px;
-    flex-direction: column;
+/* Grid mode.
+
+   The host calls this "grid" but implements it as a wrapping flex row with
+   `width: 30%; max-width: 100px` cells (css/toggle-dependent.css:60-160), so
+   cell width jumps between 30% and 100px depending on panel width and the last
+   row is spread by `justify-content: space-around`. We replace it with a real
+   grid track so the column count follows the panel and every cell is identical.
+
+   Everything here needs `!important` because base.css gives entity blocks
+   Telegram list-row geometry (62px tall, avatar left, 12px gap) with
+   `!important` throughout, and that has to be undone for the column layout. */
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(var(--tg-grid-cell), 1fr));
+    gap: 2px;
+    align-content: start;
+    justify-content: stretch;
+    padding: 4px 6px 10px !important;
 }
 
-html[data-tg-enabled='on'] body.charListGrid #right-nav-panel .entity_block :is(.character_select_container, .group_select_container, .ch_name, .character_name_block) {
-    width: 100%;
-    max-width: 100%;
+/* Status rows (empty list, "N characters hidden", the folder back button) are
+   not cells. Let them keep the full row. */
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block > :is(.text_block, .bogus_folder_select_back) {
+    grid-column: 1 / -1;
+}
+
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block > .bogus_folder_select_back {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: auto !important;
+    max-width: none !important;
+    padding: 6px 8px !important;
+    text-align: left;
+}
+
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block > .bogus_folder_select_back :is(.character_select_container, .character_name_block, .ch_name) {
+    width: auto !important;
+    max-width: none !important;
+    text-align: left !important;
+}
+
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block {
+    position: relative;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 4px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 6px 2px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    text-align: center;
+}
+
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block > :is(.avatar, .missing-avatar) {
+    flex: 0 0 auto !important;
+    width: var(--tg-grid-avatar) !important;
+    min-width: var(--tg-grid-avatar) !important;
+    max-width: var(--tg-grid-avatar) !important;
+    height: var(--tg-grid-avatar) !important;
+    min-height: var(--tg-grid-avatar) !important;
+    max-height: var(--tg-grid-avatar) !important;
+    align-self: center !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+}
+
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block > .missing-avatar {
+    display: flex !important;
+    font-size: 26px !important;
+}
+
+/* The text column is `width: calc(100% - 70px)` in the markup, sized for the
+   50px list avatar. In a column card it has to take the whole cell. */
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block :is(.character_select_container, .group_select_container) {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 0 !important;
+    justify-content: center !important;
+}
+
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block :is(.character_name_block, .group_name_block) {
+    flex-direction: column !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 0 !important;
+    margin: 0 !important;
+}
+
+/* Two lines, always. A clamp alone would let one- and two-line names produce
+   different cell heights, and grid rows are sized per row, so the list would
+   look ragged. The fixed height keeps every row identical. */
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block .ch_name {
+    display: -webkit-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: calc(2 * 1.25 * 13px) !important;
+    overflow: hidden !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.25 !important;
+    text-align: center !important;
+    white-space: normal !important;
+    text-wrap: wrap !important;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+/* Bulk edit prepends the checkbox as the card's first child, which would push
+   the avatar down. Float it over the corner instead. */
+html[data-tg-enabled='on'] body.charListGrid #right-nav-panel #rm_print_characters_block .entity_block > .bulk_select_checkbox {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 1;
+    margin: 0 !important;
 }
 
 html[data-tg-enabled='on'] body.no-hotswap #right-nav-panel .hotswap {
@@ -241,5 +364,11 @@ html[data-tg-enabled='on'] #right-nav-panel .paginationjs-pages a {
 @media (pointer: coarse) {
     html[data-tg-enabled='on'] :is(#right-nav-panel, #character_popup) {
         --tg-character-action: 44px;
+    }
+
+    /* Touch needs a bigger tap target than a 92px cell around a 56px avatar. */
+    html[data-tg-enabled='on'] #right-nav-panel {
+        --tg-grid-cell: 104px;
+        --tg-grid-avatar: 64px;
     }
 }
