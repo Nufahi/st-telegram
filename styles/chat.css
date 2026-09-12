@@ -782,6 +782,34 @@ html[data-tg-message-actions='on'] #chat > .mes .mes_buttons {
     font-size: 18px !important;
 }
 
+/* An extension that ships an inline <svg> or <img> instead of a Font Awesome
+   class gets its own graphic cloned into the slot. The mask must go, or the
+   slot would paint a solid rectangle over the artwork. `currentColor` is set so
+   an SVG using `stroke="currentColor"` (the common case) inherits our palette,
+   while an SVG with hardcoded fills keeps its own colours -- both look right. */
+.tg-action-icon.tg-action-native-graphic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    -webkit-mask: none !important;
+    mask: none !important;
+    color: var(--tg-text-secondary);
+}
+
+.tg-action-icon.tg-action-native-graphic :is(svg, img) {
+    width: 18px;
+    height: 18px;
+    max-width: 18px;
+    max-height: 18px;
+    display: block;
+    object-fit: contain;
+    border: 0 !important;
+    box-shadow: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+}
+
 .tg-message-action-sheet[data-tg-action-page='more'] {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));

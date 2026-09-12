@@ -25,7 +25,8 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.44';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.45';
+import { t, tCount } from './i18n.js?v=0.1.45';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -116,14 +117,14 @@ function ensureHeader() {
     if (!node) {
         node = el('div', 'tg-header');
         node.innerHTML = `
-            <button type="button" class="tg-header-btn tg-header-back" aria-label="Menu"></button>
+            <button type="button" class="tg-header-btn tg-header-back" aria-label="${t('Menu')}"></button>
             <div class="tg-header-avatar"><img alt=""></div>
             <div class="tg-header-titles">
                 <div class="tg-header-name"></div>
                 <div class="tg-header-status"></div>
             </div>
-            <button type="button" class="tg-header-btn tg-header-search" aria-label="Search"></button>
-            <button type="button" class="tg-header-btn tg-header-menu" aria-label="Extensions" title="Extensions"></button>`;
+            <button type="button" class="tg-header-btn tg-header-search" aria-label="${t('Search')}"></button>
+            <button type="button" class="tg-header-btn tg-header-menu" aria-label="${t('Extensions')}" title="${t('Extensions')}"></button>`;
         /* Before #chat so flex order puts it on top. */
         sheld.insertBefore(node, chat);
         wireHeader(node);
@@ -598,9 +599,9 @@ function actionLabel(button) {
         || button.getAttribute('data-tooltip')
         || button.textContent?.trim();
     if (explicit) return explicit.trim();
-    if (button.matches('.swipe_left')) return 'Previous response';
-    if (button.matches('.swipe_right')) return 'Next response';
-    return 'Action';
+    if (button.matches('.swipe_left')) return t('Previous response');
+    if (button.matches('.swipe_right')) return t('Next response');
+    return t('Action');
 }
 
 function actionKind(button) {
@@ -675,7 +676,7 @@ function collectMessageActions(row) {
     if (nativeActionAvailable(editButton)) {
         primary.push({
             button: editButton,
-            label: 'Delete',
+            label: t('Delete'),
             kind: 'delete',
             run: () => {
                 runNativeAction(editButton);
@@ -690,9 +691,70 @@ function collectMessageActions(row) {
         add(row.querySelector('.swipe_right'));
         add(document.getElementById('option_regenerate'));
     }
-    for (const button of row.querySelectorAll('.extraMesButtons > .mes_button')) add(button, !button.matches('.mes_copy'));
+    /* Do NOT require `.mes_button` here. That class is a convention, not a
+       contract: SillyTavern-MemoryBooks appends bare `.mes_stmb_start` /
+       `.mes_stmb_end` divs, and other extensions append plain buttons. Filtering
+       on the class silently dropped those actions from the sheet entirely.
+       Instead take every element child and reject the ones that cannot be a
+       control -- hidden inputs, and nodes with neither an icon nor a label. */
+    for (const button of row.querySelectorAll('.extraMesButtons > *')) {
+        if (!(button instanceof HTMLElement)) continue;
+        if (button.matches('input, template, style, script, link, br, hr')) continue;
+        if (!looksLikeAction(button)) continue;
+        add(button, !button.matches('.mes_copy'));
+    }
 
     return { primary, more };
+}
+
+/* A node earns a row in the sheet if it carries something we can show: an icon
+   (Font Awesome class, inline SVG or image), or a name we can print. Anything
+   else is layout filler that an extension parked inside the button strip. */
+function looksLikeAction(button) {
+    if (button.matches('.fa, .fas, .far, .fab, [class*="fa-"]')) return true;
+    if (button.querySelector('.fa, .fas, .far, .fab, [class*="fa-"], svg, img')) return true;
+    return Boolean(button.getAttribute('aria-label')
+        || button.getAttribute('title')
+        || button.getAttribute('data-tooltip')
+        || button.textContent?.trim());
+}
+
+/* Mirror whatever glyph the extension chose onto our own row.
+   Three sources, in order of fidelity:
+     1. Font Awesome classes -- copied onto the slot, rendered as a font glyph.
+     2. An inline <svg> -- cloned. Extensions like ST-LiteBranch ship their icon
+        this way, and matching on `fa-*` alone left those rows blank.
+     3. An <img> -- cloned.
+   When none of the three exists the slot keeps the generic mask from the
+   stylesheet, which is still better than an empty box. */
+function paintNativeIcon(slot, source) {
+    if (!(slot instanceof Element) || !(source instanceof Element)) return;
+
+    const faHost = source.matches('.fa, .fas, .far, .fab, [class*="fa-"]')
+        ? source
+        : source.querySelector('.fa, .fas, .far, .fab, [class*="fa-"]');
+    const faClasses = faHost
+        ? [...faHost.classList].filter(name => name === 'fa' || name.startsWith('fa-'))
+        : [];
+    if (faClasses.length) {
+        slot.classList.add('tg-action-native-icon', ...faClasses);
+        return;
+    }
+
+    const graphic = source.querySelector('svg, img');
+    if (!graphic) return;
+
+    const clone = graphic.cloneNode(true);
+    /* The clone is decorative and must not be reachable: the original keeps the
+       accessible name, and an id copied out of the source would duplicate it. */
+    if (clone instanceof Element) {
+        clone.removeAttribute('id');
+        clone.removeAttribute('aria-label');
+        clone.setAttribute('aria-hidden', 'true');
+        clone.querySelectorAll?.('[id]').forEach(node => node.removeAttribute('id'));
+    }
+    slot.classList.add('tg-action-native-graphic');
+    slot.replaceChildren(clone);
 }
 
 function makeActionButton(action) {
@@ -702,16 +764,7 @@ function makeActionButton(action) {
     button.setAttribute('aria-label', action.label);
     button.title = action.label;
     if (action.kind === 'more' && action.button instanceof Element) {
-        const icon = button.querySelector('.tg-action-icon');
-        const nativeIcon = action.button.matches('.fa, .fas, .far, .fab, [class*="fa-"]')
-            ? action.button
-            : action.button.querySelector('.fa, .fas, .far, .fab, [class*="fa-"]');
-        const nativeIconClasses = nativeIcon
-            ? [...nativeIcon.classList].filter(name => name === 'fa' || name.startsWith('fa-'))
-            : [];
-        if (nativeIconClasses.length) {
-            icon.classList.add('tg-action-native-icon', ...nativeIconClasses);
-        }
+        paintNativeIcon(button.querySelector('.tg-action-icon'), action.button);
     }
     button.querySelector('.tg-action-label').textContent = action.label;
     button.addEventListener('click', () => {
@@ -732,22 +785,22 @@ function openActionSheet(row) {
     row.classList.add('tg-action-target');
 
     const sheet = el('div', 'tg-message-action-layer');
-    sheet.innerHTML = '<button type="button" class="tg-message-action-scrim" aria-label="Close message actions"></button><div class="tg-message-action-sheet" role="menu"></div>';
+    sheet.innerHTML = '<button type="button" class="tg-message-action-scrim" aria-label="' + t('Close message actions') + '"></button><div class="tg-message-action-sheet" role="menu"></div>';
     const panel = sheet.querySelector('.tg-message-action-sheet');
     for (const action of actions.primary) panel.append(makeActionButton(action));
 
     if (actions.more.length) {
         const moreButton = el('button', 'tg-message-action tg-action-more');
         moreButton.type = 'button';
-        moreButton.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">More</span>';
+        moreButton.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">' + t('More') + '</span>';
         moreButton.addEventListener('click', () => {
             panel.dataset.tgActionPage = 'more';
             panel.replaceChildren(...actions.more.map(makeActionButton));
             const back = el('button', 'tg-message-action tg-action-back');
             back.type = 'button';
-            back.setAttribute('aria-label', 'Back');
-            back.title = 'Back';
-            back.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">Back</span>';
+            back.setAttribute('aria-label', t('Back'));
+            back.title = t('Back');
+            back.innerHTML = '<span class="tg-action-icon" aria-hidden="true"></span><span class="tg-action-label">' + t('Back') + '</span>';
             back.addEventListener('click', () => openActionSheet(row));
             panel.prepend(back);
         });
@@ -1001,14 +1054,14 @@ function ensureDrawerChrome() {
         const head = el('div', 'tg-drawer-head');
         head.innerHTML = `
             <div class="tg-drawer-head-top">
-                <div class="tg-drawer-avatar" role="button" tabindex="0" aria-label="Persona settings" title="Persona settings"><img alt=""></div>
+                <div class="tg-drawer-avatar" role="button" tabindex="0" aria-label="${t('Persona settings')}" title="${t('Persona settings')}"><img alt=""></div>
                 <div class="tg-drawer-actions">
-                    <button type="button" class="tg-drawer-theme" aria-label="Toggle theme"></button>
-                    <button type="button" class="tg-drawer-disable" aria-label="Disable Telegram theme" title="Disable Telegram theme"></button>
+                    <button type="button" class="tg-drawer-theme" aria-label="${t('Toggle theme')}"></button>
+                    <button type="button" class="tg-drawer-disable" aria-label="${t('Disable Telegram theme')}" title="${t('Disable Telegram theme')}"></button>
                 </div>
             </div>
             <div class="tg-drawer-name"></div>
-            <button type="button" class="tg-drawer-status" aria-label="Set persona status"></button>
+            <button type="button" class="tg-drawer-status" aria-label="${t('Set persona status')}"></button>
             <div class="tg-drawer-sub"></div>`;
         /* The avatar is the user's own profile button, mirroring the way
            tapping your avatar on a message opens the persona panel. Origin is
@@ -1035,7 +1088,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.44');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.45');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);
@@ -1073,7 +1126,9 @@ function ensureDrawerChrome() {
         }
 
         const cls = [...icon.classList].find((c) => DRAWER_LABELS[c]);
-        const text = DRAWER_LABELS[cls] || icon.getAttribute('title') || '';
+        /* Translate at render time, not in the table: the table is keyed on the
+           Font Awesome class and its values are the English source strings. */
+        const text = cls ? t(DRAWER_LABELS[cls]) : (icon.getAttribute('title') || '');
         if (label.textContent !== text) label.textContent = text;
 
         /* The native tooltip duplicates the label we just drew. */
@@ -1088,8 +1143,8 @@ function ensureDrawerChrome() {
         if (content && !content.querySelector(':scope > .tg-panel-back')) {
             const back = el('button', 'tg-panel-back');
             back.type = 'button';
-            back.setAttribute('aria-label', 'Back to menu');
-            back.innerHTML = '<span aria-hidden="true"></span><b>Back</b>';
+            back.setAttribute('aria-label', t('Back to menu'));
+            back.innerHTML = '<span aria-hidden="true"></span><b>' + t('Back') + '</b>';
             back.addEventListener('click', () => returnToDrawer(content));
             content.prepend(back);
         }
@@ -1248,9 +1303,9 @@ async function editPersonaStatus() {
     let value = null;
 
     if (Popup?.show?.input) {
-        value = await Popup.show.input('Persona status', 'Shown under your name in the menu.', current, { rows: 1 });
+        value = await Popup.show.input(t('Persona status'), t('Shown under your name in the menu.'), current, { rows: 1 });
     } else {
-        value = window.prompt('Persona status', current);
+        value = window.prompt(t('Persona status'), current);
     }
 
     /* null means cancelled; an empty string is a deliberate "clear it". */
@@ -1279,7 +1334,7 @@ function refreshDrawerIdentity() {
         || context?.personas
         || {};
     const personaName = personaAvatar ? personas?.[personaAvatar] : null;
-    const name = personaName || context?.name1 || 'You';
+    const name = personaName || context?.name1 || t('You');
     const nameEl = head.querySelector('.tg-drawer-name');
     if (nameEl && nameEl.textContent !== name) nameEl.textContent = name;
 
@@ -1290,9 +1345,9 @@ function refreshDrawerIdentity() {
     if (statusEl) {
         const status = personaAvatar ? personaStatus(personaAvatar) : '';
         if (statusEl.textContent !== status) statusEl.textContent = status;
-        statusEl.dataset.tgPlaceholder = 'Set a status';
+        statusEl.dataset.tgPlaceholder = t('Set a status');
         statusEl.classList.toggle('tg-is-empty', !status);
-        statusEl.title = status ? 'Change persona status' : 'Set persona status';
+        statusEl.title = t(status ? 'Change persona status' : 'Set persona status');
         /* Without a descriptor there is nowhere to save; hide the affordance
            rather than offering a button that silently does nothing. */
         statusEl.hidden = !personaAvatar || !personaDescriptor(personaAvatar);
@@ -1304,13 +1359,11 @@ function refreshDrawerIdentity() {
     const sub = head.querySelector('.tg-drawer-sub');
     let text;
     if (personaAvatar && personaConnectionCount(personaAvatar) > 0) {
-        const linked = personaConnectionCount(personaAvatar);
-        text = `${linked} connected character${linked === 1 ? '' : 's'}`;
+        text = tCount(personaConnectionCount(personaAvatar), 'connected');
     } else if (isDefaultPersona(personaAvatar)) {
-        const total = context?.characters?.length ?? 0;
-        text = `${total} character${total === 1 ? '' : 's'}`;
+        text = tCount(context?.characters?.length ?? 0, 'character');
     } else {
-        text = 'No connected characters';
+        text = t('No connected characters');
     }
     if (sub && sub.textContent !== text) sub.textContent = text;
 

@@ -10,7 +10,8 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.44';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.45';
+import { t } from './i18n.js?v=0.1.45';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -28,7 +29,7 @@ function buildPanel() {
        what makes swatch strips unusable with a keyboard. */
     const accentSwatches = Object.entries(TG_ACCENTS)
         .map(([key, colours], index) => {
-            const label = `${key[0].toUpperCase()}${key.slice(1)}`;
+            const label = t(`${key[0].toUpperCase()}${key.slice(1)}`);
             return `<button type="button" class="tg-swatch" role="radio" aria-checked="false"`
                 + ` tabindex="${index === 0 ? '0' : '-1'}" data-tg-scheme="${key}"`
                 + ` style="--tg-swatch: ${colours.night}" title="${label}"`
@@ -255,66 +256,66 @@ function buildPanel() {
         </style>
         <div class="inline-drawer">
             <div class="inline-drawer-toggle inline-drawer-header">
-                <b>Telegram Mobile</b>
+                <b>${t('Telegram Mobile')}</b>
                 <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
             </div>
             <div class="inline-drawer-content">
                 <div class="tg-row">
-                    <label for="tg-enabled">Enable theme
-                        <small>Turning this off restores SillyTavern's own layout.</small>
+                    <label for="tg-enabled">${t('Enable theme')}
+                        <small>${t("Turning this off restores SillyTavern's own layout.")}</small>
                     </label>
                     <input type="checkbox" id="tg-enabled">
                 </div>
                 <div class="tg-row">
-                    <label for="tg-theme-auto">Theme mode</label>
+                    <label for="tg-theme-auto">${t('Theme mode')}</label>
                     <select id="tg-theme-auto">
-                        <option value="manual">Manual</option>
-                        <option value="system">Follow system</option>
-                        <option value="time">By time of day</option>
+                        <option value="manual">${t('Manual')}</option>
+                        <option value="system">${t('Follow system')}</option>
+                        <option value="time">${t('By time of day')}</option>
                     </select>
                 </div>
                 <div class="tg-row" data-tg-when="manual">
-                    <label for="tg-variant">Theme</label>
+                    <label for="tg-variant">${t('Theme')}</label>
                     <select id="tg-variant">
-                        <option value="day">Day</option>
-                        <option value="night">Night</option>
+                        <option value="day">${t('Day')}</option>
+                        <option value="night">${t('Night')}</option>
                     </select>
                 </div>
                 <div class="tg-row" data-tg-when="time">
-                    <label for="tg-day-start">Day starts at</label>
+                    <label for="tg-day-start">${t('Day starts at')}</label>
                     <input type="time" id="tg-day-start">
                 </div>
                 <div class="tg-row" data-tg-when="time">
-                    <label for="tg-night-start">Night starts at</label>
+                    <label for="tg-night-start">${t('Night starts at')}</label>
                     <input type="time" id="tg-night-start">
                 </div>
                 <div class="tg-row tg-row-stacked">
-                    <label>Colour scheme
-                        <small>Recolours the whole app, as Telegram's themes do.</small>
+                    <label>${t('Colour scheme')}
+                        <small>${t("Recolours the whole app, as Telegram's themes do.")}</small>
                     </label>
-                    <div class="tg-swatches" id="tg-accent" role="radiogroup" aria-label="Colour scheme">${accentSwatches}</div>
+                    <div class="tg-swatches" id="tg-accent" role="radiogroup" aria-label="${t('Colour scheme')}">${accentSwatches}</div>
                 </div>
                 <div class="tg-row">
-                    <label for="tg-blur">Blur wallpaper
-                        <small>Softens the chat wallpaper behind messages. Needs the wallpaper on.</small>
+                    <label for="tg-blur">${t('Blur wallpaper')}
+                        <small>${t('Softens the chat wallpaper behind messages. Needs the wallpaper on.')}</small>
                     </label>
-                    <label class="tg-settings-switch" aria-label="Blur wallpaper">
+                    <label class="tg-settings-switch" aria-label="${t('Blur wallpaper')}">
                         <input type="checkbox" id="tg-blur">
                         <span class="tg-settings-switch-track" aria-hidden="true"></span>
                     </label>
                 </div>
                 <div class="tg-row">
-                    <label for="tg-flat-messages">Full-width messages
-                        <small>Monochrome Discord-style chat without bubbles.</small>
+                    <label for="tg-flat-messages">${t('Full-width messages')}
+                        <small>${t('Monochrome Discord-style chat without bubbles.')}</small>
                     </label>
-                    <label class="tg-settings-switch" aria-label="Full-width messages">
+                    <label class="tg-settings-switch" aria-label="${t('Full-width messages')}">
                         <input type="checkbox" id="tg-flat-messages">
                         <span class="tg-settings-switch-track" aria-hidden="true"></span>
                     </label>
                 </div>
                 <div class="tg-row">
-                    <label for="tg-message-font-size">Message text size
-                        <small>Changes only the text inside messages.</small>
+                    <label for="tg-message-font-size">${t('Message text size')}
+                        <small>${t('Changes only the text inside messages.')}</small>
                     </label>
                     <div class="tg-range-control">
                         <input type="range" id="tg-message-font-size" min="14" max="22" step="1">
@@ -322,14 +323,14 @@ function buildPanel() {
                     </div>
                 </div>
                 <div class="tg-row">
-                    <label for="tg-wallpaper">Chat wallpaper</label>
+                    <label for="tg-wallpaper">${t('Chat wallpaper')}</label>
                     <input type="checkbox" id="tg-wallpaper">
                 </div>
                 <div class="tg-row">
-                    <label for="tg-motion">Animations</label>
+                    <label for="tg-motion">${t('Animations')}</label>
                     <input type="checkbox" id="tg-motion">
                 </div>
-                <div class="tg-note">Version ${TG_VERSION}. Enabling or disabling the theme reloads the page.</div>
+                <div class="tg-note">${t('Version')} ${TG_VERSION}. ${t('Enabling or disabling the theme reloads the page.')}</div>
             </div>
         </div>`;
 
@@ -395,7 +396,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.44');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.45');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);
