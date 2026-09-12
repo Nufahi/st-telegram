@@ -82,6 +82,21 @@ html[data-tg-enabled='on'] *::-webkit-scrollbar-thumb {
 html[data-tg-enabled='on'] {
     transform: none !important;
     perspective: none !important;
+
+    /* SillyTavern marks favourites with --golden (rgb(248, 211, 0)), a pure
+       traffic-light yellow. On the Day palette's white panels that ring is
+       1.5:1 against the surface -- effectively invisible -- and on Night it
+       glares. Redefining the host variable recolours every consumer at once:
+       the favourite avatar outline and name in the character list and group
+       members (style.css:3465/3471), the star icon (.fav_on, .ch_fav_icon),
+       the default-persona avatar ring (style.css:4115) and its lock icon,
+       plus the background list and bulk-edit indicators.
+       --tg-favourite is a muted amber tuned per variant: dark enough on white
+       (4.7:1) to read as text, light enough on the night panel (8.7:1) to
+       read as a ring. See tokens.css for the contrast rules.
+       Not covered: .group_select .group_fav_icon, which hardcodes #c5b457
+       in css/rm-groups.css:235 and is handled in characters.css. */
+    --golden: var(--tg-favourite) !important;
 }
 
 /* #preloader owns the viewport in current SillyTavern. Pin both layers so

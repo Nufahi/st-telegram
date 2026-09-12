@@ -122,8 +122,11 @@ body.tg-drawer-open #top-settings-holder {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    gap: 8px;
-    min-height: 148px;
+    /* Name, status and sub are one tight identity stack, so the gap is small
+       and the avatar row carries its own spacing instead. Raising this to 8px
+       again would leave the three lines floating apart. */
+    gap: 2px;
+    min-height: 166px;
     padding: 14px 16px 12px;
     background: var(--tg-drawer-header-bg);
     color: #fff;
@@ -149,6 +152,9 @@ html[data-tg-wallpaper='on'] .tg-drawer-head.tg-has-wallpaper {
     align-items: flex-start;
     justify-content: space-between;
     gap: 8px;
+    /* Replaces the header's old 8px gap, which now has to stay small for the
+       identity stack below. */
+    margin-bottom: 8px;
 }
 
 /* The circle is a button: it opens Persona Management, mirroring the way
@@ -268,6 +274,58 @@ html[data-tg-wallpaper='on'] .tg-drawer-head.tg-has-wallpaper {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* The persona's own status line, Telegram-style: a quiet line under the name
+   that opens an input when tapped. It is a <button> so keyboard and screen
+   readers get the affordance for free, but it must not look like one -- hence
+   the full appearance reset. */
+.tg-drawer-status {
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0 !important;
+    background: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+    text-align: left;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.25;
+    color: rgba(255, 255, 255, .88);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tg-drawer-status:hover {
+    color: #fff;
+}
+
+.tg-drawer-status:focus-visible {
+    outline: 2px solid var(--tg-text-on-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* An unset status still needs a tap target, so render the prompt from a data
+   attribute instead of storing placeholder text in SillyTavern's settings. */
+.tg-drawer-status.tg-is-empty::before {
+    content: attr(data-tg-placeholder);
+    color: rgba(255, 255, 255, .55);
+    font-style: italic;
+}
+
+.tg-drawer-status[hidden] {
+    display: none !important;
 }
 
 .tg-drawer-sub {

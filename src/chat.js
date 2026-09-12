@@ -25,7 +25,7 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.41';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.42';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -988,6 +988,7 @@ function ensureDrawerChrome() {
                 </div>
             </div>
             <div class="tg-drawer-name"></div>
+            <button type="button" class="tg-drawer-status" aria-label="Set persona status"></button>
             <div class="tg-drawer-sub"></div>`;
         /* The avatar is the user's own profile button, mirroring the way
            tapping your avatar on a message opens the persona panel. Origin is
@@ -998,6 +999,9 @@ function ensureDrawerChrome() {
             if (event.key !== 'Enter' && event.key !== ' ') return;
             event.preventDefault();
             openPersonaPanel('drawer');
+        });
+        head.querySelector('.tg-drawer-status')?.addEventListener('click', () => {
+            editPersonaStatus();
         });
         head.querySelector('.tg-drawer-theme')?.addEventListener('click', () => {
             const next = tgRoot.dataset.tgVariant === 'night' ? 'day' : 'night';
@@ -1011,7 +1015,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.41');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.42');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);
@@ -1088,6 +1092,22 @@ function currentPersonaAvatar() {
     const selected = document.querySelector('#user_avatar_block .avatar-container.selected');
     const id = selected?.getAttribute('data-avatar-id');
     if (id) return id;
+
+    /* The persona panel has never been opened in this session, so the list
+       above does not exist yet. Recover the id from the avatar SillyTavern
+       already painted on the user's own messages: reloadUserAvatar() sets it
+       to getThumbnailUrl('persona', user_avatar), i.e.
+       "/thumbnail?type=persona&file=<encoded id>". Parsing that is the only
+       way to learn the id before the panel renders -- getContext() never
+       exposes the user_avatar module binding. */
+    const src = document.querySelector('#chat > .mes[is_user="true"] .avatar img')?.getAttribute('src');
+    if (!src) return null;
+    try {
+        const params = new URL(src, window.location.href).searchParams;
+        if (params.get('type') === 'persona') return params.get('file') || null;
+    } catch {
+        /* not a URL we understand; fall through */
+    }
     return null;
 }
 
@@ -1116,6 +1136,108 @@ function currentPersonaAvatarUrl() {
     return src || null;
 }
 
+/* ── Persona status line ────────────────────────────────────────────────────
+ *
+ * Telegram shows a short, freely editable status under your name. SillyTavern
+ * already stores exactly such a string per persona:
+ *
+ *   power_user.persona_descriptions[avatarId].title
+ *
+ * It is documented as "Persona Title (optional, display only)" and is only
+ * reachable through the Rename Persona popup, which makes it invisible in
+ * practice. Reusing it instead of inventing our own localStorage key means
+ * the status survives persona backup/restore, shows up in the persona list
+ * (the host renders it into .ch_additional_info), and stays editable from the
+ * native UI and from /persona-update. */
+function personaDescriptor(avatarId) {
+    if (!avatarId) return null;
+    const settings = getContext()?.powerUserSettings;
+    const all = settings?.persona_descriptions;
+    if (!all || typeof all !== 'object') return null;
+    return all[avatarId] || null;
+}
+
+function personaStatus(avatarId) {
+    const title = personaDescriptor(avatarId)?.title;
+    return typeof title === 'string' ? title.trim() : '';
+}
+
+/* How many characters and groups this persona is connected to.
+ *
+ * descriptor.connections is an array of { type: 'character' | 'group', id }.
+ * The account-wide character count the drawer used to show says nothing about
+ * the persona you are looking at, so it is only kept as a fallback for the
+ * default persona -- the one the user treats as "mine, for everything". */
+function personaConnectionCount(avatarId) {
+    const connections = personaDescriptor(avatarId)?.connections;
+    return Array.isArray(connections) ? connections.length : 0;
+}
+
+function isDefaultPersona(avatarId) {
+    if (!avatarId) return false;
+    return getContext()?.powerUserSettings?.default_persona === avatarId;
+}
+
+/* Write the status back into SillyTavern's own store.
+ *
+ * Mirrors editPersonaTitle() in scripts/personas.js: an empty value deletes
+ * the key rather than storing '', settings are persisted through the debounced
+ * saver, and PERSONA_UPDATED is emitted so the persona list re-renders. We do
+ * NOT call getUserAvatars() -- it re-prints the whole list and would fight the
+ * pagination state when the panel happens to be open; the event is enough for
+ * every listener that cares. */
+async function writePersonaStatus(avatarId, value) {
+    const context = getContext();
+    const descriptor = personaDescriptor(avatarId);
+    if (!descriptor) return false;
+
+    const next = String(value ?? '').trim();
+    const current = typeof descriptor.title === 'string' ? descriptor.title.trim() : '';
+    if (next === current) return false;
+
+    if (next) descriptor.title = next;
+    else delete descriptor.title;
+
+    context?.saveSettingsDebounced?.();
+    const types = context?.eventTypes || context?.event_types || {};
+    try {
+        await context?.eventSource?.emit?.(types.PERSONA_UPDATED || 'persona_updated', avatarId);
+    } catch (error) {
+        console.warn('[ST Telegram] persona status saved but PERSONA_UPDATED failed:', error);
+    }
+    return true;
+}
+
+/* Ask for the new status with SillyTavern's own input popup so the dialog
+   matches every other prompt in the application (and inherits our popup CSS
+   instead of a browser-chrome prompt()). */
+async function editPersonaStatus() {
+    const avatarId = currentPersonaAvatar();
+    if (!avatarId) return;
+    if (!personaDescriptor(avatarId)) {
+        /* The descriptor is created lazily by setUserAvatar(). Without it there
+           is nowhere to store the status, and inventing one here would be
+           overwritten the next time SillyTavern initialises it. */
+        console.warn('[ST Telegram] no persona descriptor yet; open Persona Management once.');
+        return;
+    }
+
+    const context = getContext();
+    const current = personaStatus(avatarId);
+    const Popup = context?.Popup;
+    let value = null;
+
+    if (Popup?.show?.input) {
+        value = await Popup.show.input('Persona status', 'Shown under your name in the menu.', current, { rows: 1 });
+    } else {
+        value = window.prompt('Persona status', current);
+    }
+
+    /* null means cancelled; an empty string is a deliberate "clear it". */
+    if (value === null || value === undefined) return;
+    if (await writePersonaStatus(avatarId, value)) refreshDrawerIdentity();
+}
+
 function refreshDrawerIdentity() {
     const holder = document.getElementById('top-settings-holder');
     const head = holder?.querySelector(':scope > .tg-drawer-head');
@@ -1141,9 +1263,35 @@ function refreshDrawerIdentity() {
     const nameEl = head.querySelector('.tg-drawer-name');
     if (nameEl && nameEl.textContent !== name) nameEl.textContent = name;
 
+    /* Status: the persona's own line, empty until the user writes one. The
+       placeholder lives in a data attribute so CSS can dim it without us
+       having to store a fake value in SillyTavern's settings. */
+    const statusEl = head.querySelector('.tg-drawer-status');
+    if (statusEl) {
+        const status = personaAvatar ? personaStatus(personaAvatar) : '';
+        if (statusEl.textContent !== status) statusEl.textContent = status;
+        statusEl.dataset.tgPlaceholder = 'Set a status';
+        statusEl.classList.toggle('tg-is-empty', !status);
+        statusEl.title = status ? 'Change persona status' : 'Set persona status';
+        /* Without a descriptor there is nowhere to save; hide the affordance
+           rather than offering a button that silently does nothing. */
+        statusEl.hidden = !personaAvatar || !personaDescriptor(personaAvatar);
+    }
+
+    /* Sub line: how many characters THIS persona is connected to. The
+       account-wide total is only meaningful for the default persona, which is
+       the one implicitly attached to everything not otherwise connected. */
     const sub = head.querySelector('.tg-drawer-sub');
-    const count = context?.characters?.length ?? 0;
-    const text = `${count} character${count === 1 ? '' : 's'}`;
+    let text;
+    if (personaAvatar && personaConnectionCount(personaAvatar) > 0) {
+        const linked = personaConnectionCount(personaAvatar);
+        text = `${linked} connected character${linked === 1 ? '' : 's'}`;
+    } else if (isDefaultPersona(personaAvatar)) {
+        const total = context?.characters?.length ?? 0;
+        text = `${total} character${total === 1 ? '' : 's'}`;
+    } else {
+        text = 'No connected characters';
+    }
     if (sub && sub.textContent !== text) sub.textContent = text;
 
     const avatarBox = head.querySelector('.tg-drawer-avatar');
@@ -1246,6 +1394,12 @@ function watchGeneration() {
        arrow would stay stale without this. */
     source.on(types.MESSAGE_SWIPED || 'message_swiped', () => scheduleRefresh());
     source.on(types.MESSAGE_SWIPE_DELETED || 'message_swipe_deleted', () => scheduleRefresh());
+
+    /* The persona status and its connection list live in power_user, not in
+       the DOM, so the observer cannot see them change. These events fire for
+       renames, title edits, lock/unlock and connection changes alike. */
+    source.on(types.PERSONA_UPDATED || 'persona_updated', () => scheduleRefresh());
+    source.on(types.PERSONA_RENAMED || 'persona_renamed', () => scheduleRefresh());
 
     generationSubscribed = true;
 }

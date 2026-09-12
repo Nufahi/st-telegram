@@ -179,6 +179,14 @@ html[data-tg-enabled='on'] #right-nav-panel :is(.fav_on, .world_set, .bulk_edit_
     background: var(--tg-accent-soft) !important;
 }
 
+/* The group favourite star is the one favourite marker SillyTavern does NOT
+   route through --golden: css/rm-groups.css:235 hardcodes #c5b457. base.css
+   recolours everything else by redefining --golden, so this rule exists only
+   to keep the group star in step. Colour only -- no geometry. */
+html[data-tg-enabled='on'] #right-nav-panel .group_select .group_fav_icon {
+    color: var(--tg-favourite) !important;
+}
+
 html[data-tg-enabled='on'] #right-nav-panel :is(.menu_button, .right_menu_button, input, select, textarea, .entity_block, .inline-drawer-header):focus-visible,
 html[data-tg-enabled='on'] #character_popup :is(.menu_button, input, select, textarea):focus-visible {
     outline: 2px solid var(--tg-accent) !important;

@@ -159,17 +159,67 @@ for (const file of files.filter((f) => f.endsWith('.css'))) {
 /* ── 5. no top-level await in the entry graph ───────────────────────────── */
 
 /* TauriTavern and older WebViews choke on top-level await in a dynamically
-   imported module; the extension silently never initialises. */
+   imported module; the extension silently never initialises.
+
+   The first version of this check matched /^\s*await\s/m, which flags EVERY
+   await in the file -- including the ones inside async functions, where they
+   are perfectly legal. It reported a false failure for years. The real
+   question is whether an await sits at module scope, so strip comments and
+   strings, then walk the source tracking brace/paren/bracket depth and only
+   flag an await found at depth 0. Awaits inside a top-level `if`/`for` block
+   would slip through, but nothing in this codebase writes one and the check
+   is meant to catch the accidental `const x = await init()` at the bottom of
+   a module, which is always at depth 0. */
+function stripLiterals(src) {
+    let out = '';
+    let i = 0;
+    while (i < src.length) {
+        const c = src[i];
+        const next = src[i + 1];
+        if (c === '/' && next === '/') {
+            while (i < src.length && src[i] !== '\n') i += 1;
+            continue;
+        }
+        if (c === '/' && next === '*') {
+            i += 2;
+            while (i < src.length && !(src[i] === '*' && src[i + 1] === '/')) i += 1;
+            i += 2;
+            continue;
+        }
+        if (c === '"' || c === '\'' || c === '`') {
+            i += 1;
+            while (i < src.length && src[i] !== c) {
+                if (src[i] === '\\') i += 1;
+                i += 1;
+            }
+            i += 1;
+            out += '""';
+            continue;
+        }
+        out += c;
+        i += 1;
+    }
+    return out;
+}
+
 for (const name of ['index.js', 'src/boot.js', 'src/theme.js', 'src/chat.js', 'src/settings.js']) {
     const path = join(ROOT, name);
     if (!existsSync(path)) continue;
-    const src = readFileSync(path, 'utf8');
-    const stripped = src
-        .split('\n')
-        .filter((line) => !/^\s*(\/\/|\*|\/\*)/.test(line))
-        .join('\n');
-    if (/^\s*await\s/m.test(stripped) || /^\s*(const|let|var)\s+\w+\s*=\s*await\s/m.test(stripped)) {
-        fail(`${name}: top-level await found; some WebViews never initialise the extension`);
+    const src = stripLiterals(readFileSync(path, 'utf8'));
+
+    let depth = 0;
+    for (let i = 0; i < src.length; i += 1) {
+        const c = src[i];
+        if (c === '{' || c === '(' || c === '[') depth += 1;
+        else if (c === '}' || c === ')' || c === ']') depth -= 1;
+        else if (depth === 0 && c === 'a' && src.startsWith('await', i)) {
+            const before = src[i - 1] ?? ' ';
+            const after = src[i + 5] ?? ' ';
+            if (!/[\w$.]/.test(before) && !/[\w$]/.test(after)) {
+                fail(`${name}: top-level await found; some WebViews never initialise the extension`);
+                break;
+            }
+        }
     }
 }
 
