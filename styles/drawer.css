@@ -1156,9 +1156,19 @@ html[data-tg-enabled='on'] #left-nav-panel :is(
     margin: 0 !important;
     padding: 8px 0 14px !important;
     border: 0 !important;
-    border-bottom: 1px solid var(--tg-divider) !important;
     background: transparent !important;
     box-shadow: none !important;
+}
+
+/* Group separators are drawn only between groups that actually render, and
+   never after the last one, so no hairline is left dangling at the bottom. */
+html[data-tg-enabled='on'] #left-nav-panel :is(
+    #respective-presets-block,
+    #common-gen-settings-block,
+    #respective-ranges-and-temps,
+    #advanced-ai-config-block
+):not(:last-child):has(:is(input, select, textarea, button, .range-block-title)) {
+    border-bottom: 1px solid var(--tg-divider) !important;
 }
 
 html[data-tg-enabled='on'] #left-nav-panel :is(.standoutHeader, .range-block-title) {
@@ -1176,12 +1186,14 @@ html[data-tg-enabled='on'] #left-nav-panel .standoutHeader {
     background: transparent !important;
 }
 
+/* Telegram never rules a line between rows inside a group -- only between
+   groups. A per-row border-bottom here drew ~73 hairlines in this one panel,
+   including under empty JS-filled containers, so rows stay borderless. */
 html[data-tg-enabled='on'] #left-nav-panel .range-block {
     gap: 4px !important;
     margin: 0 !important;
     padding: 8px 10px !important;
     border: 0 !important;
-    border-bottom: 1px solid var(--tg-divider) !important;
     background: transparent !important;
     background-image: none !important;
     box-shadow: none !important;
@@ -1487,9 +1499,14 @@ html[data-tg-enabled='on'] #left-nav-panel :is(
 
 html[data-tg-enabled='on'] #left-nav-panel .inline-drawer {
     border: 0 !important;
-    border-bottom: 1px solid var(--tg-divider) !important;
     background: transparent !important;
     box-shadow: none !important;
+}
+
+/* An accordion reads as its own group, so it keeps a separator -- but not when
+   it is the last thing in the panel, and not when its header is hidden. */
+html[data-tg-enabled='on'] #left-nav-panel .inline-drawer:not(:last-child):has(> .inline-drawer-toggle) {
+    border-bottom: 1px solid var(--tg-divider) !important;
 }
 
 html[data-tg-enabled='on'] #left-nav-panel .inline-drawer-header {
