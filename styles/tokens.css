@@ -138,6 +138,13 @@ html[data-tg-variant='day'] {
 
     --tg-code-bg: rgba(0, 0, 0, .05);
     --tg-code-text: #3a3a3a;
+    /* Inline code sits on TWO different bubble colours (white incoming, tinted
+       outgoing), so its background is a neutral alpha rather than an accent
+       tint: alpha darkens whatever is behind it and stays legible on both. */
+    --tg-code-inline-bg: rgba(0, 0, 0, .06);
+    --tg-code-inline-border: rgba(0, 0, 0, .11);
+    --tg-code-inline-bg-out: rgba(0, 0, 0, .07);
+    --tg-code-inline-border-out: rgba(0, 0, 0, .13);
     --tg-quote-text: #287fbd;
     --tg-quote-bar: var(--tg-accent);
     --tg-link: #3390ec;
@@ -199,6 +206,12 @@ html[data-tg-variant='night'] {
 
     --tg-code-bg: rgba(0, 0, 0, .28);
     --tg-code-text: #dfe6ec;
+    /* Night lifts instead of darkening: a darker patch on an already dark
+       bubble reads as a hole, a lighter one reads as a chip. */
+    --tg-code-inline-bg: rgba(255, 255, 255, .10);
+    --tg-code-inline-border: rgba(255, 255, 255, .14);
+    --tg-code-inline-bg-out: rgba(255, 255, 255, .13);
+    --tg-code-inline-border-out: rgba(255, 255, 255, .18);
     --tg-quote-text: #82c7f5;
     --tg-quote-bar: var(--tg-accent);
     --tg-link: #62bcf9;

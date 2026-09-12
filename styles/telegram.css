@@ -14,11 +14,31 @@
  * under 60 KB.
  */
 
-@import url('./tokens.css?v=0.1.42-persona-status');
+/* Roboto is Telegram's typeface on Android and the reason the theme looks like
+ * Telegram rather than like SillyTavern. It was named in --tg-font-ui from the
+ * start but never actually loaded, so on any machine without Roboto installed
+ * (i.e. every Windows box) the stack silently fell through to SillyTavern's
+ * bundled Noto Sans -- a different, wider face.
+ *
+ * The css2 endpoint splits the file by unicode-range, so Cyrillic is fetched
+ * only when Cyrillic is rendered. Weights are limited to the three the theme
+ * actually uses (400 body, 500 names/headers, 700 the rare bold) plus 400 mono
+ * for code; every extra weight is another file.
+ *
+ * display=swap means text paints immediately in Noto Sans and reflows to
+ * Roboto when it arrives, so a slow or absent network costs a repaint rather
+ * than an invisible chat. If the request fails outright the font stack in
+ * tokens.css still resolves -- nothing here is load-bearing.
+ *
+ * Must stay above the local imports: @import rules are applied in order, and
+ * a font must be declared before the rules that use it are matched. */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400&family=Roboto+Mono:wght@400&display=swap');
+
+@import url('./tokens.css?v=0.1.44-inline-code');
 @import url('./icons.css?v=0.1.4-hidden-message-actions');
 @import url('./base.css?v=0.1.42-persona-status');
 @import url('./controls.css?v=0.1.19-switches');
-@import url('./chat.css?v=0.1.43-swipe-rail-fix');
+@import url('./chat.css?v=0.1.44-inline-code');
 @import url('./header.css?v=0.1.35-colour-schemes');
 @import url('./composer.css?v=0.1.35-colour-schemes');
 @import url('./drawer.css?v=0.1.42-persona-status');

@@ -386,18 +386,29 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     margin-bottom: 0 !important;
 }
 
+/* Inline prose colours are deliberately NOT !important.
+   Several extensions recolour quoted speech and italics per speaker, either by
+   adding a class to the <q> or by wrapping it in a styled <span>. An
+   !important colour here would win over all of that, because !important beats
+   any specificity, and the extension would silently do nothing.
+   These selectors already out-specify SillyTavern's own `.mes_text q`
+   (one id + two classes against one class), so they hold the Telegram look
+   without !important, and anything more specific -- or !important, or an
+   inline style -- can still take over.
+   The same applies to every colour declaration in this quote/italic family
+   below; do not "fix" them by adding !important back. */
 #chat > .mes .mes_text q,
 #chat > .mes .mes_text .q {
-    color: var(--tg-quote-text) !important;
+    color: var(--tg-quote-text);
 }
 
 #chat > .mes .mes_text em,
 #chat > .mes .mes_text i {
-    color: var(--tg-text-secondary) !important;
+    color: var(--tg-text-secondary);
 }
 
 #chat > .mes .mes_text :is(q, .q, blockquote) :is(em, i) {
-    color: inherit !important;
+    color: inherit;
 }
 
 #chat > .mes .mes_text a {
@@ -409,13 +420,54 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     text-decoration: underline !important;
 }
 
-#chat > .mes .mes_text code {
+/* Inline code (`like this`).
+   SillyTavern's own `code` rule (style.css:701) sets `line-height:
+   var(--mainFontSize)`, i.e. a line-height in PIXELS equal to the font size.
+   Inside a 1.31 line-height bubble that squeezes the chip's own line box, so
+   a code span in the middle of a paragraph shifts the whole line up by a
+   pixel or two. Resetting line-height to `inherit` is the single most
+   important declaration here.
+
+   `padding-block` is deliberately tiny (1px). A taller chip cannot grow the
+   line box -- inline boxes do not affect line height -- so it would just
+   overlap the lines above and below. The visual height comes from the
+   background reaching slightly past the glyphs, not from padding.
+
+   `:not(pre code)` keeps this off code blocks, which get the `pre` treatment
+   below and must not inherit a chip border or a horizontal padding that
+   would misalign their first line. */
+#chat > .mes .mes_text code:not(pre code) {
     font-family: var(--tg-font-mono) !important;
-    font-size: .92em !important;
-    background: var(--tg-code-bg) !important;
+    font-size: .875em !important;
+    font-weight: 400 !important;
+    font-variant-ligatures: none !important;
+    line-height: inherit !important;
+    background: var(--tg-code-inline-bg) !important;
     color: var(--tg-code-text) !important;
-    border-radius: 4px !important;
-    padding: 1px 4px !important;
+    border: 1px solid var(--tg-code-inline-border) !important;
+    border-radius: 5px !important;
+    padding: 1px 5px !important;
+    margin: 0 1px !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    /* Long tokens (paths, hashes) must wrap inside the bubble rather than
+       widen it -- the bubble is max-width, so an unbreakable child would
+       either overflow or force a horizontal scrollbar on the whole chat. */
+    white-space: break-spaces !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    /* Keeps the chip's rounded ends when a wrap splits it across two lines
+       instead of leaving one square edge hanging mid-sentence. */
+    box-decoration-break: clone !important;
+    -webkit-box-decoration-break: clone !important;
+}
+
+/* The outgoing bubble is accent-tinted and darker than the incoming one, so a
+   neutral alpha chip loses contrast there. Its own token carries a stronger
+   alpha. */
+#chat > .mes[is_user='true'] .mes_text code:not(pre code) {
+    background: var(--tg-code-inline-bg-out) !important;
+    border-color: var(--tg-code-inline-border-out) !important;
 }
 
 #chat > .mes .mes_text pre {
@@ -432,17 +484,19 @@ html[data-tg-chat-type='private'] #chat > .mes[is_user='false'] .mes_block {
     padding: 0 !important;
 }
 
+/* Geometry stays !important (the host hardcodes padding-left and margin), but
+   the two colours do not -- same reasoning as the inline quote rule above. */
 #chat > .mes .mes_text blockquote {
-    border-left: 3px solid var(--tg-quote-bar) !important;
-    background: var(--tg-accent-soft) !important;
+    border-left: 3px solid var(--tg-quote-bar);
+    background: var(--tg-accent-soft);
     border-radius: 4px !important;
     margin: 4px 0 !important;
     padding: 4px 8px !important;
-    color: var(--tg-quote-text) !important;
+    color: var(--tg-quote-text);
 }
 
 #chat > .mes .mes_text :is(h1, h2, h3, h4, h5, h6, ul, ol, li, strong, b, s, del) {
-    color: inherit !important;
+    color: inherit;
     text-shadow: none !important;
 }
 
