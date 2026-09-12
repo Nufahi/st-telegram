@@ -25,7 +25,7 @@
  * just sent, which then never gets tagged. Use takeRecords() instead.
  */
 
-import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.38';
+import { tgRead, tgWrite, tgRoot, tgApplyVariant } from './boot.js?v=0.1.39';
 
 /* ── Context ────────────────────────────────────────────────────────────── */
 
@@ -123,7 +123,7 @@ function ensureHeader() {
                 <div class="tg-header-status"></div>
             </div>
             <button type="button" class="tg-header-btn tg-header-search" aria-label="Search"></button>
-            <button type="button" class="tg-header-btn tg-header-menu" aria-label="More"></button>`;
+            <button type="button" class="tg-header-btn tg-header-menu" aria-label="Extensions" title="Extensions"></button>`;
         /* Before #chat so flex order puts it on top. */
         sheld.insertBefore(node, chat);
         wireHeader(node);
@@ -150,9 +150,10 @@ function openChatSearch() {
         toggleDrawer(false);
         /* #option_select_chat sits inside the closed #options popup. It is
            still in the DOM with a live delegated handler, so clicking it
-           works without showing the menu -- but the click must be deferred
-           for the same reason as openChatMenu: SillyTavern's document-level
-           handlers would otherwise process our still-bubbling event. */
+           works without showing the menu -- but the click must be deferred by
+           a macrotask, or SillyTavern's document-level close-on-outside-click
+           handler processes our still-bubbling event and shuts the view again
+           in the same dispatch. */
         window.setTimeout(() => {
             document.getElementById('option_select_chat')?.click();
             /* SillyTavern focuses this itself 200ms after the view opens;
@@ -171,25 +172,20 @@ function openChatSearch() {
     });
 }
 
-/* The three-dot menu. SillyTavern's #options popup is the real thing and it
-   already carries the chat-level actions Telegram puts here, so we open that
-   rather than inventing a parallel menu.
+/* The header's three-dot button opens the Extensions panel.
  *
- * Forwarding the click naively does NOT work, and this is why:
- * SillyTavern binds a close-on-outside-click handler to `document`. Our
- * button's own click keeps bubbling after we synthesise the one on
- * #options_button, reaches that handler in the same dispatch, and it closes
- * the menu again because the pointer is over our header rather than over the
- * button or the menu. The result is a menu that opens and shuts instantly --
- * indistinguishable from a dead button.
+ * It used to forward to SillyTavern's #options popup, but every action in that
+ * popup is already reachable from the message action sheet (regenerate, swipe,
+ * delete) or from the launcher, whereas the extension list had no shortcut at
+ * all and is the screen the user actually visits from a chat.
  *
- * Deferring to the next macrotask lets our click finish dispatching first, so
- * SillyTavern's document handler runs while the menu is still closed (it
- * returns early) and only then do we open it. */
-function openChatMenu() {
-    window.setTimeout(() => {
-        document.getElementById('options_button')?.click();
-    }, 0);
+ * This goes through openNativePanel rather than clicking #options_button
+ * because the target is a real drawer: only its own .drawer-toggle keeps
+ * SillyTavern's open/closed bookkeeping (and the .openDrawer class our CSS
+ * keys on) in step. Origin stays 'chat' so Back returns to the conversation
+ * instead of popping a launcher the user never opened. */
+function openExtensionsPanel() {
+    return openNativePanel('#extensions-settings-button', 'rm_extensions_block');
 }
 
 /* Open the Character Management panel, which is where every card, chat file
@@ -290,9 +286,12 @@ function wireHeader(node) {
         openChatSearch();
     });
 
+    /* stopPropagation is still needed: SillyTavern closes every unpinned
+       drawer on any mousedown/click outside it, and our header sits outside
+       every drawer subtree. */
     node.querySelector('.tg-header-menu')?.addEventListener('click', (event) => {
         event.stopPropagation();
-        openChatMenu();
+        openExtensionsPanel();
     });
 
     /* Telegram opens the peer's profile when you tap the avatar or the title.
@@ -452,6 +451,19 @@ function refreshMessages() {
            date in separators and shows only the local time beside the ticks. */
         const timestamp = row.querySelector('.ch_name .timestamp');
         if (timestamp && date) timestamp.textContent = timeLabel(date);
+
+        /* Telegram puts both swipe controls in one rail under the bubble.
+           SillyTavern keeps the left chevron OUTSIDE .swipeRightBlock, as a
+           direct child of .mes, so a pure-CSS placement would have to encode
+           the rail's width -- and the counter in the middle of it is as wide
+           as its "current/total" text. Move the node instead of guessing.
+           Safe because every native reference to it is a descendant selector
+           ('.last_mes .swipe_left', '.swipe_left:last', the a11y and keyboard
+           lists), and it stays inside the same .mes. Self-limiting: the
+           :scope query stops matching once the node has moved. */
+        const swipeRail = row.querySelector(':scope > .swipeRightBlock');
+        const swipeBack = row.querySelector(':scope > .swipe_left');
+        if (swipeRail && swipeBack) swipeRail.prepend(swipeBack);
 
         /* Preserve the native nodes so ST can keep updating their values, but
            move them out of the narrow avatar column into the message bubble. */
@@ -977,7 +989,7 @@ function ensureDrawerChrome() {
             const button = head.querySelector('.tg-drawer-disable');
             if (button) button.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.38');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.39');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] emergency disable could not restore settings:', error);
