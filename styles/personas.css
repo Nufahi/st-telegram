@@ -1,6 +1,7 @@
 /* Persona selection, bindings, pagination and visibility remain host-owned. */
 html[data-tg-enabled='on'] #PersonaManagement {
     --tg-persona-action: 40px;
+    --tg-persona-avatar: 52px;
     min-width: 0 !important;
 }
 
@@ -28,15 +29,24 @@ html[data-tg-enabled='on'] #PersonaManagement :is(.flex-container, .buttons_bloc
 }
 
 html[data-tg-enabled='on'] #PersonaManagement #persona-management-block {
+    /* Host mobile CSS changes flex-direction to column. A 320px flex-basis
+       then becomes a height and the overflowHidden list clips its avatars.
+       Size columns by the panel's actual width, including desktop sheets. */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+    align-items: start;
     gap: 20px !important;
     margin-top: 12px;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement :is(.persona_management_left_column, .persona_management_right_column) {
-    flex: 1 1 320px;
     width: 100%;
     max-width: 100%;
     min-width: 0;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .persona_management_left_column {
+    overflow: visible;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement :is(.persona_controls_buttons_block, #persona_connections_buttons) {
@@ -44,11 +54,18 @@ html[data-tg-enabled='on'] #PersonaManagement :is(.persona_controls_buttons_bloc
     gap: 6px;
 }
 
+html[data-tg-enabled='on'] #PersonaManagement .persona_controls_buttons_block {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+}
+
 html[data-tg-enabled='on'] #PersonaManagement #your_name {
     flex: 1 1 100%;
     margin: 0 !important;
     font: 600 18px/1.4 var(--tg-font-ui) !important;
     overflow-wrap: anywhere;
+    white-space: normal;
+    opacity: 1;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement :is(select, input[type='search'], input[type='number'], textarea) {
@@ -90,7 +107,10 @@ html[data-tg-enabled='on'] #PersonaManagement #persona_depth_position_settings >
 
 html[data-tg-enabled='on'] #PersonaManagement .menu_button {
     min-width: var(--tg-persona-action);
-    min-height: var(--tg-persona-action);
+    min-height: var(--tg-persona-action) !important;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
     margin: 0;
     padding: 8px 12px !important;
     border: 1px solid var(--tg-divider-strong) !important;
@@ -162,6 +182,7 @@ html[data-tg-enabled='on'] #PersonaManagement .checkbox_label > span {
 html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block {
     gap: 6px;
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement .avatar-container {
@@ -171,6 +192,9 @@ html[data-tg-enabled='on'] #PersonaManagement .avatar-container {
     border: 1px solid transparent;
     border-radius: 14px;
     min-width: 0;
+    flex: 0 0 100%;
+    width: 100%;
+    max-width: 100%;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement .avatar-container:hover {
@@ -182,38 +206,84 @@ html[data-tg-enabled='on'] #PersonaManagement .avatar-container.selected {
     background: var(--tg-accent-soft);
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container .avatar {
-    flex: 0 0 52px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container .avatar {
+    flex: 0 0 var(--tg-persona-avatar);
+    width: var(--tg-persona-avatar);
+    min-width: var(--tg-persona-avatar);
+    height: var(--tg-persona-avatar);
+    /* Override the host's square/rounded avatar presets in this panel. */
+    border-radius: 50% !important;
+    opacity: 1;
 }
 
-html[data-tg-enabled='on'] #PersonaManagement .avatar-container .avatar img {
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar-container .avatar img {
+    display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: inherit;
+    border-radius: inherit !important;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement .character_select_container {
     flex: 1 1 0;
     width: auto;
+    max-width: 100%;
+    gap: 6px;
+    align-content: start;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .character_name_block {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2px;
+    margin-bottom: 0;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement :is(.ch_name, .ch_additional_info) {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .ch_additional_info {
+    color: var(--tg-text-secondary);
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .ch_description {
+    margin-top: 0;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement .avatar_container_states {
     flex-wrap: wrap;
     gap: 4px;
     max-width: 100%;
+    flex: 1 1 100%;
+    justify-content: flex-start;
 }
 
 /* These are status badges, not actions. Keep the host's conditional display. */
 html[data-tg-enabled='on'] #PersonaManagement .avatar_state.menu_button {
     min-width: 0;
-    min-height: 24px;
+    min-height: 24px !important;
     max-width: 100%;
     padding: 3px 5px !important;
     font-size: 11px !important;
+}
+
+/* The host only reveals these labels on hover, which phones cannot do. */
+html[data-tg-enabled='on'] #PersonaManagement .avatar_state.has_hover_label .label {
+    opacity: 1;
+    max-width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    transition: none;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .avatar_state.has_hover_label .label_icon {
+    display: none;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement .ch_name {
@@ -221,11 +291,24 @@ html[data-tg-enabled='on'] #PersonaManagement .ch_name {
     overflow-wrap: anywhere;
 }
 
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+}
+
 html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar-container {
-    flex: 1 1 120px;
     width: auto;
-    max-width: 180px;
+    max-width: 100%;
+    height: auto;
     align-items: center;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .character_select_container {
+    flex: 0 1 auto;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar_container_states {
+    justify-content: center;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView :is(.character_select_container, .ch_name, .ch_additional_info) {
@@ -234,9 +317,18 @@ html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView :is(.c
 }
 
 html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block .avatar_upload {
+    width: var(--tg-persona-avatar);
+    height: var(--tg-persona-avatar);
+    flex: 0 0 var(--tg-persona-avatar);
+    border-radius: 50%;
     background: var(--tg-accent-soft);
     color: var(--tg-accent);
     margin: 8px;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement #user_avatar_block.gridView .avatar_upload {
+    justify-self: center;
+    align-self: center;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement #persona_pagination_container {
@@ -259,6 +351,16 @@ html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages a {
     border: 0;
     border-radius: 10px;
     background: var(--tg-panel-sunken);
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages {
+    min-width: 0;
+    max-width: 100%;
+}
+
+html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages ul {
+    flex-wrap: wrap;
+    margin-inline: 0;
 }
 
 html[data-tg-enabled='on'] #PersonaManagement .paginationjs-pages .disabled a {

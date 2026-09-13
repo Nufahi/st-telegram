@@ -10,8 +10,8 @@
  * only a UI over those keys.
  */
 
-import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.45';
-import { t } from './i18n.js?v=0.1.45';
+import { TG_VERSION, TG_ACCENTS, tgRead, tgReadRaw, tgWrite, tgRoot, tgApplyVariant, tgResolveVariant } from './boot.js?v=0.1.46';
+import { t } from './i18n.js?v=0.1.46';
 
 const PANEL_ID = 'st-telegram-settings';
 
@@ -396,7 +396,7 @@ function wire(panel) {
         if (next === 'off') {
             enabled.disabled = true;
             try {
-                const { restorePreviousTheme } = await import('./theme.js?v=0.1.45');
+                const { restorePreviousTheme } = await import('./theme.js?v=0.1.46');
                 restorePreviousTheme();
             } catch (error) {
                 console.warn('[ST Telegram] failed to restore the previous theme:', error);
