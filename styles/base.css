@@ -405,7 +405,6 @@ html[data-tg-variant='night'] #options {
    SillyTavern's desktop affordances without a Telegram equivalent. */
 #top-bar,
 #sheldheader,
-#chat_import_button,
 #loading_mes {
     display: none !important;
 }
